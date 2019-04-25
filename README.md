@@ -5,6 +5,13 @@ Android Motioneye Client App using Backend of motionEye
 This is new (Alpha at the moment) Motioneye client only using its backend, and not webview like in other apps.
 
 
+##  **Why using this instead other client apps:**
+
+- It's fast, because you are not loading HTML and CSS at all
+- Using **ONLY** motionEye Backend, which is faster than Webviews
+- Auto DDNS and Local switching, which will increase Video framerate and quality in local Wifi newtork
+- Fullscreen support
+
 
 ##  **Features:**
 
@@ -21,6 +28,7 @@ This is new (Alpha at the moment) Motioneye client only using its backend, and n
 - Actions
 - Media Tab in Bottom Navigation to see all media combined from all cameras and devices
 - Only Local or DDNS Mode
+- More is coming
 
 
 ## Licence
