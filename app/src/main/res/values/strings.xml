@@ -1,0 +1,73 @@
+<!--
+  ~ Copyright (c) 2019. MotionEyeClient by Developer From Jokela, All Rights Reserved.
+  ~ Licenced with MIT;
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<resources>
+    <string name="app_name">MotionEye Client</string>
+    <string name="title_devices">Devices</string>
+    <string name="cameras_count">%1$s camera%2$s</string>
+    <string name="cameras_count_morethan1">s</string>
+    <string name="no_devices_added">No Devices Added</string>
+    <string name="add_new_device">Add New Device</string>
+    <string name="title_activity_setup_start_screen">Add Device Wizard</string>
+    <string name="welcome_to_wizard">Welcome to the Devices Wizard</string>
+    <string name="continue_setup">Continue</string>
+    <string name="previous_setup">Previous</string>
+    <string name="cd_rpi">Raspberry Pi</string>
+    <string name="setup_device_hint">Let\'s setup your device by clicking Continue</string>
+    <string name="wizard_device_type">Configure Network Settings</string>
+    <string name="optional_ddns_port">(Optional) DDNS Port</string>
+    <string name="optional_local_port">(Optional) Local Port</string>
+    <string name="ddns_hostname">(Optional) DDNS Hostname</string>
+    <string name="local_hostname">motionEye IP Address</string>
+    <string name="wizard_login_settings">Login Settings</string>
+    <string name="wizard_username">Username</string>
+    <string name="wizard_password">Password</string>
+    <string name="wizard_local_help">Enter Device\'s local IP Address for local access via Wi-Fi</string>
+    <string name="wizard_ddns_help">Enter your DDNS address for remote access using port forwarding.</string>
+    <string name="wizard_port_help">Enter optionally Port number for motionEye server, if you have set custom port number</string>
+    <string name="select_wifi">Select Local Wi-Fi Network</string>
+    <string name="no_wifi_networks_saved">No Wifi Networks Saved! Please add one from Device\'s Wifi Settings.</string>
+    <string name="connected">connected</string>
+    <string name="checking_connection">Checking connection</string>
+    <string name="wizard_trying_login">Checking Authentication</string>
+    <string name="wizard_validating">Validating parameters</string>
+    <string name="wizard_check_wifi">Checking Local Connection</string>
+    <string name="wizard_check_login">Trying to login</string>
+    <string name="wizard_check_ddns">DDNS Connection</string>
+    <string name="wizard_not_motioneye">Not Motioneye Server, please check URL and port if needed</string>
+    <string name="wizard_wrong_credentials">Wrong authentication credentials, please check username and password</string>
+    <string name="wizard_completed">Device %1$s added successfully!</string>
+    <string name="wizard_completed_desc">Your Device has been added successfully!</string>
+    <string name="wizard_getting_details">Get Information about motionEye</string>
+    <string name="wizard_finish">Close Setup</string>
+    <string name="title_activity_camera_viewer">Camera Viewer</string>
+
+    <string name="title_activity_full_camera_viewer">FullCameraViewer</string>
+    <string name="loading">Loading Stream…</string>
+    <string name="ddns_available">DDNS Available</string>
+    <string name="change_protocol">Change Protocol</string>
+    <string name="change_protocol_desc">You may speed up loading times by changing protocol</string>
+    <string name="http_or_rtsp">HTTP works better if you cannot port forward any other port, but if you can, it\'s reccomended to swith to RTSP, as it\'s designed for live video feed.</string>
+    <string name="try_again">Try Again</string>
+
+</resources>
