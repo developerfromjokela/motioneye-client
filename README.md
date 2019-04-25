@@ -1,8 +1,11 @@
 # motioneye-client
 Android Motioneye Client App using Backend of motionEye
 
+![alt text](https://raw.githubusercontent.com/developerfromjokela/motioneye-client/master/app/src/main/ic_launcher-web.png)
+
 
 This is new (Alpha at the moment) Motioneye client only using its backend, and not webview like in other apps.
+
 
 
 ###  **Why using this instead other client apps:**
