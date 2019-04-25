@@ -5,7 +5,7 @@ Android Motioneye Client App using Backend of motionEye
 This is new (Alpha at the moment) Motioneye client only using its backend, and not webview like in other apps.
 
 
-##  **Why using this instead other client apps:**
+###  **Why using this instead other client apps:**
 
 - It's fast, because you are not loading HTML and CSS at all
 - Using **ONLY** motionEye Backend, which is faster than Webviews
@@ -13,7 +13,7 @@ This is new (Alpha at the moment) Motioneye client only using its backend, and n
 - Fullscreen support
 
 
-##  **Features:**
+###  **Features:**
 
 - Auto DDNS and Local Network Switching
 - Using **ONLY** motionEye Backend
@@ -22,13 +22,13 @@ This is new (Alpha at the moment) Motioneye client only using its backend, and n
 
 
 
-##  **Developers:**
+###  **Developers:**
 
 If you can implement one of "Need To Be Implemented" tasks, just do pull request, I will check these out daily.
 Thank you for contributing to this project!
 
 
-##  **Need To Be Implemented:**
+###  **Need To Be Implemented:**
 
 - Camera Settings
 - Device Configuration Editing and Deleting
@@ -38,7 +38,7 @@ Thank you for contributing to this project!
 - More is coming
 
 
-## Licence
+### Licence
 
 Copyright 2019 Developer From Jokela
 
