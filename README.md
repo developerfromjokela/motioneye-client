@@ -1,4 +1,4 @@
-# Android motioneye-client
+# motioneye-client
 Android Motioneye Client App using Backend of motionEye
 
 
