@@ -21,6 +21,13 @@ This is new (Alpha at the moment) Motioneye client only using its backend, and n
 - Fullscreen
 
 
+
+##  **Developers:**
+
+If you can implement one of "Need To Be Implemented" tasks, just do pull request, I will check these out daily.
+Thank you for contributing to this project!
+
+
 ##  **Need To Be Implemented:**
 
 - Camera Settings
