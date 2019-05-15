@@ -26,7 +26,7 @@ apply plugin: 'com.android.application'
 def versionMajor = 1
 def versionMinor = 0
 def versionPatch = 0
-def versionBuild = 0 // 0-50=Alpha / 51-98=RC / 90-99=stable
+def versionBuild = 1 // 0-50=Alpha / 51-98=RC / 90-99=stable
 android {
     compileSdkVersion 28
     defaultConfig {
