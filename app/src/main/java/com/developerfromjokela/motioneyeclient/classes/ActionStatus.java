@@ -21,35 +21,25 @@
  * SOFTWARE.
  */
 
-package com.developerfromjokela.motioneyeclient.api;
+package com.developerfromjokela.motioneyeclient.classes;
+
+import com.google.gson.annotations.SerializedName;
+
+public class ActionStatus {
 
 
-import com.developerfromjokela.motioneyeclient.classes.ActionStatus;
-import com.developerfromjokela.motioneyeclient.classes.Cameras;
+    @SerializedName("status")
+    private int status;
 
-import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Url;
+    public ActionStatus(int status) {
+        this.status = status;
+    }
 
-public interface ApiInterface {
+    public int getStatus() {
+        return status;
+    }
 
-
-    @GET()
-    Call<Cameras> getCameras(@Url String url);
-
-    @POST()
-    Call<ActionStatus> peformAction(@Url String url);
-
-    @GET()
-    Call<okhttp3.ResponseBody> getMotionDetails(@Url String url);
-
-    @FormUrlEncoded
-    @POST()
-    Call<okhttp3.ResponseBody> login(@Url String url, @Field("username") String username, @Field("password") String password, @Field("login") String login);
-
-    @GET()
-    Call<okhttp3.ResponseBody> loginResult(@Url String url);
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }

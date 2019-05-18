@@ -35,40 +35,54 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.developerfromjokela.motioneyeclient.R;
+import com.developerfromjokela.motioneyeclient.api.ApiInterface;
 import com.developerfromjokela.motioneyeclient.api.MotionEyeHelper;
+import com.developerfromjokela.motioneyeclient.api.ServiceGenerator;
+import com.developerfromjokela.motioneyeclient.classes.ActionStatus;
 import com.developerfromjokela.motioneyeclient.classes.Camera;
 import com.developerfromjokela.motioneyeclient.classes.CameraImage;
 import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.other.Utils;
+import com.developerfromjokela.motioneyeclient.ui.adapters.ActionsAdapter;
 import com.google.gson.Gson;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static android.app.DownloadManager.Request.NETWORK_WIFI;
 
 
-public class FullCameraViewer extends Activity {
+public class FullCameraViewer extends Activity implements ActionsAdapter.ActionsAdapterListener {
 
     private Source source;
     private boolean loaded = false;
@@ -76,8 +90,11 @@ public class FullCameraViewer extends Activity {
     private TextView status;
     private Runnable timerRunnable;
     private Handler timerHandler = new Handler();
+    private ActionsAdapter adapter;
+    private String baseurl;
+    private Device device;
+    private Camera camera;
 
-    private View mContentView;
 
 
     @Override
@@ -97,6 +114,9 @@ public class FullCameraViewer extends Activity {
         TextView fps = findViewById(R.id.cameraFPS);
         ProgressBar loadingCircle = findViewById(R.id.progressBar2);
         TextView cameraName = findViewById(R.id.cameraName);
+        RecyclerView actions = findViewById(R.id.actions);
+        LinearLayout joystick = findViewById(R.id.dircontrols);
+
 
         status = findViewById(R.id.status);
 
@@ -106,10 +126,10 @@ public class FullCameraViewer extends Activity {
         if (intent.getExtras() != null) {
 
             String ID = intent.getStringExtra("DeviceId");
-            Device device = null;
+
             try {
                 device = source.get(ID);
-                final Camera camera = new Gson().fromJson(intent.getStringExtra("Camera"), Camera.class);
+                camera = new Gson().fromJson(intent.getStringExtra("Camera"), Camera.class);
                 MotionEyeHelper helper = new MotionEyeHelper();
                 helper.setUsername(device.getUser().getUsername());
                 try {
@@ -119,7 +139,29 @@ public class FullCameraViewer extends Activity {
                 }
                 String serverurl;
                 String cameraId = camera.getId();
+                List<String> customActions = new ArrayList<>(camera.getActions());
+                Iterator cIterator = customActions.iterator();
+                while (cIterator.hasNext()) {
+                    String actionString = (String) cIterator.next();
+                    if (actionString.contains("up")) {
+                        cIterator.remove();
+                    } else if (actionString.contains("right")) {
+                        cIterator.remove();
+                    } else if (actionString.contains("down")) {
+                        cIterator.remove();
+                    } else if (actionString.contains("left")) {
+                        cIterator.remove();
+                    }
+                }
 
+
+                adapter = new ActionsAdapter(this, customActions, this);
+                actions.setAdapter(adapter);
+                LinearLayoutManager layoutManager
+                        = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                actions.setLayoutManager(layoutManager);
+                adapter.notifyDataSetChanged();
+                initControls(camera, joystick, this);
                 if (device.getDdnsURL().length() > 5) {
                     if ((Utils.getNetworkType(FullCameraViewer.this)) == NETWORK_MOBILE) {
                         serverurl = device.getDDNSUrlCombo();
@@ -134,7 +176,6 @@ public class FullCameraViewer extends Activity {
                     serverurl = device.getDeviceUrlCombo();
 
                 }
-                String baseurl;
                 if (!serverurl.contains("://"))
                     baseurl = removeSlash("http://" + serverurl);
                 else
@@ -221,6 +262,37 @@ public class FullCameraViewer extends Activity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
+    }
+
+    @Override
+    public void onActionClicked(int position, String action, View button) {
+
+        try {
+            String url = baseurl + "/action/" + camera.getId() + "/" + action + "/?_=" + String.valueOf(new Date().getTime());
+            MotionEyeHelper helper = new MotionEyeHelper();
+            helper.setUsername(device.getUser().getUsername());
+            helper.setPasswordHash(device.getUser().getPassword());
+            url = helper.addAuthParams("GET", url, "");
+            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+            button.setEnabled(false);
+            apiInterface.peformAction(url).enqueue(new Callback<ActionStatus>() {
+                @Override
+                public void onResponse(Call<ActionStatus> call, Response<ActionStatus> response) {
+                    button.setEnabled(true);
+
+                }
+
+                @Override
+                public void onFailure(Call<ActionStatus> call, Throwable t) {
+                    button.setEnabled(true);
+
+                    Toast.makeText(FullCameraViewer.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -388,6 +460,32 @@ public class FullCameraViewer extends Activity {
         }
 
         return result;
+    }
+
+    public void initControls(Camera camera, LinearLayout dircontrols, ActionsAdapter.ActionsAdapterListener listener) {
+        ImageButton up = dircontrols.findViewById(R.id.up);
+        ImageButton down = dircontrols.findViewById(R.id.down);
+        ImageButton left = dircontrols.findViewById(R.id.left);
+        ImageButton right = dircontrols.findViewById(R.id.right);
+        for (String actionString : camera.getActions()) {
+            if (actionString.contains("up")) {
+                dircontrols.setVisibility(View.VISIBLE);
+                up.setVisibility(View.VISIBLE);
+                up.setOnClickListener(v -> listener.onActionClicked(-1, "up", up));
+            } else if (actionString.contains("right")) {
+                dircontrols.setVisibility(View.VISIBLE);
+                right.setVisibility(View.VISIBLE);
+                right.setOnClickListener(v -> listener.onActionClicked(-1, "right", right));
+            } else if (actionString.contains("down")) {
+                dircontrols.setVisibility(View.VISIBLE);
+                down.setVisibility(View.VISIBLE);
+                down.setOnClickListener(v -> listener.onActionClicked(-1, "down", down));
+            } else if (actionString.contains("left")) {
+                dircontrols.setVisibility(View.VISIBLE);
+                left.setVisibility(View.VISIBLE);
+                left.setOnClickListener(v -> listener.onActionClicked(-1, "left", left));
+            }
+        }
     }
 
 }

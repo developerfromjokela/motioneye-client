@@ -26,6 +26,7 @@ package com.developerfromjokela.motioneyeclient.database;
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 import javax.crypto.Cipher;
@@ -39,7 +40,7 @@ public class AESCryptor {
         Key key = generateKey();
         @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance(AESCryptor.ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encryptedByteValue = cipher.doFinal(value.getBytes("utf-8"));
+        byte[] encryptedByteValue = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
         return Base64.encodeToString(encryptedByteValue, Base64.DEFAULT);
 
     }
@@ -50,7 +51,7 @@ public class AESCryptor {
         cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] decryptedValue64 = Base64.decode(value, Base64.DEFAULT);
         byte[] decryptedByteValue = cipher.doFinal(decryptedValue64);
-        return new String(decryptedByteValue, "utf-8");
+        return new String(decryptedByteValue, StandardCharsets.UTF_8);
 
     }
 

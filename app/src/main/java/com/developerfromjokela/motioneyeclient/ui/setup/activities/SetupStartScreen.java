@@ -137,7 +137,7 @@ public class SetupStartScreen extends AppCompatActivity {
     }
 
     private void initializeViewStub() {
-        final LinearLayout ll = (LinearLayout) findViewById(R.id.ll);
+        final LinearLayout ll = findViewById(R.id.ll);
 
         final View inflated = LayoutInflater.from(SetupStartScreen.this).inflate(views[0], ll, false);
         ll.addView(inflated);
@@ -151,7 +151,7 @@ public class SetupStartScreen extends AppCompatActivity {
 
     private View setCurrentViewToViewStub(final int view) {
 
-        final LinearLayout ll = (LinearLayout) findViewById(R.id.ll);
+        final LinearLayout ll = findViewById(R.id.ll);
         final View[] inflated = {null};
 
 
@@ -769,11 +769,7 @@ public class SetupStartScreen extends AppCompatActivity {
                     return false;
                 }
             }
-            if (ip.endsWith(".")) {
-                return false;
-            }
-
-            return true;
+            return !ip.endsWith(".");
         } catch (NumberFormatException nfe) {
             return false;
         }

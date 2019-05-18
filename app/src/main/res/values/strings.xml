@@ -69,5 +69,10 @@
     <string name="change_protocol_desc">You may speed up loading times by changing protocol</string>
     <string name="http_or_rtsp">HTTP works better if you cannot port forward any other port, but if you can, it\'s reccomended to swith to RTSP, as it\'s designed for live video feed.</string>
     <string name="try_again">Try Again</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="down">Down</string>
+    <string name="up">Up</string>
+    <string name="action">Action</string>
 
 </resources>
