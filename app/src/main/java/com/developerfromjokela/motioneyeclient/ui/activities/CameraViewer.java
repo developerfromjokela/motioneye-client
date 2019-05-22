@@ -33,6 +33,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.developerfromjokela.motioneyeclient.R;
@@ -64,6 +67,7 @@ import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 public class CameraViewer extends AppCompatActivity {
 
     private HttpCamerasAdapter adapter;
+    private Device device;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,7 @@ public class CameraViewer extends AppCompatActivity {
         if (intent.getExtras() != null) {
             String ID = intent.getStringExtra("DeviceId");
             try {
-                Device device = source.get(ID);
+                device = source.get(ID);
                 setTitle(device.getDeviceName());
                 Log.e(CameraViewer.class.getSimpleName(), new Gson().toJson(device));
                 RecyclerView recyclerView = findViewById(R.id.cameras);
@@ -121,7 +125,7 @@ public class CameraViewer extends AppCompatActivity {
                     baseurl = removeSlash("http://" + serverurl);
                 else
                     baseurl = removeSlash(serverurl);
-                String url = baseurl + "/config/list?_=" + String.valueOf(new Date().getTime());
+                String url = baseurl + "/config/list?_=" + new Date().getTime();
                 MotionEyeHelper helper = new MotionEyeHelper();
                 helper.setUsername(device.getUser().getUsername());
                 helper.setPasswordHash(device.getUser().getPassword());
@@ -141,7 +145,7 @@ public class CameraViewer extends AppCompatActivity {
                                         final String stringResponse = response.body().string();
                                         Document html = Jsoup.parse(stringResponse);
                                         Elements elements = html.select("body");
-                                        String lines[] = elements.html().replace("\"", "").replace("\n", "").split("<br>");
+                                        String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
                                         for (String string : lines) {
                                             String[] paramParts = string.split("=");
                                             String paramName = paramParts[0].trim();
@@ -216,6 +220,27 @@ public class CameraViewer extends AppCompatActivity {
             adapter.onDestroy();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.device, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.deviceSettings:
+                startDeviceSettings(device.getID());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
     private static String removeSlash(String url) {
         if (!url.endsWith("/"))
             return url;
@@ -230,6 +255,12 @@ public class CameraViewer extends AppCompatActivity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void startDeviceSettings(String deviceID) {
+        Intent fullscreen = new Intent(CameraViewer.this, DeviceSettings.class);
+        fullscreen.putExtra("DeviceId", deviceID);
+        startActivity(fullscreen);
     }
 
 

@@ -19,13 +19,17 @@
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
         <activity
+            android:name=".ui.activities.DeviceSettings"
+            android:label="@string/title_activity_device_settings"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".ui.activities.FullCameraViewer"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_full_camera_viewer"/>
+            android:label="@string/title_activity_full_camera_viewer" />
         <activity
             android:name=".ui.activities.CameraViewer"
             android:label="@string/title_activity_camera_viewer"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.setup.activities.SetupStartScreen"
             android:label="@string/title_activity_setup_start_screen"
