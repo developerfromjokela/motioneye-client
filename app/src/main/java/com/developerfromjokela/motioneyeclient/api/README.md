@@ -2,7 +2,7 @@
 
 
 # MotionEyeHelper
-Is class that helps adding authentication parameters and generating signature for motioneye backend authentication
+This class that helps adding authentication parameters and generating signature for motioneye backend authentication
 
 # ApiInterface
 Required for Retrofit
