@@ -38,10 +38,8 @@ Thank you for contributing to this project!
 ###  **Need To Be Implemented:**
 
 - Camera Settings
-- Device Configuration Editing and Deleting
-- Actions
+- Device Configuration Editing and Deleting (Ongoing)
 - Media Tab in Bottom Navigation to see all media combined from all cameras and devices
-- Only Local or DDNS Mode
 - More is coming
 
 
