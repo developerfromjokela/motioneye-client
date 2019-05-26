@@ -16,11 +16,12 @@
 
 package com.developerfromjokela.motioneyeclient.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.SwitchPreference;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -33,15 +34,20 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.api.ApiInterface;
 import com.developerfromjokela.motioneyeclient.api.MotionEyeHelper;
 import com.developerfromjokela.motioneyeclient.api.ServiceGenerator;
-import com.developerfromjokela.motioneyeclient.classes.ActionStatus;
+import com.developerfromjokela.motioneyeclient.classes.Cameras;
 import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.classes.MainConfig;
 import com.developerfromjokela.motioneyeclient.database.Source;
@@ -82,7 +88,7 @@ public class DeviceSettings extends AppCompatActivity {
         DevicePreferences preferencesFragment = new DevicePreferences();
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
-            preferencesFragment.setDeviceId(intent.getStringExtra("DeviceId"), this);
+            preferencesFragment.setDeviceId(intent.getStringExtra("DeviceId"), findViewById(R.id.validateSettingsFab), this);
             getSupportFragmentManager().beginTransaction().add(R.id.devPreferencesFrame, preferencesFragment).commit();
         } else {
             finish();
@@ -100,6 +106,9 @@ public class DeviceSettings extends AppCompatActivity {
         public static final MediaType JSON
                 = MediaType.parse("application/json; charset=utf-8");
 
+        private boolean networkChangesMade = false;
+        private FloatingActionButton validateButton;
+
 
         @Override
         public void onCreate(Bundle savedInstanceState)
@@ -107,7 +116,7 @@ public class DeviceSettings extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.devicepreferences);
             disableMEYESettings();
-
+            initNewtorkSettings();
 
             {
                 findPreference("admin_username").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -121,7 +130,7 @@ public class DeviceSettings extends AppCompatActivity {
                         dialogBuilder.setNegativeButton(R.string.close, null);
 
                         TextInputLayout layout = dialogView.findViewById(R.id.settingHead);
-                        EditText editText = (EditText) dialogView.findViewById(R.id.settingParam);
+                        EditText editText = dialogView.findViewById(R.id.settingParam);
                         editText.setText(preference.getSummary());
                         editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
@@ -134,7 +143,7 @@ public class DeviceSettings extends AppCompatActivity {
                             public void onShow(DialogInterface dialog) {
 
                                 Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                                if (checkForDuplicate(config.getNormal_password(), editText.getText().toString()))
+                                if (checkForDuplicate(config.getAdmin_username(), editText.getText().toString()))
                                     b.setEnabled(false);
                                 else
                                     b.setEnabled(true);
@@ -165,6 +174,8 @@ public class DeviceSettings extends AppCompatActivity {
                                         disableMEYESettings();
 
                                         try {
+                                            if (device.getUser().getUsername().equals(preference.getSummary()))
+                                                device.getUser().setUsername(editText.getText().toString());
                                             changeSettings(getAdminUsernameSettingsJSON(editText.getText().toString()));
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -204,7 +215,7 @@ public class DeviceSettings extends AppCompatActivity {
                             public void onShow(DialogInterface dialog) {
 
                                 Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                                if (checkForDuplicate(config.getNormal_password(), editText.getText().toString()))
+                                if (checkForDuplicate(config.getAdmin_password(), editText.getText().toString()))
                                     b.setEnabled(false);
                                 else
                                     b.setEnabled(true);
@@ -235,6 +246,8 @@ public class DeviceSettings extends AppCompatActivity {
                                         disableMEYESettings();
                                         try {
                                             JSONObject settings = getBasicSettingsJSON();
+                                            if (device.getUser().getUsername().equals(findPreference("admin_username").getSummary()))
+                                                device.getUser().setPassword(editText.getText().toString());
                                             settings.getJSONObject("main").put("admin_password", editText.getText().toString());
                                             changeSettings(settings);
                                             dialog.dismiss();
@@ -266,7 +279,7 @@ public class DeviceSettings extends AppCompatActivity {
                         dialogBuilder.setNegativeButton(R.string.close, null);
 
                         TextInputLayout layout = dialogView.findViewById(R.id.settingHead);
-                        EditText editText = (EditText) dialogView.findViewById(R.id.settingParam);
+                        EditText editText = dialogView.findViewById(R.id.settingParam);
                         editText.setText(preference.getSummary());
                         editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
@@ -279,7 +292,7 @@ public class DeviceSettings extends AppCompatActivity {
                             public void onShow(DialogInterface dialog) {
 
                                 Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                                if (checkForDuplicate(config.getNormal_password(), editText.getText().toString()))
+                                if (checkForDuplicate(config.getNormal_username(), editText.getText().toString()))
                                     b.setEnabled(false);
                                 else
                                     b.setEnabled(true);
@@ -309,7 +322,10 @@ public class DeviceSettings extends AppCompatActivity {
 
                                         disableMEYESettings();
 
+
                                         try {
+                                            if (device.getUser().getUsername().equals(preference.getSummary()))
+                                                device.getUser().setUsername(editText.getText().toString());
                                             changeSettings(getNormalUsernameSettingsJSON(editText.getText().toString()));
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -382,6 +398,9 @@ public class DeviceSettings extends AppCompatActivity {
 
                                         try {
                                             JSONObject settings = getBasicSettingsJSON();
+                                            if (device.getUser().getUsername().equals(findPreference("surv_username").getSummary()))
+                                                device.getUser().setPassword(editText.getText().toString());
+
                                             settings.getJSONObject("main").put("normal_password", editText.getText().toString());
                                             changeSettings(settings);
                                             dialog.dismiss();
@@ -402,9 +421,390 @@ public class DeviceSettings extends AppCompatActivity {
                 });
             }
 
+            {
+                findPreference("ip_addr").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        LayoutInflater inflater = getActivity().getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.settingdialog, null);
+                        dialogBuilder.setView(dialogView);
+
+                        dialogBuilder.setNegativeButton(R.string.close, null);
+
+                        TextInputLayout layout = dialogView.findViewById(R.id.settingHead);
+                        EditText editText = dialogView.findViewById(R.id.settingParam);
+
+                        editText.setText(preference.getSummary());
+                        editText.setInputType(InputType.TYPE_TEXT_VARIATION_WEB_EDIT_TEXT);
+
+                        layout.setHint(preference.getTitle());
+                        dialogBuilder.setPositiveButton(R.string.save, null);
+                        AlertDialog alertDialog = dialogBuilder.create();
+
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+
+                                Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                if (checkForDuplicate(device.getDeviceUrl(), editText.getText().toString()))
+                                    b.setEnabled(false);
+                                else
+                                    b.setEnabled(true);
+                                editText.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                        String url = s.toString();
+                                        if (Utils.validIP(url)) {
+
+                                            Log.e("ValidBasic", "Valid IP");
+
+                                            if (checkForDuplicate(device.getDeviceUrl(), url)) {
+                                                b.setEnabled(false);
+                                            }
+                                            else
+                                                b.setEnabled(true);
+
+                                        } else {
+                                            Log.e("ValidBasic", "Invalid IP");
+
+                                            b.setEnabled(false);
+                                        }
+                                        if (url.contains(":")) {
+                                            final String[] portparts = url.split(":");
+                                            editText.setText(portparts[0]);
+                                            editText.setSelection(url.length());
+
+                                            if (Utils.validIP(portparts[0])) {
+
+                                                Log.e("ValidAdv", "Valid IP");
+                                                if (checkForDuplicate(device.getDeviceUrl(), url)) {
+                                                    b.setEnabled(false);
+                                                }
+                                                else
+                                                    b.setEnabled(true);
+
+                                            } else {
+                                                Log.e("ValidAdv", "Invalid IP");
+
+                                                b.setEnabled(false);
+                                            }
+
+                                        }
+                                    }
+                                });
+                                b.setOnClickListener(new View.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        device.setDeviceUrl(editText.getText().toString());
+                                        networkChangesMade = true;
+                                        replaceDeviceInDB();
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        });
+                        alertDialog.show();
+
+                        return false;
+                    }
+                });
+            }
+            {
+                findPreference("ddns_addr").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        LayoutInflater inflater = getActivity().getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.settingdialog, null);
+                        dialogBuilder.setView(dialogView);
+
+                        dialogBuilder.setNegativeButton(R.string.close, null);
+
+                        TextInputLayout layout = dialogView.findViewById(R.id.settingHead);
+                        EditText editText = dialogView.findViewById(R.id.settingParam);
+
+                        editText.setText(preference.getSummary());
+                        editText.setInputType(InputType.TYPE_TEXT_VARIATION_WEB_EDIT_TEXT);
+
+                        layout.setHint(preference.getTitle());
+                        dialogBuilder.setPositiveButton(R.string.save, null);
+                        AlertDialog alertDialog = dialogBuilder.create();
+
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+
+                                Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                if (checkForDuplicate(device.getDdnsURL(), editText.getText().toString()))
+                                    b.setEnabled(false);
+                                else
+                                    b.setEnabled(true);
+                                editText.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                        String url = editText.getText().toString();
+                                        Log.e("DeviceSettings", url);
+                                        if (!url.isEmpty()) {
+                                            if (Utils.isValidURL(url)) {
+
+                                                Log.e("ValidBasic", "Valid url");
+
+                                                if (checkForDuplicate(device.getDdnsURL(), url)) {
+                                                    b.setEnabled(false);
+                                                }
+                                                else
+                                                    b.setEnabled(true);
+
+                                            } else {
+                                                Log.e("ValidBasic", "Invalid url");
+
+                                                b.setEnabled(false);
+                                            }
+
+                                            if (url.contains(":")) {
+                                                final String[] portparts = url.split(":");
+                                                editText.setText(portparts[0]);
+                                                editText.setSelection(url.length());
+
+                                                if (Utils.isValidURL(portparts[0])) {
+
+                                                    Log.e("ValidAdv", "Valid url");
+                                                    if (checkForDuplicate(device.getDdnsURL(), url)) {
+                                                        b.setEnabled(false);
+                                                    }
+                                                    else
+                                                        b.setEnabled(true);
+
+                                                } else {
+                                                    Log.e("ValidAdv", "Invalid url");
+
+                                                    b.setEnabled(false);
+                                                }
+
+                                            }
+                                        } else {
+                                            b.setEnabled(true);
+
+                                        }
+
+                                    }
+                                });
+                                b.setOnClickListener(new View.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        device.setDdnsURL(editText.getText().toString());
+                                        networkChangesMade = true;
+
+                                        replaceDeviceInDB();
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        });
+                        alertDialog.show();
+
+                        return false;
+                    }
+                });
+            }
+            {
+                findPreference("port").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        LayoutInflater inflater = getActivity().getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.settingdialog, null);
+                        dialogBuilder.setView(dialogView);
+
+                        dialogBuilder.setNegativeButton(R.string.close, null);
+
+                        TextInputLayout layout = dialogView.findViewById(R.id.settingHead);
+                        EditText editText = dialogView.findViewById(R.id.settingParam);
+
+                        editText.setText(preference.getSummary());
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                        layout.setHint(preference.getTitle());
+                        dialogBuilder.setPositiveButton(R.string.save, null);
+                        AlertDialog alertDialog = dialogBuilder.create();
+
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+
+                                Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                if (checkForDuplicate(device.getLocalPort(), editText.getText().toString()))
+                                    b.setEnabled(false);
+                                else
+                                    b.setEnabled(true);
+                                editText.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                        String url = s.toString();
+
+                                            Log.e("ValidBasic", "Valid IP");
+
+                                            if (checkForDuplicate(device.getDdnsURL(), url)) {
+                                                b.setEnabled(false);
+                                            }
+                                            else
+                                                b.setEnabled(true);
+
+
+                                    }
+                                });
+                                b.setOnClickListener(new View.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        device.setLocalPort(editText.getText().toString());
+                                        networkChangesMade = true;
+
+                                        replaceDeviceInDB();
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        });
+                        alertDialog.show();
+
+                        return false;
+                    }
+                });
+            }
+
+            {
+                findPreference("ddns_port").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        LayoutInflater inflater = getActivity().getLayoutInflater();
+                        View dialogView = inflater.inflate(R.layout.settingdialog, null);
+                        dialogBuilder.setView(dialogView);
+
+                        dialogBuilder.setNegativeButton(R.string.close, null);
+
+                        TextInputLayout layout = dialogView.findViewById(R.id.settingHead);
+                        EditText editText = dialogView.findViewById(R.id.settingParam);
+
+                        editText.setText(preference.getSummary());
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                        layout.setHint(preference.getTitle());
+                        dialogBuilder.setPositiveButton(R.string.save, null);
+                        AlertDialog alertDialog = dialogBuilder.create();
+
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+
+                                Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                                if (checkForDuplicate(device.getDDNSPort(), editText.getText().toString()))
+                                    b.setEnabled(false);
+                                else
+                                    b.setEnabled(true);
+                                editText.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                        String url = s.toString();
+
+                                        Log.e("ValidBasic", "Valid IP");
+
+                                        if (checkForDuplicate(device.getDDNSPort(), url)) {
+                                            b.setEnabled(false);
+                                        }
+                                        else
+                                            b.setEnabled(true);
+
+
+                                    }
+                                });
+                                b.setOnClickListener(new View.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        device.setDDNSPort(editText.getText().toString());
+                                        networkChangesMade = true;
+
+                                        replaceDeviceInDB();
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        });
+                        alertDialog.show();
+
+                        return false;
+                    }
+                });
+            }
+
 
             loadConfig();
 
+
+        }
+
+        private void initNewtorkSettings() {
+            findPreference("ip_addr").setSummary(device.getDeviceUrl());
+            findPreference("ddns_addr").setSummary(device.getDdnsURL());
+            findPreference("port").setSummary(device.getLocalPort());
+            findPreference("ddns_port").setSummary(device.getDDNSPort());
 
         }
 
@@ -441,6 +841,218 @@ public class DeviceSettings extends AppCompatActivity {
             }
         }
 
+        private void validateSettings() {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View validateView = inflater.inflate(R.layout.validatedialog, null);
+            dialogBuilder.setView(validateView);
+
+            dialogBuilder.setPositiveButton(R.string.close, null);
+            dialogBuilder.setCancelable(false);
+            AlertDialog validateDialog = dialogBuilder.create();
+            validateDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                @Override
+                public void onShow(DialogInterface dialog) {
+
+
+
+                    TextView Errorstatus = validateView.findViewById(R.id.errorDetails);
+                    // Root Layouts
+                    LinearLayout rootLayout2 = validateView.findViewById(R.id.ddns_connection_test);
+                    // Progressbars
+                    ProgressBar progressBar1 = validateView.findViewById(R.id.progress1);
+                    ProgressBar progressBar2 = validateView.findViewById(R.id.progress2);
+                    ProgressBar progressBar3 = validateView.findViewById(R.id.progress3);
+                    ProgressBar progressBar4 = validateView.findViewById(R.id.progress4);
+
+                    // Icons
+                    ImageView status1 = validateView.findViewById(R.id.statusimage1);
+                    ImageView status2 = validateView.findViewById(R.id.statusimage2);
+                    ImageView status3 = validateView.findViewById(R.id.statusimage3);
+                    ImageView status4 = validateView.findViewById(R.id.statusimage4);
+                    Button continue_btn = validateDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
+                    continue_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            validateDialog.dismiss();
+                        }
+                    });
+                    continue_btn.setEnabled(false);
+
+                    if (device.getDdnsURL().length() > 0) {
+                        rootLayout2.setVisibility(View.VISIBLE);
+                    }
+
+
+                    validateServer(new TestInterface() {
+                        @Override
+                        public void TestSuccessful(String response, int status) {
+                            progressBar1.setVisibility(View.GONE);
+                            status1.setVisibility(View.VISIBLE);
+                            status1.setImageResource(R.drawable.ic_check_green);
+                            status2.setVisibility(View.GONE);
+                            progressBar2.setVisibility(View.VISIBLE);
+                            if (device.getDdnsURL().length() > 0) {
+                                validateServer(new TestInterface() {
+                                    @Override
+                                    public void TestSuccessful(String response, int status) {
+
+                                        progressBar2.setVisibility(View.GONE);
+                                        status2.setVisibility(View.VISIBLE);
+                                        status2.setImageResource(R.drawable.ic_check_green);
+                                        try {
+                                            checkLogin(device.getDeviceUrlCombo(), new TestInterface() {
+                                                @Override
+                                                public void TestSuccessful(String response, int status) {
+                                                    progressBar3.setVisibility(View.GONE);
+                                                    status3.setVisibility(View.VISIBLE);
+                                                    status3.setImageResource(R.drawable.ic_check_green);
+                                                    status4.setVisibility(View.GONE);
+                                                    progressBar4.setVisibility(View.VISIBLE);
+                                                    getServerDetails(new TestInterface() {
+                                                        @Override
+                                                        public void TestSuccessful(String response, int status) {
+                                                            validateDialog.setCancelable(true);
+                                                            continue_btn.setEnabled(true);
+                                                            status4.setVisibility(View.VISIBLE);
+                                                            progressBar4.setVisibility(View.GONE);
+                                                            status4.setImageResource(R.drawable.ic_check_green);
+
+                                                        }
+
+                                                        @Override
+                                                        public void TestFailed(String response, int status) {
+                                                            validateDialog.setCancelable(true);
+                                                            continue_btn.setEnabled(true);
+                                                            status4.setVisibility(View.VISIBLE);
+                                                            progressBar4.setVisibility(View.GONE);
+                                                            status4.setImageResource(R.drawable.ic_error_red);
+                                                            Errorstatus.setVisibility(View.VISIBLE);
+                                                            Errorstatus.setText(response);
+                                                        }
+                                                    }, device.getDeviceUrlCombo());
+                                                }
+
+                                                @Override
+                                                public void TestFailed(String response, int status) {
+                                                    validateDialog.setCancelable(true);
+                                                    continue_btn.setEnabled(true);
+                                                    progressBar3.setVisibility(View.GONE);
+                                                    status3.setVisibility(View.VISIBLE);
+                                                    status3.setImageResource(R.drawable.ic_error_red);
+                                                    Errorstatus.setVisibility(View.VISIBLE);
+                                                    Errorstatus.setText(response);
+                                                }
+                                            });
+                                        } catch (NoSuchAlgorithmException e) {
+                                            e.printStackTrace();
+                                            progressBar3.setVisibility(View.GONE);
+                                            status3.setVisibility(View.VISIBLE);
+                                            status3.setImageResource(R.drawable.ic_error_red);
+                                            Errorstatus.setVisibility(View.VISIBLE);
+                                            Errorstatus.setText(e.getMessage());
+                                            validateDialog.setCancelable(true);
+                                            continue_btn.setEnabled(true);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void TestFailed(String response, int status) {
+                                        validateDialog.setCancelable(true);
+                                        continue_btn.setEnabled(true);
+                                        progressBar2.setVisibility(View.GONE);
+                                        status2.setVisibility(View.VISIBLE);
+                                        status2.setImageResource(R.drawable.ic_error_red);
+                                        Errorstatus.setVisibility(View.VISIBLE);
+                                        Errorstatus.setText(response);
+                                    }
+                                }, device.getDDNSUrlCombo());
+                            } else {
+
+                                try {
+                                    checkLogin(device.getDeviceUrlCombo(), new TestInterface() {
+                                        @Override
+                                        public void TestSuccessful(String response, int status) {
+                                            progressBar3.setVisibility(View.GONE);
+                                            status3.setVisibility(View.VISIBLE);
+                                            status3.setImageResource(R.drawable.ic_check_green);
+                                            status4.setVisibility(View.GONE);
+                                            progressBar4.setVisibility(View.VISIBLE);
+                                            getServerDetails(new TestInterface() {
+                                                @Override
+                                                public void TestSuccessful(String response, int status) {
+                                                    validateDialog.setCancelable(true);
+                                                    continue_btn.setEnabled(true);
+                                                    status4.setVisibility(View.VISIBLE);
+                                                    progressBar4.setVisibility(View.GONE);
+                                                    status4.setImageResource(R.drawable.ic_check_green);
+
+
+                                                }
+
+                                                @Override
+                                                public void TestFailed(String response, int status) {
+                                                    validateDialog.setCancelable(true);
+                                                    continue_btn.setEnabled(true);
+                                                    status4.setVisibility(View.VISIBLE);
+                                                    progressBar4.setVisibility(View.GONE);
+                                                    status4.setImageResource(R.drawable.ic_error_red);
+                                                    Errorstatus.setVisibility(View.VISIBLE);
+                                                    Errorstatus.setText(response);
+                                                }
+                                            }, device.getDeviceUrlCombo());
+                                        }
+
+                                        @Override
+                                        public void TestFailed(String response, int status) {
+                                            validateDialog.setCancelable(true);
+                                            continue_btn.setEnabled(true);
+                                            progressBar3.setVisibility(View.GONE);
+                                            status3.setVisibility(View.VISIBLE);
+                                            status3.setImageResource(R.drawable.ic_error_red);
+                                            Errorstatus.setVisibility(View.VISIBLE);
+                                            Errorstatus.setText(response);
+                                        }
+                                    });
+                                } catch (NoSuchAlgorithmException e) {
+                                    e.printStackTrace();
+                                    progressBar3.setVisibility(View.GONE);
+                                    status3.setVisibility(View.VISIBLE);
+                                    status3.setImageResource(R.drawable.ic_error_red);
+                                    Errorstatus.setVisibility(View.VISIBLE);
+                                    Errorstatus.setText(e.getMessage());
+                                    validateDialog.setCancelable(true);
+                                    continue_btn.setEnabled(true);
+
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void TestFailed(String response, int status2) {
+                            progressBar1.setVisibility(View.GONE);
+                            status1.setVisibility(View.VISIBLE);
+                            status1.setImageResource(R.drawable.ic_error_red);
+                            Errorstatus.setVisibility(View.VISIBLE);
+                            validateDialog.setCancelable(true);
+                            continue_btn.setEnabled(true);
+
+                            Errorstatus.setText(response);
+                        }
+                    }, device.getDeviceUrlCombo());
+                }
+            });
+
+            validateDialog.show();
+
+
+
+
+        }
+
         private void setConfigValues() {
             SwitchPreferenceCompat advancedSettings = (SwitchPreferenceCompat) findPreference("advancedSettings") ;
             advancedSettings.setChecked(config.isShow_advanced());
@@ -474,6 +1086,11 @@ public class DeviceSettings extends AppCompatActivity {
                 motionEyeVersion.setSummary(device.getMotioneyeVersion());
                 motionVersion.setSummary(device.getMotionVersion());
                 OSVersion.setSummary(device.getOsVersion());
+            } else {
+                motionEyeVersion.setVisible(false);
+
+                OSVersion.setVisible(false);
+                motionVersion.setVisible(false);
             }
 
 
@@ -497,6 +1114,226 @@ public class DeviceSettings extends AppCompatActivity {
             findPreference("surv_password").setEnabled(false);
 
         }
+
+        private void validateServer(TestInterface testInterface, String serverurl) {
+            Log.e("Setup", serverurl);
+            String baseurl;
+
+            Log.e("Setup", String.valueOf(serverurl.split("//").length));
+            if (!serverurl.contains("://"))
+                baseurl = removeSlash("http://" + serverurl);
+            else
+                baseurl = removeSlash(serverurl);
+
+            Log.e("Setup", baseurl);
+            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+            Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword(), "login");
+            Log.e("Setup", baseurl);
+            call.enqueue(new Callback<ResponseBody>() {
+
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
+                        Log.e("Setup", call.request().body().contentType().toString());
+                        try {
+                            testInterface.TestSuccessful(response.body().string(), response.code());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            testInterface.TestFailed(e.getMessage(), 700);
+
+                        }
+
+
+                    } else {
+                        testInterface.TestFailed(getString(R.string.wizard_not_motioneye), 404);
+
+                    }
+
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                    t.fillInStackTrace();
+                    testInterface.TestFailed(t.getMessage(), 700);
+
+                }
+            });
+        }
+
+        private void getServerDetails(TestInterface testInterface, String serverurl) {
+            Log.e("Setup", serverurl);
+            String baseurl;
+
+            Log.e("Setup", String.valueOf(serverurl.split("//").length));
+            if (!serverurl.contains("://"))
+                baseurl = removeSlash("http://" + serverurl);
+            else
+                baseurl = removeSlash(serverurl);
+
+            Log.e("Setup", baseurl);
+            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+            Call<ResponseBody> call = apiInterface.getMotionDetails(baseurl + "/version");
+            Log.e("Setup", baseurl);
+            call.enqueue(new Callback<ResponseBody>() {
+
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
+                        try {
+                            final String stringResponse = response.body().string();
+                            Document html = Jsoup.parse(stringResponse);
+                            Elements elements = html.select("body");
+                            String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
+                            for (String string : lines) {
+                                String[] paramParts = string.split("=");
+                                String paramName = paramParts[0].trim();
+                                String paramValue = paramParts[1];
+                                if (paramName.contains("hostname"))
+                                    device.setDeviceName(paramValue);
+                                else if (paramName.contains("motion_version"))
+                                    device.setMotionVersion(paramValue);
+                                else if (paramName.contains("os_version"))
+                                    device.setOsVersion(paramValue);
+                                else if (paramName.equals("version"))
+                                    device.setMotioneyeVersion(paramValue);
+
+                            }
+                            String url = baseurl + "/config/list?_=" + new Date().getTime();
+                            MotionEyeHelper helper = new MotionEyeHelper();
+                            helper.setUsername(device.getUser().getUsername());
+                            helper.setPasswordHash(device.getUser().getPassword());
+                            url = helper.addAuthParams("GET", url, "");
+
+                            Call<Cameras> call2 = apiInterface.getCameras(url);
+                            call2.enqueue(new Callback<Cameras>() {
+                                @Override
+                                public void onResponse(Call<Cameras> call, Response<Cameras> response) {
+                                    Cameras cameras = response.body();
+                                    device.setCameras(cameras.getCameras());
+                                    Log.e("Setup", cameras.getCameras().size() + " cameras found");
+                                    testInterface.TestSuccessful(stringResponse, response.code());
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<Cameras> call, Throwable t) {
+                                    t.printStackTrace();
+                                    t.fillInStackTrace();
+                                    testInterface.TestFailed(t.getMessage(), 700);
+                                }
+                            });
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            testInterface.TestFailed(e.getMessage(), 700);
+
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                            testInterface.TestFailed(e.getMessage(), 700);
+
+                        }
+
+
+                    } else {
+                        testInterface.TestFailed(getString(R.string.wizard_not_motioneye), 404);
+
+                    }
+
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                    t.fillInStackTrace();
+                    testInterface.TestFailed(t.getMessage(), 700);
+
+                }
+            });
+        }
+
+        public static boolean isValidURL(String url) {
+            return URLUtil.isValidUrl(url);
+        }
+
+        private interface TestInterface {
+            void TestSuccessful(String response, int status);
+
+            void TestFailed(String response, int status);
+
+        }
+
+        private void checkLogin(String serverurl, TestInterface testInterface) throws NoSuchAlgorithmException {
+            String baseurl;
+            if (!serverurl.contains("://"))
+                baseurl = removeSlash("http://" + serverurl);
+            else
+                baseurl = removeSlash(serverurl);
+            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+
+            MotionEyeHelper helper = new MotionEyeHelper();
+            helper.setUsername(device.getUser().getUsername());
+            helper.setPasswordHash(device.getUser().getPassword());
+            String url = baseurl;
+
+            url += "/login?_=" + new Date().getTime();
+            helper.setLoggedIn(true);
+            url = helper.addAuthParams("GET", url, "");
+            Call<okhttp3.ResponseBody> checkLoginCall = apiInterface.loginResult(url);
+            checkLoginCall.enqueue(new Callback<okhttp3.ResponseBody>() {
+                @Override
+                public void onResponse(Call<okhttp3.ResponseBody> call2, Response<okhttp3.ResponseBody> response2) {
+                    if (!response2.isSuccessful()) {
+                        try (ResponseBody responseBody2 = response2.errorBody()) {
+                            final String responseString = responseBody2.string();
+                            if (response2.code() == 403)
+                                testInterface.TestFailed(getString(R.string.wizard_wrong_credentials), response2.code());
+                            else
+                                testInterface.TestFailed(responseString, response2.code());
+
+
+                        } catch (Exception e) {
+                            e.fillInStackTrace();
+                            e.printStackTrace();
+                            testInterface.TestFailed(e.getMessage(), 700);
+                        }
+                    } else {
+                        try (ResponseBody responseBody2 = response2.body()) {
+                            final String stringResponse2 = responseBody2.string();
+                            testInterface.TestSuccessful(stringResponse2, response2.code());
+
+
+                        } catch (Exception e) {
+                            e.fillInStackTrace();
+                            e.printStackTrace();
+                            testInterface.TestFailed(e.getMessage(), 700);
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.fillInStackTrace();
+
+                    t.printStackTrace();
+                    testInterface.TestFailed(t.getMessage(), 700);
+
+                }
+            });
+        }
+
+        private static String removeSlash(String url) {
+            if (!url.endsWith("/"))
+                return url;
+            String[] parts = url.split("/");
+
+            return parts[0];
+        }
+
 
         private String getFullUrl() {
             String serverurl;
@@ -522,7 +1359,7 @@ public class DeviceSettings extends AppCompatActivity {
             return baseurl;
         }
 
-        public void setDeviceId(String ID, Context context) {
+        public void setDeviceId(String ID, FloatingActionButton button,  Context context) {
             Source source = new Source(context);
             try {
                 device = source.get(ID);
@@ -530,6 +1367,8 @@ public class DeviceSettings extends AppCompatActivity {
                 e.printStackTrace();
                 getActivity().finish();
             }
+
+            this.validateButton = button;
 
         }
 
@@ -585,6 +1424,7 @@ public class DeviceSettings extends AppCompatActivity {
         }
 
         private boolean checkForDuplicate(String original, String newValue) {
+            Log.e("DeviceSettings", "Check for Duplicate "+original+":"+newValue+"="+ original.equals(newValue));
             return original.equals(newValue);
         }
 
@@ -611,9 +1451,12 @@ public class DeviceSettings extends AppCompatActivity {
                             if (!object.getString("error").equals("null")) {
                                 Toast.makeText(getActivity(), object.getString("error"), Toast.LENGTH_SHORT).show();
                             }
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        replaceDeviceInDB();
+
                         loadConfig();
                     }
 
@@ -684,6 +1527,32 @@ public class DeviceSettings extends AppCompatActivity {
                 });
 
 
+        }
+
+
+
+        @SuppressLint("RestrictedApi")
+        private void replaceDeviceInDB() {
+            Source source = new Source(getActivity());
+            try {
+                source.editEntry(device);
+                loadConfig();
+                initNewtorkSettings();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            if (networkChangesMade) {
+                validateButton.setVisibility(View.VISIBLE);
+                validateButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        validateSettings();
+                        validateButton.setVisibility(View.GONE);
+                    }
+                });
+            }
         }
     }
 

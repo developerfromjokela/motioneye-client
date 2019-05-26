@@ -15,7 +15,7 @@
   ~    SOFTWARE.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -25,10 +25,25 @@
     tools:context=".ui.activities.DeviceSettings"
     tools:showIn="@layout/activity_devicesettings">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/validateSettingsFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:fabSize="normal"
+        app:layout_anchor="@id/devPreferencesFrame"
+        app:layout_anchorGravity="end|bottom"
+        app:srcCompat="@drawable/ic_validate_settings"
+        tools:visibility="visible" />
+
     <FrameLayout
         android:id="@+id/devPreferencesFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </FrameLayout>
-</LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

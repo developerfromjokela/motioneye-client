@@ -97,32 +97,21 @@
       -->
     <PreferenceCategory android:title="@string/network_settings">
 
-        <EditTextPreference
+        <Preference
             android:key="ip_addr"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:defaultValue="@string/def_ip"
             android:summary="@string/local_hostame_summary"
             android:title="@string/local_hostname" />
-        <EditTextPreference
+        <Preference
             android:key="ddns_addr"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
             android:summary="@string/local_hostame_summary"
             android:title="@string/ddns_hostname" />
-        <EditTextPreference
+        <Preference
             android:key="port"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:defaultValue="@string/def_port"
             android:summary="@string/local_port_summary"
             android:title="@string/optional_local_port" />
 
-        <EditTextPreference
+        <Preference
             android:key="ddns_port"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:defaultValue="@string/def_port"
             android:summary="@string/optional_ddns_port_summary"
             android:title="@string/optional_ddns_port" />
     </PreferenceCategory>

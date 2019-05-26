@@ -61,6 +61,8 @@ public class CameraViewer extends AppCompatActivity {
 
     private HttpCamerasAdapter adapter;
     private Device device;
+    private String ID;
+    private Source source;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,116 +78,10 @@ public class CameraViewer extends AppCompatActivity {
             }
         });
         Intent intent = getIntent();
-        Source source = new Source(this);
+        source = new Source(this);
         if (intent.getExtras() != null) {
-            String ID = intent.getStringExtra("DeviceId");
-            try {
-                device = source.get(ID);
-                setTitle(device.getDeviceName());
-                Log.e(CameraViewer.class.getSimpleName(), new Gson().toJson(device));
-                RecyclerView recyclerView = findViewById(R.id.cameras);
-                recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-                adapter = new HttpCamerasAdapter(this, new HttpCamerasAdapter.CamerasAdapterListener() {
-                    @Override
-                    public void onImageClick(int position, Camera camera) {
-                        Intent fullscreen = new Intent(CameraViewer.this, FullCameraViewer.class);
-                        fullscreen.putExtra("DeviceId", ID);
-                        fullscreen.putExtra("Camera", new Gson().toJson(camera));
-                        startActivity(fullscreen);
-                    }
+            ID = intent.getStringExtra("DeviceId");
 
-                }, device);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-                String baseurl;
-                String serverurl;
-                if (device.getDdnsURL().length() > 5) {
-                    if ((Utils.getNetworkType(CameraViewer.this)) == NETWORK_MOBILE) {
-                        serverurl = device.getDDNSUrlCombo();
-                    } else if (device.getWlan().networkId == Utils.getCurrentWifiNetworkId(CameraViewer.this)) {
-                        serverurl = device.getDeviceUrlCombo();
-
-                    } else {
-                        serverurl = device.getDDNSUrlCombo();
-
-                    }
-                } else {
-                    serverurl = device.getDeviceUrlCombo();
-
-                }
-                Log.e("Setup", String.valueOf(serverurl.split("//").length));
-                if (!serverurl.contains("://"))
-                    baseurl = removeSlash("http://" + serverurl);
-                else
-                    baseurl = removeSlash(serverurl);
-                String url = baseurl + "/config/list?_=" + new Date().getTime();
-                MotionEyeHelper helper = new MotionEyeHelper();
-                helper.setUsername(device.getUser().getUsername());
-                helper.setPasswordHash(device.getUser().getPassword());
-                url = helper.addAuthParams("GET", url, "");
-                ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
-
-                apiInterface.getCameras(url).enqueue(new Callback<Cameras>() {
-                    @Override
-                    public void onResponse(Call<Cameras> call, Response<Cameras> response) {
-                        Cameras cameras = response.body();
-                        device.setCameras(cameras.getCameras());
-                        apiInterface.getMotionDetails(baseurl + "/version").enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
-                                    try {
-                                        final String stringResponse = response.body().string();
-                                        Document html = Jsoup.parse(stringResponse);
-                                        Elements elements = html.select("body");
-                                        String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
-                                        for (String string : lines) {
-                                            String[] paramParts = string.split("=");
-                                            String paramName = paramParts[0].trim();
-                                            String paramValue = paramParts[1];
-                                            if (paramName.contains("hostname"))
-                                                device.setDeviceName(paramValue);
-                                            else if (paramName.contains("motion_version"))
-                                                device.setMotionVersion(paramValue);
-                                            else if (paramName.contains("os_version"))
-                                                device.setOsVersion(paramValue);
-                                            else if (paramName.equals("version"))
-                                                device.setMotioneyeVersion(paramValue);
-
-                                        }
-                                        adapter.notifyDataSetChanged();
-                                        setTitle(device.getDeviceName());
-
-                                        source.editEntry(device);
-
-
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-
-
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Call<Cameras> call, Throwable t) {
-
-                    }
-                });
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
         } else {
             finish();
@@ -196,8 +92,116 @@ public class CameraViewer extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        try {
+            device = source.get(ID);
+            setTitle(device.getDeviceName());
+            Log.e(CameraViewer.class.getSimpleName(), new Gson().toJson(device));
+            RecyclerView recyclerView = findViewById(R.id.cameras);
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+            adapter = new HttpCamerasAdapter(this, new HttpCamerasAdapter.CamerasAdapterListener() {
+                @Override
+                public void onImageClick(int position, Camera camera) {
+                    Intent fullscreen = new Intent(CameraViewer.this, FullCameraViewer.class);
+                    fullscreen.putExtra("DeviceId", ID);
+                    fullscreen.putExtra("Camera", new Gson().toJson(camera));
+                    startActivity(fullscreen);
+                }
+
+            }, device);
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+            String baseurl;
+            String serverurl;
+            if (device.getDdnsURL().length() > 5) {
+                if ((Utils.getNetworkType(CameraViewer.this)) == NETWORK_MOBILE) {
+                    serverurl = device.getDDNSUrlCombo();
+                } else if (device.getWlan().networkId == Utils.getCurrentWifiNetworkId(CameraViewer.this)) {
+                    serverurl = device.getDeviceUrlCombo();
+
+                } else {
+                    serverurl = device.getDDNSUrlCombo();
+
+                }
+            } else {
+                serverurl = device.getDeviceUrlCombo();
+
+            }
+            Log.e("Setup", String.valueOf(serverurl.split("//").length));
+            if (!serverurl.contains("://"))
+                baseurl = removeSlash("http://" + serverurl);
+            else
+                baseurl = removeSlash(serverurl);
+            String url = baseurl + "/config/list?_=" + new Date().getTime();
+            MotionEyeHelper helper = new MotionEyeHelper();
+            helper.setUsername(device.getUser().getUsername());
+            helper.setPasswordHash(device.getUser().getPassword());
+            url = helper.addAuthParams("GET", url, "");
+            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+
+            apiInterface.getCameras(url).enqueue(new Callback<Cameras>() {
+                @Override
+                public void onResponse(Call<Cameras> call, Response<Cameras> response) {
+                    Cameras cameras = response.body();
+                    device.setCameras(cameras.getCameras());
+                    apiInterface.getMotionDetails(baseurl + "/version").enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
+                                try {
+                                    final String stringResponse = response.body().string();
+                                    Document html = Jsoup.parse(stringResponse);
+                                    Elements elements = html.select("body");
+                                    String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
+                                    for (String string : lines) {
+                                        String[] paramParts = string.split("=");
+                                        String paramName = paramParts[0].trim();
+                                        String paramValue = paramParts[1];
+                                        if (paramName.contains("hostname"))
+                                            device.setDeviceName(paramValue);
+                                        else if (paramName.contains("motion_version"))
+                                            device.setMotionVersion(paramValue);
+                                        else if (paramName.contains("os_version"))
+                                            device.setOsVersion(paramValue);
+                                        else if (paramName.equals("version"))
+                                            device.setMotioneyeVersion(paramValue);
+
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                    setTitle(device.getDeviceName());
+
+                                    source.editEntry(device);
+
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Call<Cameras> call, Throwable t) {
+
+                }
+            });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (adapter != null)
             adapter.onResume();
+
     }
 
     @Override

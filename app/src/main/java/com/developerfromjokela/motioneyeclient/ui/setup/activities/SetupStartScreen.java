@@ -266,7 +266,7 @@ public class SetupStartScreen extends AppCompatActivity {
             for (WifiConfiguration tmp : wifiManager.getConfiguredNetworks()) {
                 SSIDCONFIGS.add(new WifiNetwork(tmp, false));
 
-                Log.e("Setup", "Wifi " + tmp.SSID + ": " + String.valueOf(tmp.status) + " & " + String.valueOf(tmp.networkId));
+                Log.e("Setup", "Wifi " + tmp.SSID + ": " + tmp.status + " & " + tmp.networkId);
             }
 
 
@@ -419,6 +419,7 @@ public class SetupStartScreen extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     local_hostname.setText(portparts[0]);
+                                    local_hostname.setSelection(local_hostname.getText().length());
 
                                     Log.e("Setup", "Set Local Port " + portparts[1]);
                                 }
@@ -474,12 +475,15 @@ public class SetupStartScreen extends AppCompatActivity {
                             device.setDdnsURL(url);
 
                             ddns_port.setText(portparts[portparts.length - 1]);
+
                             device.setDdnsURL(portparts[0]);
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ddns_hostname.setText(portparts[0] + ":" + portparts[1]);
+                                    ddns_hostname.setText(portparts[0]);
+                                    ddns_hostname.setSelection(ddns_hostname.getText().length());
+
                                 }
                             }, 900);
                         }
@@ -838,7 +842,7 @@ public class SetupStartScreen extends AppCompatActivity {
                         final String stringResponse = response.body().string();
                         Document html = Jsoup.parse(stringResponse);
                         Elements elements = html.select("body");
-                        String lines[] = elements.html().replace("\"", "").replace("\n", "").split("<br>");
+                        String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
                         for (String string : lines) {
                             String[] paramParts = string.split("=");
                             String paramName = paramParts[0].trim();
@@ -853,7 +857,7 @@ public class SetupStartScreen extends AppCompatActivity {
                                 device.setMotioneyeVersion(paramValue);
 
                         }
-                        String url = baseurl + "/config/list?_=" + String.valueOf(new Date().getTime());
+                        String url = baseurl + "/config/list?_=" + new Date().getTime();
                         MotionEyeHelper helper = new MotionEyeHelper();
                         helper.setUsername(device.getUser().getUsername());
                         helper.setPasswordHash(device.getUser().getPassword());
@@ -865,7 +869,7 @@ public class SetupStartScreen extends AppCompatActivity {
                             public void onResponse(Call<Cameras> call, Response<Cameras> response) {
                                 Cameras cameras = response.body();
                                 device.setCameras(cameras.getCameras());
-                                Log.e("Setup", String.valueOf(cameras.getCameras().size()) + " cameras found");
+                                Log.e("Setup", cameras.getCameras().size() + " cameras found");
                                 testInterface.TestSuccessful(stringResponse, response.code());
 
                             }
@@ -932,7 +936,7 @@ public class SetupStartScreen extends AppCompatActivity {
         helper.setPasswordHash(device.getUser().getPassword());
         String url = baseurl;
 
-        url += "/login?_=" + String.valueOf(new Date().getTime());
+        url += "/login?_=" + new Date().getTime();
         helper.setLoggedIn(true);
         url = helper.addAuthParams("GET", url, "");
         Call<okhttp3.ResponseBody> checkLoginCall = apiInterface.loginResult(url);
