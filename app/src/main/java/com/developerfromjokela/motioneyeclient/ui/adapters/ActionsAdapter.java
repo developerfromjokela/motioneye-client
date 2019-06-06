@@ -17,6 +17,7 @@
 package com.developerfromjokela.motioneyeclient.ui.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,7 +40,7 @@ public class ActionsAdapter extends RecyclerView.Adapter<ActionsAdapter.ActionsV
 
         TextView number;
         CardView action;
-        ImageView icon;
+        AppCompatImageView icon;
 
         ActionsViewHolder(View itemView) {
             super(itemView);
