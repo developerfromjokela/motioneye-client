@@ -229,7 +229,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                         else
                             baseurl = Utils.removeSlash(serverurl);
 
-                        String url = baseurl + "/picture/" + cameraId + "/current?_=" + String.valueOf(new Date().getTime());
+                        String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
                         url = helper.addAuthParams("GET", url, "");
                         String finalUrl = url;
                         new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, cameraFrame).execute(finalUrl);
@@ -237,7 +237,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
 
                     }
                 };
-                String url = baseurl + "/picture/" + cameraId + "/current?_=" + String.valueOf(new Date().getTime());
+                String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
                 url = helper.addAuthParams("GET", url, "");
                 String finalUrl = url;
                 new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, cameraFrame).execute(finalUrl);
@@ -261,7 +261,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
     public void onActionClicked(int position, String action, View button) {
 
         try {
-            String url = baseurl + "/action/" + camera.getId() + "/" + action + "/?_=" + String.valueOf(new Date().getTime());
+            String url = baseurl + "/action/" + camera.getId() + "/" + action + "/?_=" + new Date().getTime();
             MotionEyeHelper helper = new MotionEyeHelper();
             helper.setUsername(device.getUser().getUsername());
             helper.setPasswordHash(device.getUser().getPassword());
@@ -453,6 +453,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
         ImageButton down = dircontrols.findViewById(R.id.down);
         ImageButton left = dircontrols.findViewById(R.id.left);
         ImageButton right = dircontrols.findViewById(R.id.right);
+        View lrlayout = dircontrols.findViewById(R.id.lrlayout);
         for (String actionString : camera.getActions()) {
             if (actionString.contains("up")) {
                 dircontrols.setVisibility(View.VISIBLE);
@@ -472,6 +473,8 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                 left.setOnClickListener(v -> listener.onActionClicked(-1, "left", left));
             }
         }
+        if (left.getVisibility() == View.GONE && right.getVisibility() == View.GONE)
+            lrlayout.setVisibility(View.GONE);
     }
 
 }
