@@ -136,11 +136,12 @@ public final class Source {
     /**
      * Deletes an item in the database.
      *
-     * @param where Row to delete.
+     * @param device Device to delete.
      */
-    public final void delete_item(final String where) {
+    public final void delete_item(final Device device) throws Exception {
+        Log.e("Source", device.getID());
         open();
-        database.delete(Helper.TABLE_DEVICE, where, null);
+        database.delete(Helper.TABLE_DEVICE, "ID = ?", new String[]{device.getID()});
         close();
     }
 

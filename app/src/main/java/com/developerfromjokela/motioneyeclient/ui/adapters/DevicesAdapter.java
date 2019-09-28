@@ -19,9 +19,14 @@ package com.developerfromjokela.motioneyeclient.ui.adapters;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.developerfromjokela.motioneyeclient.R;
@@ -46,8 +51,12 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesV
             cameras = itemView.findViewById(R.id.camerasCount);
             deviceURL = itemView.findViewById(R.id.deviceURL);
             itemCard = itemView.findViewById(R.id.itemCard);
+
         }
+
     }
+
+
 
     public DevicesAdapter(Context mContext, List<Device> deviceList, DevicesAdapterListener listener) {
         this.mContext = mContext;
@@ -81,15 +90,41 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesV
                 listener.onDeviceClicked(position, device);
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.e("DA", "Longclick");
+                PopupMenu popup = new PopupMenu(mContext, holder.itemView);
+                //inflating menu from xml resource
+                popup.inflate(R.menu.device_menu);
+                //adding click listener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        return false;
+                    }
+                });
+                //displaying the popup
+                popup.show();
+                return false;
+            }
+        });
+
     }
 
     public interface DevicesAdapterListener {
 
         void onDeviceClicked(int position, Device device);
+        void onDeviceDeleteRequest(int position, Device device);
     }
 
     @Override
     public int getItemCount() {
         return deviceList.size();
     }
+
+
+
 }

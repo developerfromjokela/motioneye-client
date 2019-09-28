@@ -193,6 +193,34 @@ public class DeviceSettings extends AppCompatActivity {
                 });
             }
             {
+                findPreference("delete_camera").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        dialogBuilder.setTitle(R.string.delete_camera);
+                        dialogBuilder.setMessage(R.string.delete_camera_caution);
+                        dialogBuilder.setNegativeButton(R.string.cancel, null);
+                        dialogBuilder.setPositiveButton(R.string.delete_camera, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Source source = new Source(getContext());
+                                try {
+                                    source.delete_item(device);
+                                    getActivity().setResult(RESULT_CANCELED);
+                                    getActivity().finish();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(getActivity(), getString(R.string.failed_device_delete, e.getMessage()), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        AlertDialog alertDialog = dialogBuilder.create();
+                        alertDialog.show();
+                        return false;
+                    }
+                });
+            }
+            {
                 findPreference("admin_password").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
@@ -819,14 +847,17 @@ public class DeviceSettings extends AppCompatActivity {
                 apiInterface.getMainConfig(url).enqueue(new Callback<MainConfig>() {
                     @Override
                     public void onResponse(Call<MainConfig> call, Response<MainConfig> response) {
-                        config = response.body();
-                        if (config.isShow_advanced()) {
-                            getAdvancedDetails();
+                        if (response.isSuccessful()) {
+                            config = response.body();
+                            if (config.isShow_advanced()) {
+                                getAdvancedDetails();
 
-                        } else {
-                            setConfigValues();
-                            enableMEYESettings();
+                            } else {
+                                setConfigValues();
+                                enableMEYESettings();
+                            }
                         }
+
                     }
 
                     @Override

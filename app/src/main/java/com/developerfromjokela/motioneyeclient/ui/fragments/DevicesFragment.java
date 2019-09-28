@@ -18,15 +18,21 @@ package com.developerfromjokela.motioneyeclient.ui.fragments;
 
 
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.classes.Device;
@@ -35,6 +41,7 @@ import com.developerfromjokela.motioneyeclient.other.Utils;
 import com.developerfromjokela.motioneyeclient.ui.activities.CameraViewer;
 import com.developerfromjokela.motioneyeclient.ui.adapters.DevicesAdapter;
 import com.developerfromjokela.motioneyeclient.ui.setup.activities.SetupStartScreen;
+import com.developerfromjokela.motioneyeclient.ui.utils.DevicesView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +51,7 @@ import java.util.List;
  */
 public class DevicesFragment extends android.support.v4.app.Fragment implements DevicesAdapter.DevicesAdapterListener {
 
-    private RecyclerView camerasRecyclerView;
+    private DevicesView camerasRecyclerView;
     private DevicesAdapter adapter;
     private Source database;
     private FloatingActionButton addCamera;
@@ -77,6 +84,11 @@ public class DevicesFragment extends android.support.v4.app.Fragment implements 
         startActivity(viewer);
     }
 
+    @Override
+    public void onDeviceDeleteRequest(int position, Device device) {
+        deleteDevice(device);
+    }
+
     private void setListeners() {
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 
@@ -106,6 +118,50 @@ public class DevicesFragment extends android.support.v4.app.Fragment implements 
                 getActivity().startActivity(new Intent(getActivity(), SetupStartScreen.class));
             }
         });
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        // Inflate Menu from xml resource
+        MenuInflater menuInflater = getActivity().getMenuInflater();
+        menuInflater.inflate(R.menu.device_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.deleteDevice:
+                DevicesView.RecyclerContextMenuInfo info = (DevicesView.RecyclerContextMenuInfo) item.getMenuInfo();
+                deleteDevice(deviceList.get(info.position));
+                break;
+        }
+
+        return false;
+    }
+
+    private void deleteDevice(Device device) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setTitle(R.string.delete_camera);
+        dialogBuilder.setMessage(R.string.delete_camera_caution);
+        dialogBuilder.setNegativeButton(R.string.cancel, null);
+        dialogBuilder.setPositiveButton(R.string.delete_camera, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Source source = new Source(getContext());
+                try {
+                    source.delete_item(device);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), getString(R.string.failed_device_delete, e.getMessage()), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 
     private void loadFromDatabase() {

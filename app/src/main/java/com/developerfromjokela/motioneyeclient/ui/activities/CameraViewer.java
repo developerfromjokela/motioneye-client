@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -142,6 +143,7 @@ public class CameraViewer extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<Cameras> call, Response<Cameras> response) {
                     Cameras cameras = response.body();
+                    if (response.isSuccessful()) {
                     device.setCameras(cameras.getCameras());
                     apiInterface.getMotionDetails(baseurl + "/version").enqueue(new Callback<ResponseBody>() {
                         @Override
@@ -182,11 +184,13 @@ public class CameraViewer extends AppCompatActivity {
                             }
                         }
 
+
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                         }
                     });
+                    }
                 }
 
                 @Override
@@ -258,8 +262,14 @@ public class CameraViewer extends AppCompatActivity {
     private void startDeviceSettings(String deviceID) {
         Intent fullscreen = new Intent(CameraViewer.this, DeviceSettings.class);
         fullscreen.putExtra("DeviceId", deviceID);
-        startActivity(fullscreen);
+        startActivityForResult(fullscreen, 5300);
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 5300)
+            if (resultCode == RESULT_CANCELED)
+                finish();
+    }
 }

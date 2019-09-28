@@ -115,4 +115,9 @@
             android:summary="@string/optional_ddns_port_summary"
             android:title="@string/optional_ddns_port" />
     </PreferenceCategory>
+
+    <Preference
+        android:key="delete_camera"
+        android:summary="@string/delete_camera_summary"
+        android:title="@string/delete_camera" />
 </PreferenceScreen>

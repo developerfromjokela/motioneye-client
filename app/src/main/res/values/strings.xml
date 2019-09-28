@@ -91,5 +91,11 @@
     <string name="reboot">Reboot</string>
     <string name="shutdown">Shutdown</string>
     <string name="shutdown_summary">Shutdown Device by clicking here</string>
+    <string name="delete_camera">Delete this device</string>
+    <string name="delete_camera_summary">Delete this device from list of devices</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_camera_caution">Are you sure to delete this camera from devices list?</string>
+    <string name="failed_device_delete">Failed to delete device: %1$s</string>
+
 
 </resources>

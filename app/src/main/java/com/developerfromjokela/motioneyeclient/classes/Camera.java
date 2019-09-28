@@ -250,7 +250,7 @@ public class Camera {
     private String proto;
     @SerializedName("extra_options")
 
-    private List<String> extra_options;
+    private List<List<String>> extra_options;
     @SerializedName("image_quality")
 
     private String image_quality;
@@ -297,7 +297,7 @@ public class Camera {
 
     private String storage_device;
 
-    public Camera(boolean show_frame_changes, List<String> actions, String preserve_movies, String recording_mode, String monday_to, String light_switch_detect, boolean command_end_notifications_enabled, boolean smb_shares, String upload_server, String monday_from, boolean audo_brightness, String frame_change_threshold, String name, String movie_format, String network_username, String preserve_pictures, String event_gap, String capture_mode, boolean upload_movie, boolean video_streaming, String upload_location, String max_movie_length, String movie_file_name, String upload_authorization_key, boolean still_images, String upload_method, String streaming_resolution, String device_url, boolean text_overlay, String right_text, boolean upload_picture, boolean email_notifications_enabled, String working_schedule_type, boolean enabled, String movie_quality, String disk_total, String upload_service, String upload_password, String wednesday_to, String mask_type, boolean command_storage_enabled, String disk_used, String streaming_motion, boolean manual_snapshots, String noise_level, List<String> mask_lines, boolean upload_enabled, String root_directory, boolean working_schedule, String pre_capture, boolean command_notifications_enabled, String streaming_framerate, String email_notifications_picture_time_span, String thursday_to, boolean streaming_server_resize, boolean upload_subfolders, String sunday_to, String left_text, String image_file_name, String rotation, String framerate, boolean movies, boolean motion_detection, String upload_username, String upload_port, List<Disk> available_disks, String network_smb_ver, String streaming_auth_mode, String despeckle_filter, String snapshot_Stringerval, String minimum_motion_frames, boolean auto_noise_detect, String network_share_name, String sunday_from, String friday_from, boolean web_hook_storage_enabled, String custom_left_text, String streaming_port, String id, String post_capture, String streaming_quality, String wednesday_from, String proto, List<String> extra_options, String image_quality, boolean create_debug_media, String friday_to, String custom_right_text, boolean web_hook_notifications_enabled, String saturday_from, String tuesday_from, String network_password, String saturday_to, String newtork_server, String smart_mask_sluggishness, boolean mask, String tuesday_to, String thursday_from, String storage_device) {
+    public Camera(boolean show_frame_changes, List<String> actions, String preserve_movies, String recording_mode, String monday_to, String light_switch_detect, boolean command_end_notifications_enabled, boolean smb_shares, String upload_server, String monday_from, boolean audo_brightness, String frame_change_threshold, String name, String movie_format, String network_username, String preserve_pictures, String event_gap, String capture_mode, boolean upload_movie, boolean video_streaming, String upload_location, String max_movie_length, String movie_file_name, String upload_authorization_key, boolean still_images, String upload_method, String streaming_resolution, String device_url, boolean text_overlay, String right_text, boolean upload_picture, boolean email_notifications_enabled, String working_schedule_type, boolean enabled, String movie_quality, String disk_total, String upload_service, String upload_password, String wednesday_to, String mask_type, boolean command_storage_enabled, String disk_used, String streaming_motion, boolean manual_snapshots, String noise_level, List<String> mask_lines, boolean upload_enabled, String root_directory, boolean working_schedule, String pre_capture, boolean command_notifications_enabled, String streaming_framerate, String email_notifications_picture_time_span, String thursday_to, boolean streaming_server_resize, boolean upload_subfolders, String sunday_to, String left_text, String image_file_name, String rotation, String framerate, boolean movies, boolean motion_detection, String upload_username, String upload_port, List<Disk> available_disks, String network_smb_ver, String streaming_auth_mode, String despeckle_filter, String snapshot_Stringerval, String minimum_motion_frames, boolean auto_noise_detect, String network_share_name, String sunday_from, String friday_from, boolean web_hook_storage_enabled, String custom_left_text, String streaming_port, String id, String post_capture, String streaming_quality, String wednesday_from, String proto, List<List<String>> extra_options, String image_quality, boolean create_debug_media, String friday_to, String custom_right_text, boolean web_hook_notifications_enabled, String saturday_from, String tuesday_from, String network_password, String saturday_to, String newtork_server, String smart_mask_sluggishness, boolean mask, String tuesday_to, String thursday_from, String storage_device) {
         this.show_frame_changes = show_frame_changes;
         this.actions = actions;
         this.preserve_movies = preserve_movies;
@@ -1063,11 +1063,11 @@ public class Camera {
         this.proto = proto;
     }
 
-    public List<String> getExtra_options() {
+    public List<List<String>> getExtra_options() {
         return extra_options;
     }
 
-    public void setExtra_options(List<String> extra_options) {
+    public void setExtra_options(List<List<String>> extra_options) {
         this.extra_options = extra_options;
     }
 
