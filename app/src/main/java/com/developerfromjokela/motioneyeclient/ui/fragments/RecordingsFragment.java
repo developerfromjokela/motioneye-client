@@ -116,6 +116,13 @@ public class RecordingsFragment extends Fragment implements MediaDeviceAdapter.D
         if (!devices.isEmpty()) {
             selectedDevice = devices.get(0);
             loadRecordings();
+        } else {
+            View view1 = view.findViewById(R.id.emptyView);
+            view1.setVisibility(View.VISIBLE);
+            devicesView.setVisibility(View.GONE);
+            recordings.setVisibility(View.GONE);
+            view.findViewById(R.id.bottom_sheet);
+
         }
 
     }
