@@ -16,7 +16,9 @@
 
 package com.developerfromjokela.motioneyeclient.classes.disks;
 
-public class Partition {
+import java.io.Serializable;
+
+public class Partition implements Serializable {
     private String mount_point;
     private String vendor;
     private String target;

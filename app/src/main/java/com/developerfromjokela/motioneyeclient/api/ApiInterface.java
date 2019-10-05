@@ -20,6 +20,8 @@ package com.developerfromjokela.motioneyeclient.api;
 import com.developerfromjokela.motioneyeclient.classes.ActionStatus;
 import com.developerfromjokela.motioneyeclient.classes.Cameras;
 import com.developerfromjokela.motioneyeclient.classes.MainConfig;
+import com.developerfromjokela.motioneyeclient.classes.Media;
+import com.developerfromjokela.motioneyeclient.classes.MediaList;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -32,6 +34,9 @@ import retrofit2.http.Url;
 
 public interface ApiInterface {
 
+
+    @GET()
+    Call<MediaList> getMedia(@Url String url);
 
     @GET()
     Call<Cameras> getCameras(@Url String url);

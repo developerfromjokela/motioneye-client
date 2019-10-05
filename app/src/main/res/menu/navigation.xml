@@ -22,4 +22,9 @@
         android:icon="@drawable/ic_devices"
         android:title="@string/title_devices" />
 
+    <item
+        android:id="@+id/navigation_recordings"
+        android:icon="@drawable/ic_recordings"
+        android:title="@string/title_recordings" />
+
 </menu>

@@ -26,6 +26,7 @@ import android.view.MenuItem;
 
 import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.ui.fragments.DevicesFragment;
+import com.developerfromjokela.motioneyeclient.ui.fragments.RecordingsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_devices:
                     loadFragment(new DevicesFragment());
+                    return true;
+                case R.id.navigation_recordings:
+                    loadFragment(new RecordingsFragment());
                     return true;
             }
             return false;

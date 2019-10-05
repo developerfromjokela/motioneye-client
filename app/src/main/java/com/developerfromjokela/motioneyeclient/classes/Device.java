@@ -18,10 +18,11 @@ package com.developerfromjokela.motioneyeclient.classes;
 
 import android.net.wifi.WifiConfiguration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Device {
+public class Device implements Serializable {
     private String ID;
     private String deviceName;
     private String deviceUrl;

@@ -19,9 +19,10 @@ package com.developerfromjokela.motioneyeclient.classes;
 import com.developerfromjokela.motioneyeclient.classes.disks.Disk;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Camera {
+public class Camera implements Serializable {
 
 
     @SerializedName("show_frame_changes")

@@ -97,5 +97,13 @@
     <string name="delete_camera_caution">Are you sure to delete this camera from devices list?</string>
     <string name="failed_device_delete">Failed to delete device: %1$s</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_recordings">Recordings</string>
+
+    <string name="title_activity_movie_view">MovieView</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
 
 </resources>

@@ -16,7 +16,9 @@
 
 package com.developerfromjokela.motioneyeclient.classes;
 
-public class CameraUser {
+import java.io.Serializable;
+
+public class CameraUser implements Serializable {
     private String Username = "";
     private String Password = "";
 

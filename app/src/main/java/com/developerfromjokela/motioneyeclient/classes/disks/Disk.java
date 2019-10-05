@@ -16,9 +16,10 @@
 
 package com.developerfromjokela.motioneyeclient.classes.disks;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Disk {
+public class Disk implements Serializable {
     private String bus;
     private String model;
     private String vendor;
