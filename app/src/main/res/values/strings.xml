@@ -98,12 +98,10 @@
     <string name="failed_device_delete">Failed to delete device: %1$s</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_recordings">Recordings</string>
-
     <string name="title_activity_movie_view">MovieView</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-
+    <string name="other_settings">Other settings</string>
+    <string name="open_by_default">Open by default</string>
+    <string name="open_by_default_desc">Open this device\'s cameras stream as soon you open the app. It\'s handy when you have only a single device added.</string>
 
 </resources>

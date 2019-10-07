@@ -25,7 +25,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -52,6 +54,7 @@ import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.classes.MainConfig;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.other.Utils;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -118,6 +121,23 @@ public class DeviceSettings extends AppCompatActivity {
             disableMEYESettings();
             initNewtorkSettings();
 
+            {
+                String autoOpenID = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("autoOpenID", null);
+                if (autoOpenID != null)
+                   if (autoOpenID.equals(device.getID()))
+                       ((CheckBoxPreference)findPreference("open_by_default")).setChecked(true);
+                findPreference("open_by_default").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object o) {
+                        boolean autoStart = (boolean) o;
+                        if (autoStart)
+                            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("autoOpenID", device.getID()).apply();
+                        else
+                            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("autoOpenID", null).apply();
+                        return true;
+                    }
+                });
+            }
             {
                 findPreference("admin_username").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override

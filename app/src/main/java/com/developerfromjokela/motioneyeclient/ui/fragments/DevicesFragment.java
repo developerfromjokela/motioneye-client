@@ -18,11 +18,14 @@ package com.developerfromjokela.motioneyeclient.ui.fragments;
 
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -57,12 +60,37 @@ public class DevicesFragment extends android.support.v4.app.Fragment implements 
     private FloatingActionButton addCamera;
     private LinearLayout emptyView;
     private List<Device> deviceList = new ArrayList<>();
-
+    private boolean startupExec = false;
+    private startupExecListener startupExecListener;
 
     public DevicesFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void setArguments(@Nullable Bundle args) {
+        super.setArguments(args);
+        if (args != null) {
+            if (args.containsKey("startupExec"))
+                startupExec = args.getBoolean("startupExec");
+        }
+
+
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof startupExecListener)
+            startupExecListener = (startupExecListener) context;
+        else
+            throw new RuntimeException("Listener not found! Can't continue");
+    }
+
+    public interface startupExecListener {
+        void paramChanged(boolean newParam);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,6 +107,10 @@ public class DevicesFragment extends android.support.v4.app.Fragment implements 
 
     @Override
     public void onDeviceClicked(int position, Device device) {
+       startViewer(device);
+    }
+
+    private void startViewer(Device device) {
         Intent viewer = new Intent(getActivity(), CameraViewer.class);
         viewer.putExtra("DeviceId", device.getID());
         startActivity(viewer);
@@ -175,6 +207,16 @@ public class DevicesFragment extends android.support.v4.app.Fragment implements 
             e.printStackTrace();
         }
         checkEmpty();
+        String autoOpenID = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("autoOpenID", null);
+        if (autoOpenID !=  null && !startupExec) {
+            startupExec = true;
+            startupExecListener.paramChanged(startupExec);
+            for (Device device : deviceList) {
+                if (device.getID().equals(autoOpenID))
+                    startViewer(device);
+
+            }
+        }
 
     }
 
@@ -207,5 +249,9 @@ public class DevicesFragment extends android.support.v4.app.Fragment implements 
         loadFromDatabase();
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        startupExecListener = null;
+    }
 }

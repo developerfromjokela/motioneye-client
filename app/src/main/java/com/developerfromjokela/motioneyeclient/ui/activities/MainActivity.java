@@ -28,9 +28,9 @@ import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.ui.fragments.DevicesFragment;
 import com.developerfromjokela.motioneyeclient.ui.fragments.RecordingsFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DevicesFragment.startupExecListener {
 
-
+    private boolean startupExec = false;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -38,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_devices:
-                    loadFragment(new DevicesFragment());
+                    Bundle a = new Bundle();
+                    a.putBoolean("startupExec", startupExec);
+                    DevicesFragment devicesFragment = new DevicesFragment();
+                    devicesFragment.setArguments(a);
+                    loadFragment(devicesFragment);
                     return true;
                 case R.id.navigation_recordings:
                     loadFragment(new RecordingsFragment());
@@ -67,4 +71,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void paramChanged(boolean newParam) {
+        startupExec = newParam;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
