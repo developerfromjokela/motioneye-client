@@ -517,7 +517,6 @@ public class DeviceSettings extends AppCompatActivity {
                                         String url = s.toString();
                                         if (Utils.validIP(url)) {
 
-                                            Log.e("ValidBasic", "Valid IP");
 
                                             if (checkForDuplicate(device.getDeviceUrl(), url)) {
                                                 b.setEnabled(false);
@@ -526,7 +525,6 @@ public class DeviceSettings extends AppCompatActivity {
                                                 b.setEnabled(true);
 
                                         } else {
-                                            Log.e("ValidBasic", "Invalid IP");
 
                                             b.setEnabled(false);
                                         }
@@ -537,7 +535,6 @@ public class DeviceSettings extends AppCompatActivity {
 
                                             if (Utils.validIP(portparts[0])) {
 
-                                                Log.e("ValidAdv", "Valid IP");
                                                 if (checkForDuplicate(device.getDeviceUrl(), url)) {
                                                     b.setEnabled(false);
                                                 }
@@ -545,7 +542,6 @@ public class DeviceSettings extends AppCompatActivity {
                                                     b.setEnabled(true);
 
                                             } else {
-                                                Log.e("ValidAdv", "Invalid IP");
 
                                                 b.setEnabled(false);
                                             }
@@ -618,11 +614,9 @@ public class DeviceSettings extends AppCompatActivity {
                                     @Override
                                     public void afterTextChanged(Editable s) {
                                         String url = editText.getText().toString();
-                                        Log.e("DeviceSettings", url);
                                         if (!url.isEmpty()) {
                                             if (Utils.isValidURL(url)) {
 
-                                                Log.e("ValidBasic", "Valid url");
 
                                                 if (checkForDuplicate(device.getDdnsURL(), url)) {
                                                     b.setEnabled(false);
@@ -631,7 +625,6 @@ public class DeviceSettings extends AppCompatActivity {
                                                     b.setEnabled(true);
 
                                             } else {
-                                                Log.e("ValidBasic", "Invalid url");
 
                                                 b.setEnabled(false);
                                             }
@@ -643,7 +636,6 @@ public class DeviceSettings extends AppCompatActivity {
 
                                                 if (Utils.isValidURL(portparts[0])) {
 
-                                                    Log.e("ValidAdv", "Valid url");
                                                     if (checkForDuplicate(device.getDdnsURL(), url)) {
                                                         b.setEnabled(false);
                                                     }
@@ -651,7 +643,6 @@ public class DeviceSettings extends AppCompatActivity {
                                                         b.setEnabled(true);
 
                                                 } else {
-                                                    Log.e("ValidAdv", "Invalid url");
 
                                                     b.setEnabled(false);
                                                 }
@@ -731,7 +722,6 @@ public class DeviceSettings extends AppCompatActivity {
                                     public void afterTextChanged(Editable s) {
                                         String url = s.toString();
 
-                                            Log.e("ValidBasic", "Valid IP");
 
                                             if (checkForDuplicate(device.getDdnsURL(), url)) {
                                                 b.setEnabled(false);
@@ -810,7 +800,6 @@ public class DeviceSettings extends AppCompatActivity {
                                     public void afterTextChanged(Editable s) {
                                         String url = s.toString();
 
-                                        Log.e("ValidBasic", "Valid IP");
 
                                         if (checkForDuplicate(device.getDDNSPort(), url)) {
                                             b.setEnabled(false);
@@ -869,13 +858,8 @@ public class DeviceSettings extends AppCompatActivity {
                     public void onResponse(Call<MainConfig> call, Response<MainConfig> response) {
                         if (response.isSuccessful()) {
                             config = response.body();
-                            if (config.isShow_advanced()) {
-                                getAdvancedDetails();
+                            getAdvancedDetails();
 
-                            } else {
-                                setConfigValues();
-                                enableMEYESettings();
-                            }
                         }
 
                     }
@@ -1167,25 +1151,20 @@ public class DeviceSettings extends AppCompatActivity {
         }
 
         private void validateServer(TestInterface testInterface, String serverurl) {
-            Log.e("Setup", serverurl);
             String baseurl;
 
-            Log.e("Setup", String.valueOf(serverurl.split("//").length));
             if (!serverurl.contains("://"))
                 baseurl = removeSlash("http://" + serverurl);
             else
                 baseurl = removeSlash(serverurl);
 
-            Log.e("Setup", baseurl);
             ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
             Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword(), "login");
-            Log.e("Setup", baseurl);
             call.enqueue(new Callback<ResponseBody>() {
 
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
-                        Log.e("Setup", call.request().body().contentType().toString());
                         try {
                             testInterface.TestSuccessful(response.body().string(), response.code());
                         } catch (IOException e) {
@@ -1214,19 +1193,15 @@ public class DeviceSettings extends AppCompatActivity {
         }
 
         private void getServerDetails(TestInterface testInterface, String serverurl) {
-            Log.e("Setup", serverurl);
             String baseurl;
 
-            Log.e("Setup", String.valueOf(serverurl.split("//").length));
             if (!serverurl.contains("://"))
                 baseurl = removeSlash("http://" + serverurl);
             else
                 baseurl = removeSlash(serverurl);
 
-            Log.e("Setup", baseurl);
             ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
             Call<ResponseBody> call = apiInterface.getMotionDetails(baseurl + "/version");
-            Log.e("Setup", baseurl);
             call.enqueue(new Callback<ResponseBody>() {
 
                 @Override
@@ -1263,7 +1238,6 @@ public class DeviceSettings extends AppCompatActivity {
                                 public void onResponse(Call<Cameras> call, Response<Cameras> response) {
                                     Cameras cameras = response.body();
                                     device.setCameras(cameras.getCameras());
-                                    Log.e("Setup", cameras.getCameras().size() + " cameras found");
                                     testInterface.TestSuccessful(stringResponse, response.code());
 
                                 }
@@ -1475,7 +1449,6 @@ public class DeviceSettings extends AppCompatActivity {
         }
 
         private boolean checkForDuplicate(String original, String newValue) {
-            Log.e("DeviceSettings", "Check for Duplicate "+original+":"+newValue+"="+ original.equals(newValue));
             return original.equals(newValue);
         }
 
@@ -1491,6 +1464,7 @@ public class DeviceSettings extends AppCompatActivity {
                 url = helper.addAuthParams("POST", url, changes.toString());
                 ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, getFullUrl());
                 disableMEYESettings();
+
 
                 apiInterface.changeMainConfig(url, body).enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -1525,60 +1499,88 @@ public class DeviceSettings extends AppCompatActivity {
 
             }
         }
+
         private void getAdvancedDetails() {
 
 
-                ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, getFullUrl());
-                disableMEYESettings();
+            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, getFullUrl());
+            disableMEYESettings();
 
-                apiInterface.getMotionDetails(getFullUrl() + "/version").enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
+            apiInterface.getMotionDetails(getFullUrl() + "/version").enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    setConfigValues();
+                    enableMEYESettings();
+                    if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
+                        try {
+                            final String stringResponse = response.body().string();
+                            Document html = Jsoup.parse(stringResponse);
+                            Elements elements = html.select("body");
+                            String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
+                            for (String string : lines) {
+                                String[] paramParts = string.split("=");
+                                String paramName = paramParts[0].trim();
+                                String paramValue = paramParts[1];
+                                if (paramName.contains("hostname"))
+                                    device.setDeviceName(paramValue);
+                                else if (paramName.contains("motion_version"))
+                                    device.setMotionVersion(paramValue);
+                                else if (paramName.contains("os_version"))
+                                    device.setOsVersion(paramValue);
+                                else if (paramName.equals("version"))
+                                    device.setMotioneyeVersion(paramValue);
+
+                            }
                             try {
-                                final String stringResponse = response.body().string();
-                                Document html = Jsoup.parse(stringResponse);
-                                Elements elements = html.select("body");
-                                String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
-                                for (String string : lines) {
-                                    String[] paramParts = string.split("=");
-                                    String paramName = paramParts[0].trim();
-                                    String paramValue = paramParts[1];
-                                    if (paramName.contains("hostname"))
-                                        device.setDeviceName(paramValue);
-                                    else if (paramName.contains("motion_version"))
-                                        device.setMotionVersion(paramValue);
-                                    else if (paramName.contains("os_version"))
-                                        device.setOsVersion(paramValue);
-                                    else if (paramName.equals("version"))
-                                        device.setMotioneyeVersion(paramValue);
+                                if (Double.valueOf(device.getMotioneyeVersion()) > 0.4 || Double.valueOf(device.getMotioneyeVersion()) == 0.4) {
+                                    hideAdvancedSettingsSwitch();
+                                    getActivity().setTitle(device.getDeviceName()+" "+getString(R.string.settings));
+                                    config.setShow_advanced(true);
+                                    setConfigValues();
+                                    enableMEYESettings();
 
-                                    Log.e("DeviceSettings", paramName+":"+paramValue);
+                                } else {
+                                    if (config.isShow_advanced()) {
+                                        getActivity().setTitle(device.getDeviceName()+" "+getString(R.string.settings));
+                                        setConfigValues();
+                                        enableMEYESettings();
+                                    }
                                 }
-                                getActivity().setTitle(device.getDeviceName()+" "+getString(R.string.settings));
-                                setConfigValues();
-                                enableMEYESettings();
-
-
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } catch (Exception ignored) {
+                                if (config.isShow_advanced()) {
+                                    getActivity().setTitle(device.getDeviceName()+" "+getString(R.string.settings));
+                                    setConfigValues();
+                                    enableMEYESettings();
+                                }
                             }
 
 
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                     }
-                });
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    setConfigValues();
+                    enableMEYESettings();
+                }
+            });
 
 
         }
+
+
+        private void hideAdvancedSettingsSwitch() {
+            Preference advancedSettings = findPreference("advancedSettings");
+            advancedSettings.setVisible(false);
+        }
+
 
 
 
