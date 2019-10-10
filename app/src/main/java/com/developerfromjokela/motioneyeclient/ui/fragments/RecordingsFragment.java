@@ -175,10 +175,11 @@ public class RecordingsFragment extends Fragment implements MediaDeviceAdapter.D
                     hideProgress();
                     MediaList mediaListObj = response.body();
                     mediaList.clear();
+                    recordingsAdapter.notifyDataSetChanged();
                     recordingsAdapter.updateDetails(selectedDevice);
                     for (Media media : mediaListObj.getMedia()) {
                         mediaList.add(media);
-                        recordingsAdapter.notifyItemInserted(mediaList.size());
+                        recordingsAdapter.notifyItemInserted(mediaList.size()-1);
                     }
                 }
 
