@@ -32,10 +32,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,6 +58,7 @@ import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.other.Utils;
 import com.developerfromjokela.motioneyeclient.ui.adapters.ActionsAdapter;
+import com.developerfromjokela.motioneyeclient.ui.adapters.HttpCamerasAdapter;
 import com.google.gson.Gson;
 
 import java.io.InputStream;
@@ -201,6 +205,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                         }
                     }
                 });
+                List<Long> time = new ArrayList<>();
 
                 Device finalDevice = device;
                 timerRunnable = new Runnable() {
@@ -232,7 +237,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                         String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
                         url = helper.addAuthParams("GET", url, "");
                         String finalUrl = url;
-                        new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, cameraFrame).execute(finalUrl);
+                        new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
 
 
                     }
@@ -240,7 +245,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                 String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
                 url = helper.addAuthParams("GET", url, "");
                 String finalUrl = url;
-                new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, cameraFrame).execute(finalUrl);
+                new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
 
 
             } catch (Exception e) {
@@ -289,6 +294,8 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
     }
 
 
+
+
     private class DownloadImageFromInternet extends AsyncTask<String, Void, CameraImage> {
         ImageView imageView;
         LinearLayout progressBar;
@@ -296,8 +303,9 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
         Camera camera;
         ProgressBar loadingCircle;
         RelativeLayout cameraFrame;
+        List<Long> time;
 
-        public DownloadImageFromInternet(ImageView imageView, LinearLayout progressBar, TextView fps, TextView status, ProgressBar loadingCircle, Camera camera, RelativeLayout cameraFrame) {
+        public DownloadImageFromInternet(ImageView imageView, LinearLayout progressBar, TextView fps, TextView status, ProgressBar loadingCircle, Camera camera, List<Long> time, RelativeLayout cameraFrame) {
             this.imageView = imageView;
             this.progressBar = progressBar;
             this.fps = fps;
@@ -305,6 +313,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
             this.status = status;
             this.cameraFrame = cameraFrame;
             this.loadingCircle = loadingCircle;
+            this.time = time;
         }
 
         protected void onPreExecute() {
@@ -314,6 +323,26 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
             if (!loaded) {
                 progressBar.setVisibility(View.VISIBLE);
             }
+            ViewParent parent = status.getParent();
+            LinearLayout r;
+            if (parent != null)
+                if (parent instanceof ViewGroup) {
+                    ViewParent grandparent = ((ViewGroup) parent).getParent();
+                    if (grandparent != null) {
+                        if (parent instanceof LinearLayout) {
+                            r = (LinearLayout) grandparent;
+                            Button button = r.findViewById(R.id.tryagain);
+                            button.setVisibility(View.GONE);
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    timerRunnable.run();
+                                }
+                            });
+                        }
+
+                    }
+                }
         }
 
         protected CameraImage doInBackground(String... urls) {
@@ -355,6 +384,8 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
 
         protected void onPostExecute(CameraImage result) {
             if (result.isSuccessful()) {
+
+                imageView.setVisibility(View.VISIBLE);
                 if (!loaded) {
                     progressBar.animate()
                             .translationY(progressBar.getHeight())
@@ -373,20 +404,55 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                 }
                 imageView.setImageBitmap(result.getBitmap());
 
-                fps.setText(result.getFps() + " fps");
+                if (time.size() == Utils.fpsLen) {
+
+                    long streamingFps = time.size() * 1000 / (time.get(time.size()-1) - time.get(0));
+                    int fpsDeliv = Math.round(streamingFps);
+                    fps.setText(result.getFps() + "/"+fpsDeliv+" fps");
+
+                }
+
+                long timeNow = new Date().getTime();
+                time.add(timeNow);
+                if (time.size() > Utils.fpsLen) {
+                    time.remove(0);
+                }
+
+
+
+                if (attached) {
+                    timerHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer after 1 sec
+
+                }
+
 
 
             } else {
                 loaded = false;
                 loadingCircle.setVisibility(View.GONE);
+                imageView.setVisibility(View.GONE);
+                status.setVisibility(View.VISIBLE);
                 status.setText(result.getErrorString());
-            }
+                ViewParent parent = status.getParent();
+                LinearLayout r;
+                if (parent != null)
+                    if (parent instanceof ViewGroup) {
+                        ViewParent grandparent = ((ViewGroup) parent).getParent();
+                        if (grandparent != null) {
+                            if (parent instanceof LinearLayout) {
+                                r = (LinearLayout) grandparent;
+                                Button button = r.findViewById(R.id.tryagain);
+                                button.setVisibility(View.VISIBLE);
+                                button.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        timerRunnable.run();
+                                    }
+                                });
+                            }
 
-            int framerate = Integer.valueOf(camera.getFramerate());
-
-            if (attached) {
-                timerHandler.postDelayed(timerRunnable, 1000 / framerate); //Start timer after 1 sec
-
+                        }
+                    }
             }
 
         }

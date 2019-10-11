@@ -43,6 +43,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,7 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
         holder.loadingBar.setId(Integer.valueOf(camera.getId()) + 4495);
 
         int framerate = Integer.valueOf(camera.getFramerate());
+        List<Long> time = new ArrayList<>();
         Runnable timerRunnable = new Runnable() {
             @Override
             public void run() {
@@ -136,10 +138,11 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
                 else
                     baseurl = removeSlash(serverurl);
 
-                String url = baseurl + "/picture/" + cameraId + "/current?_=" + String.valueOf(new Date().getTime());
+                String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
                 url = helper.addAuthParams("GET", url, "");
                 String finalUrl = url;
-                new DownloadImageFromInternet(holder, camera, this, loaded).execute(finalUrl);
+
+                new DownloadImageFromInternet(holder, camera, this, time, loaded).execute(finalUrl);
 
 
             }
@@ -148,11 +151,11 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
         holder.tryagain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timerHandler.postDelayed(timerRunnable, 1000 / framerate); //Start timer after 1 sec
+                timerHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer after 1 sec
 
             }
         });
-        timerHandler.postDelayed(timerRunnable, 1000 / framerate); //Start timer after 1 sec
+        timerHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer after 1 sec
 
         holder.itemCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,8 +192,9 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
         boolean loaded;
         Runnable timerRunnable;
         Button tryagain;
+        List<Long> time;
 
-        public DownloadImageFromInternet(CamerasViewHolder viewholder, Camera camera, Runnable timerRunnable, boolean loaded) {
+        public DownloadImageFromInternet(CamerasViewHolder viewholder, Camera camera, Runnable timerRunnable, List<Long> time, boolean loaded) {
             this.imageView = viewholder.cameraImage;
             this.progressBar = viewholder.loadingBar;
             this.loaded = loaded;
@@ -200,6 +204,7 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
             this.camera = camera;
             this.timerRunnable = timerRunnable;
             this.tryagain = viewholder.tryagain;
+            this.time = time;
 
         }
 
@@ -238,6 +243,8 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
                 }
 
 
+
+
             } catch (Exception e) {
                 e.printStackTrace();
                 return new CameraImage(false, e.getMessage());
@@ -258,12 +265,22 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
                 imageView.setImageBitmap(result.getBitmap());
                 cameraViewVisible(loaded, progressBar, imageView);
 
-                fps.setText(result.getFps() + " fps");
+                if (time.size() == Utils.fpsLen) {
 
-                int framerate = Integer.valueOf(camera.getFramerate());
+                    long streamingFps = time.size() * 1000 / (time.get(time.size()-1) - time.get(0));
+                    int fpsDeliv = Math.round(streamingFps);
+                    fps.setText(result.getFps() + "/"+fpsDeliv+" fps");
+
+                }
+
+                long timeNow = new Date().getTime();
+                time.add(timeNow);
+                if (time.size() > Utils.fpsLen) {
+                    time.remove(0);
+                }
 
                 if (attached) {
-                    timerHandler.postDelayed(timerRunnable, 1000 / framerate); //Start timer after 1 sec
+                    timerHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer after 1 sec
 
                 }
 

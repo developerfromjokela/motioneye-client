@@ -36,7 +36,9 @@ import static android.app.DownloadManager.Request.NETWORK_WIFI;
 public class Utils {
 
     public static final boolean DEBUG = true;
-
+    public static int imageRefreshInterval = 15;
+    public static int framerateFactor = 1;
+    public static int fpsLen = 4;
     public static class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
         private int spanCount;
