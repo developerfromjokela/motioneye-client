@@ -1,0 +1,3 @@
+-Videontoisto on nopeampi
+
+-Frame ratet näyttää myös aidon määrän, kuten selaimessa, tapa laskea tämä on täsmälleen sama kuin siellä.

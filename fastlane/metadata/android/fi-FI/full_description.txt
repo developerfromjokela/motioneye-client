@@ -1,0 +1,18 @@
+Motioneye Asiakassovellus Androidille, joka käyttää pelkästään Backendia toimiakseen
+
+
+
+Miksi käyttää tätä ylitse muut sovellukset:
+
+    Se on nopea, koska se ei lataa turhaa CSS, HTML ja JS skriptejä, mitä ei tarvitse
+    Käyttää VAIN ja AINOASTAAN motionEye:n Backendia eli Rajapintaa, joka on nopeampi kuin selainruutu
+    Automaattinen DDNS ja paikallisverkon vaihto, joka korottaa videontoiston framerateja ja laatua Wifi verkossa, kun olet esim. kotona
+    Fullscreen tuki
+
+Ominaisuudet:
+
+    Automaattinen DDNS ja paikallisverkon vaihto
+    Käyttää vain motionEyen rajapintaa
+    Monta laitetta ja kameraa
+    Fullscreen
+

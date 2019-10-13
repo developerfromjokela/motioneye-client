@@ -1,0 +1,3 @@
+-Videostream's speed improved
+
+-Frame rate is now displaying also the real frame rate, like in a browser, method calculating this data is exactly same as in a browser.
