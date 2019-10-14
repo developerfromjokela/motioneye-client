@@ -7,6 +7,9 @@ Android Motioneye Client App using Backend of motionEye
 
 <img width="100" alt="portfolio_view" src="https://raw.githubusercontent.com/developerfromjokela/motioneye-client/master/app/src/main/ic_launcher-web.png">
 
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" 
+      alt="Download from Google Play" 
+      height="80">](https://play.google.com/store/apps/details?id=com.developerfromjokela.motioneyeclient)
 
 
 
