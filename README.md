@@ -21,6 +21,7 @@ This is new (Alpha at the moment) Motioneye client only using its backend, and n
 <img width="240" alt="portfolio_view" src="/images/img5.png">
 ###  **Why using this instead other client apps:**
 
+
 - It's fast, because you are not loading HTML and CSS at all
 - Using **ONLY** motionEye Backend, which is faster than WebViews
 - Auto DDNS and Local switching, which will increase Video framerate and quality in local Wifi newtork
