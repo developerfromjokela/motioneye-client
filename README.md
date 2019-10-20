@@ -22,7 +22,7 @@ This is new (Alpha at the moment) Motioneye client only using its backend, and n
 ###  **Why using this instead other client apps:**
 
 - It's fast, because you are not loading HTML and CSS at all
-- Using **ONLY** motionEye Backend, which is faster than Webviews
+- Using **ONLY** motionEye Backend, which is faster than WebViews
 - Auto DDNS and Local switching, which will increase Video framerate and quality in local Wifi newtork
 - Fullscreen support
 
