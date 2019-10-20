@@ -33,6 +33,7 @@ This is new (Alpha at the moment) Motioneye client only using its backend, and n
 - Using **ONLY** motionEye Backend
 - Mulitple Devices and Cameras
 - Fullscreen
+- View recordings
 
 
 
@@ -44,9 +45,9 @@ Thank you for contributing to this project!
 
 ###  **Need To Be Implemented:**
 
-- Device Configuration Editing and Deleting (Ongoing)
-- Media Tab in Bottom Navigation to see all media combined from all cameras and devices
-- More is coming
+- Images Tab in Bottom Navigation to see all media combined from all cameras and devices
+- Custom recordings sorting
+- More is coming, request your own ideas
 
 
 ### Licence
