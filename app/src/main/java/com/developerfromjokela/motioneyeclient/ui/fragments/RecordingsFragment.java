@@ -35,6 +35,8 @@ import com.google.gson.Gson;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -177,6 +179,12 @@ public class RecordingsFragment extends Fragment implements MediaDeviceAdapter.D
                     mediaList.clear();
                     recordingsAdapter.notifyDataSetChanged();
                     recordingsAdapter.updateDetails(selectedDevice);
+                    Collections.sort(mediaListObj.getMedia(), new Comparator<Media>() {
+                        @Override
+                        public int compare(Media o1, Media o2) {
+                            return (int)o2.getTimestamp()-(int)o1.getTimestamp();
+                        }
+                    });
                     for (Media media : mediaListObj.getMedia()) {
                         mediaList.add(media);
                         recordingsAdapter.notifyItemInserted(mediaList.size()-1);

@@ -16,11 +16,17 @@
 
 package com.developerfromjokela.motioneyeclient.ui.setup.activities;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -79,6 +85,9 @@ public class SetupStartScreen extends AppCompatActivity {
     private Device.Builder device;
     private View.OnClickListener previousListener;
     private View.OnClickListener continueListener;
+    private int locPermissionRequest = 54454;
+
+    private View currentViewObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +208,7 @@ public class SetupStartScreen extends AppCompatActivity {
                         });
                         inflated[0].startAnimation(animation);
                         fillItems(inflated[0], currentView);
+                        currentViewObject = inflated[0];
 
 
                     }
@@ -259,82 +269,15 @@ public class SetupStartScreen extends AppCompatActivity {
             continue_btn.setEnabled(false);
             final ListView wifiNetwork = view.findViewById(R.id.wifiNetwork);
 
-            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-            int netId = -1;
-            final List<WifiNetwork> SSIDCONFIGS = new ArrayList<>();
-
-            for (WifiConfiguration tmp : wifiManager.getConfiguredNetworks()) {
-                SSIDCONFIGS.add(new WifiNetwork(tmp, false));
-
-                Log.e("Setup", "Wifi " + tmp.SSID + ": " + tmp.status + " & " + tmp.networkId);
-            }
-
-
-            final int[] itemPosition = {-1};
-
-            if (device.getWlan() != null) {
-                Log.e("Setup", String.valueOf(device.getWlan().networkId));
-
-
-                for (int i = 0; i < wifiManager.getConfiguredNetworks().size(); i++) {
-                    WifiConfiguration tmp = wifiManager.getConfiguredNetworks().get(i);
-                    Log.e("Setup", String.valueOf(tmp.networkId));
-
-                    if (tmp.networkId == device.getWlan().networkId) {
-                        SSIDCONFIGS.get(i).setSelected(true);
-                        itemPosition[0] = i;
-                        continue_btn.setEnabled(true);
-                    }
-                }
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, locPermissionRequest);
+                wifiNetwork.setVisibility(View.GONE);
+                CardView noLocationLayout = view.findViewById(R.id.permissionWarning);
+                noLocationLayout.setVisibility(View.VISIBLE);
             } else {
-                continue_btn.setEnabled(false);
-
+                initWifiPicker(wifiNetwork);
             }
 
-            Collections.sort(SSIDCONFIGS, new Comparator<WifiNetwork>() {
-                @Override
-                public int compare(WifiNetwork o1, WifiNetwork o2) {
-                    return o1.getConfiguration().SSID.compareTo(o2.getConfiguration().SSID);
-                }
-            });
-
-            WifisAdapter adapter = new WifisAdapter(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, SSIDCONFIGS);
-
-            continue_btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    device.setWlan(SSIDCONFIGS.get(itemPosition[0]).getConfiguration());
-                    continueListener.onClick(v);
-                }
-            });
-            // Assign adapter to ListView
-            wifiNetwork.setAdapter(adapter);
-            TextView textView = new TextView(this);
-            textView.setText(R.string.no_wifi_networks_saved);
-            wifiNetwork.setEmptyView(textView);
-            // ListView Item Click Listener
-            wifiNetwork.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    // ListView Clicked item index
-                    if (itemPosition[0] != -1) {
-                        SSIDCONFIGS.get(itemPosition[0]).setSelected(false);
-                    }
-                    itemPosition[0] = position;
-
-                    SSIDCONFIGS.get(position).setSelected(true);
-
-                    adapter.notifyDataSetChanged();
-
-                    device.setWlan(SSIDCONFIGS.get(itemPosition[0]).getConfiguration());
-                    // Show Alert
-
-                    continue_btn.setEnabled(true);
-                }
-            });
         } else if (currentView == 4) {
             continue_btn.setEnabled(false);
 
@@ -358,6 +301,85 @@ public class SetupStartScreen extends AppCompatActivity {
             TextView successtext = view.findViewById(R.id.successtext);
             successtext.setText(getString(R.string.wizard_completed, device.getDeviceName()));
         }
+    }
+
+    private void initWifiPicker(ListView wifiNetwork) {
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        int netId = -1;
+        final List<WifiNetwork> SSIDCONFIGS = new ArrayList<>();
+
+
+        for (WifiConfiguration tmp : wifiManager.getConfiguredNetworks()) {
+            SSIDCONFIGS.add(new WifiNetwork(tmp, false));
+
+            Log.e("Setup", "Wifi " + tmp.SSID + ": " + tmp.status + " & " + tmp.networkId);
+        }
+
+        final int[] itemPosition = {-1};
+
+        if (device.getWlan() != null) {
+            Log.e("Setup", String.valueOf(device.getWlan().networkId));
+
+
+            for (int i = 0; i < wifiManager.getConfiguredNetworks().size(); i++) {
+                WifiConfiguration tmp = wifiManager.getConfiguredNetworks().get(i);
+                Log.e("Setup", String.valueOf(tmp.networkId));
+
+                if (tmp.networkId == device.getWlan().networkId) {
+                    SSIDCONFIGS.get(i).setSelected(true);
+                    itemPosition[0] = i;
+                    continue_btn.setEnabled(true);
+                }
+            }
+        } else {
+            continue_btn.setEnabled(false);
+
+        }
+
+        Collections.sort(SSIDCONFIGS, new Comparator<WifiNetwork>() {
+            @Override
+            public int compare(WifiNetwork o1, WifiNetwork o2) {
+                return o1.getConfiguration().SSID.compareTo(o2.getConfiguration().SSID);
+            }
+        });
+
+        WifisAdapter adapter = new WifisAdapter(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, SSIDCONFIGS);
+
+        continue_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                device.setWlan(SSIDCONFIGS.get(itemPosition[0]).getConfiguration());
+                continueListener.onClick(v);
+            }
+        });
+        // Assign adapter to ListView
+        wifiNetwork.setAdapter(adapter);
+        TextView textView = new TextView(this);
+        textView.setText(R.string.no_wifi_networks_saved);
+        wifiNetwork.setEmptyView(textView);
+        // ListView Item Click Listener
+        wifiNetwork.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // ListView Clicked item index
+                if (itemPosition[0] != -1) {
+                    SSIDCONFIGS.get(itemPosition[0]).setSelected(false);
+                }
+                itemPosition[0] = position;
+
+                SSIDCONFIGS.get(position).setSelected(true);
+
+                adapter.notifyDataSetChanged();
+
+                device.setWlan(SSIDCONFIGS.get(itemPosition[0]).getConfiguration());
+                // Show Alert
+
+                continue_btn.setEnabled(true);
+            }
+        });
     }
 
 
@@ -576,6 +598,14 @@ public class SetupStartScreen extends AppCompatActivity {
                 @Override
                 public void afterTextChanged(Editable s) {
                     device.setUser(new CameraUser(username.getText().toString(), s.toString()));
+                }
+            });
+        } else if (currentView == 3) {
+            Button requestLocation = view.findViewById(R.id.loc_request);
+            requestLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ActivityCompat.requestPermissions(SetupStartScreen.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, locPermissionRequest);
                 }
             });
         } else if (currentView == 4) {
@@ -991,5 +1021,18 @@ public class SetupStartScreen extends AppCompatActivity {
         return parts[0];
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == locPermissionRequest) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                if (currentView == 3) {
+                    currentViewObject.findViewById(R.id.permissionWarning).setVisibility(View.GONE);
+                    currentViewObject.findViewById(R.id.wifiNetwork).setVisibility(View.VISIBLE);
+                    initWifiPicker(currentViewObject.findViewById(R.id.wifiNetwork));
+                }
+            }
+        }
+    }
 }

@@ -1,8 +1,10 @@
 package com.developerfromjokela.motioneyeclient.ui.activities;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.UserHandle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.developerfromjokela.motioneyeclient.R;
@@ -61,15 +64,26 @@ public class MovieView extends AppCompatActivity {
                 url = helper.addAuthParams("GET", url, "");
                 Log.e("RA", url);
                 VideoView videoView = findViewById(R.id.videoView);
+                TextView loadText = findViewById(R.id.videoLoadText);
+                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        Log.e("MovView", "Load done!");
+                        findViewById(R.id.loadingLayout).setVisibility(View.GONE);
+                    }
+                });
                 MediaController mc = new MediaController(this);
                 mc.show(500);
                 mc.setAnchorView(videoView);
                 mc.setMediaPlayer(videoView);
                 Uri video = Uri.parse(url);
                 videoView.setMediaController(mc);
+
+                videoView.getBufferPercentage();
                 videoView.setVideoURI(video);
                 videoView.requestFocus();
                 videoView.start();
+
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }

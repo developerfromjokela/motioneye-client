@@ -408,7 +408,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
 
                     long streamingFps = time.size() * 1000 / (time.get(time.size()-1) - time.get(0));
                     int fpsDeliv = Math.round(streamingFps);
-                    fps.setText(result.getFps() + "/"+fpsDeliv+" fps");
+                    fps.setText(fpsDeliv + "/"+result.getFps()+" fps");
 
                 }
 
