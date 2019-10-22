@@ -53,7 +53,7 @@ Thank you for contributing to this project!
 
 ### Licence
 
-MIT License
+MIT Licence
 
 Copyright 2019 Developer From Jokela
 
