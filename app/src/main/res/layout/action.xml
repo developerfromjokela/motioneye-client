@@ -37,11 +37,11 @@
             android:id="@+id/actionicon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:srcCompat="@tools:sample/avatars"
             android:clickable="true"
             android:contentDescription="@string/action"
-            android:focusable="true"
-            android:visibility="gone"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/number"

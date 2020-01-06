@@ -20,7 +20,6 @@ import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -130,16 +129,14 @@ public class ActionsAdapter extends RecyclerView.Adapter<ActionsAdapter.ActionsV
         holder.action.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("AA", "Action clicked");
-                listener.onActionClicked(actionString, v);
+                listener.onActionClicked(position, actionString, v);
             }
         });
-
     }
 
     public interface ActionsAdapterListener {
 
-        void onActionClicked(String action, View button);
+        void onActionClicked(int position, String action, View button);
     }
 
     @Override

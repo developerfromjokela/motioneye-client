@@ -21,10 +21,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +36,6 @@ import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.api.MotionEyeHelper;
 import com.developerfromjokela.motioneyeclient.classes.Camera;
 import com.developerfromjokela.motioneyeclient.classes.CameraImage;
-import com.developerfromjokela.motioneyeclient.classes.CameraImageFrame;
 import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.other.Utils;
 
@@ -50,15 +47,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 
 public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.CamerasViewHolder> {
 
+    private Context mContext;
     private CamerasAdapterListener listener;
-    private List<CameraImageFrame> cameraImageFrames;
+    private Device device;
 
+    private boolean attached = true;
+    private Handler timerHandler = new Handler();
 
 
     public class CamerasViewHolder extends RecyclerView.ViewHolder {
@@ -69,11 +68,9 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
         ProgressBar progressBar;
         Button tryagain;
         CardView itemCard;
-        boolean attached;
 
         CamerasViewHolder(View itemView) {
             super(itemView);
-
             cameraImage = itemView.findViewById(R.id.cameraImage);
             loadingBar = itemView.findViewById(R.id.cameraBar);
             itemCard = itemView.findViewById(R.id.itemCard);
@@ -81,25 +78,15 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
             status = itemView.findViewById(R.id.status);
             progressBar = itemView.findViewById(R.id.progressar);
             tryagain = itemView.findViewById(R.id.tryagain);
-            attached = false;
         }
-
-
     }
 
-    public HttpCamerasAdapter(CamerasAdapterListener listener, List<CameraImageFrame> cameraImageFrames) {
+    public HttpCamerasAdapter(Context mContext, CamerasAdapterListener listener, Device device) {
+        this.mContext = mContext;
         this.listener = listener;
-        this.cameraImageFrames = cameraImageFrames;
-    }
 
-    @Override
-    public void onViewDetachedFromWindow(@NonNull CamerasViewHolder holder) {
-        holder.attached = false;
-    }
+        this.device = device;
 
-    @Override
-    public void onViewAttachedToWindow(@NonNull CamerasViewHolder holder) {
-        holder.attached = true;
     }
 
     @Override
@@ -109,64 +96,229 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
     }
 
     @Override
-    public void onBindViewHolder(final HttpCamerasAdapter.CamerasViewHolder holder, int position) {
-        final CameraImageFrame camera = cameraImageFrames.get(position);
+    public void onBindViewHolder(final HttpCamerasAdapter.CamerasViewHolder holder, final int position) {
+        boolean loaded = false;
+        final Camera camera = device.getCameras().get(position);
+        holder.cameraImage.setId(Integer.valueOf(camera.getId()));
+        holder.loadingBar.setId(Integer.valueOf(camera.getId()) + 4495);
 
-        if (camera.getError() != null) {
-            holder.cameraImage.setVisibility(View.GONE);
-            holder.fps.setVisibility(View.GONE);
-            holder.loadingBar.setVisibility(View.VISIBLE);
-            holder.progressBar.setVisibility(View.GONE);
-            holder.tryagain.setVisibility(camera.getError().isDisplayRetry() ? View.VISIBLE : View.GONE);
-            holder.status.setText(camera.getError().getErrorCause());
+        int framerate = Integer.valueOf(camera.getFramerate());
+        List<Long> time = new ArrayList<>();
+        Runnable timerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Here you can update your adapter data
+                MotionEyeHelper helper = new MotionEyeHelper();
+                helper.setUsername(device.getUser().getUsername());
+                try {
+                    helper.setPasswordHash(device.getUser().getPassword());
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+
+                String cameraId = camera.getId();
+                String serverurl;
+                if (device.getDdnsURL().length() > 5) {
+                    if ((Utils.getNetworkType(mContext)) == NETWORK_MOBILE) {
+                        serverurl = device.getDDNSUrlCombo();
+                    } else if (device.getWlan().networkId == Utils.getCurrentWifiNetworkId(mContext)) {
+                        serverurl = device.getDeviceUrlCombo();
+
+                    } else {
+                        serverurl = device.getDDNSUrlCombo();
+
+                    }
+                } else {
+                    serverurl = device.getDeviceUrlCombo();
+
+                }
+                String baseurl;
+                if (!serverurl.contains("://"))
+                    baseurl = removeSlash("http://" + serverurl);
+                else
+                    baseurl = removeSlash(serverurl);
+
+                String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
+                url = helper.addAuthParams("GET", url, "");
+                String finalUrl = url;
+
+                new DownloadImageFromInternet(holder, camera, this, time, loaded).execute(finalUrl);
 
 
-        } else {
-            if (camera.getBitmap() != null && camera.isInitialLoadDone()) {
-                holder.loadingBar.setVisibility(View.GONE);
-                holder.cameraImage.setVisibility(View.VISIBLE);
-                holder.fps.setVisibility(View.VISIBLE);
-                holder.cameraImage.setImageBitmap(camera.getBitmap());
-                holder.fps.setText(camera.getFrameRateText());
-            } else {
-                holder.cameraImage.setVisibility(View.GONE);
-                holder.fps.setVisibility(View.GONE);
-                holder.loadingBar.setVisibility(View.VISIBLE);
-                holder.progressBar.setVisibility(View.VISIBLE);
-                holder.status.setText(R.string.loading);
             }
-        }
-
+        };
 
         holder.tryagain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onRefreshRequest(position, camera);
+                timerHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer after 1 sec
+
             }
         });
+        timerHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer after 1 sec
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onImageClick(position, camera);
             }
         });
-
-
     }
 
     public interface CamerasAdapterListener {
 
-        void onImageClick(int position, CameraImageFrame cameraImageFrame);
-
-        void onRefreshRequest(int position, CameraImageFrame cameraImageFrame);
+        void onImageClick(int position, Camera camera);
     }
 
     @Override
     public int getItemCount() {
-        return cameraImageFrames.size();
+        return device.getCameras().size();
     }
 
+    private static String removeSlash(String url) {
+        if (!url.endsWith("/"))
+            return url;
+        String[] parts = url.split("/");
+
+        return parts[0];
+    }
+
+    private class DownloadImageFromInternet extends AsyncTask<String, Void, CameraImage> {
+        ImageView imageView;
+        LinearLayout progressBar;
+        ProgressBar loading;
+        TextView fps, status;
+        Camera camera;
+        boolean loaded;
+        Runnable timerRunnable;
+        Button tryagain;
+        List<Long> time;
+
+        public DownloadImageFromInternet(CamerasViewHolder viewholder, Camera camera, Runnable timerRunnable, List<Long> time, boolean loaded) {
+            this.imageView = viewholder.cameraImage;
+            this.progressBar = viewholder.loadingBar;
+            this.loaded = loaded;
+            this.fps = viewholder.fps;
+            this.loading = viewholder.progressBar;
+            this.status = viewholder.status;
+            this.camera = camera;
+            this.timerRunnable = timerRunnable;
+            this.tryagain = viewholder.tryagain;
+            this.time = time;
+
+        }
+
+        protected void onPreExecute() {
+
+            status.setText(R.string.loading);
+            loading.setVisibility(View.VISIBLE);
+            tryagain.setVisibility(View.GONE);
+        }
+
+        protected CameraImage doInBackground(String... urls) {
+            String imageURL = urls[0];
+
+
+            try {
+                URL url = new URL(imageURL);
+                URLConnection connection = url.openConnection();
+                Map<String, List<String>> fps = connection.getHeaderFields();
+                String humanReadableFPS = "0";
+                InputStream in = url.openStream();
+                final Bitmap decoded = BitmapFactory.decodeStream(in);
+                in.close();
+                for (Map.Entry<String, List<String>> key : fps.entrySet()) {
+                    for (String string : key.getValue()) {
+                        if (string.contains("capture_fps")) {
+                            int ii = 0;
+
+                            double d = Double.parseDouble(string.split("capture_fps_" + camera.getId() + "=")[1].split(";")[0].trim());
+                            ii = (int) d;
+                            humanReadableFPS = String.valueOf(Math.round(ii));
+                            return new CameraImage(humanReadableFPS, decoded, true);
+
+                        }
+
+                    }
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new CameraImage(false, e.getMessage());
+            }
+            return null;
+
+        }
+
+        protected void onPostExecute(CameraImage result) {
+            if (result.isSuccessful()) {
+                if (!loaded) {
+                    progressBar.setVisibility(View.GONE);
+
+                    imageView.setVisibility(View.VISIBLE);
+                    loaded = true;
+
+                }
+                imageView.setImageBitmap(result.getBitmap());
+                cameraViewVisible(loaded, progressBar, imageView);
+
+                if (time.size() == Utils.fpsLen) {
+
+                    long streamingFps = time.size() * 1000 / (time.get(time.size() - 1) - time.get(0));
+                    int fpsDeliv = Math.round(streamingFps);
+                    fps.setText(fpsDeliv + "/" + result.getFps() + " fps");
+
+                }
+
+                long timeNow = new Date().getTime();
+                time.add(timeNow);
+                if (time.size() > Utils.fpsLen) {
+                    time.remove(0);
+                }
+
+                if (attached) {
+                    timerHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer after 1 sec
+
+                }
+
+            } else {
+                loaded = false;
+                imageView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.GONE);
+                tryagain.setVisibility(View.VISIBLE);
+                status.setText(result.getErrorString());
+            }
+
+
+        }
+    }
+
+
+    public void onPause() {
+        attached = false;
+    }
+
+    public void onResume() {
+        attached = true;
+        notifyDataSetChanged();
+    }
+
+    public void onDestroy() {
+        attached = false;
+    }
+
+
+    private void cameraViewVisible(boolean loaded, LinearLayout progressBar, ImageView imageView) {
+        if (!loaded) {
+            progressBar.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
+            loaded = true;
+
+
+        }
+    }
 
 
 }

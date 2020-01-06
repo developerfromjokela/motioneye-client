@@ -91,15 +91,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
     private String baseurl;
     private Device device;
     private Camera camera;
-    private ImageView cameraImage;
-    private LinearLayout loadingBar;
-    private RelativeLayout cameraFrame;
-    private LinearLayout bottomBar;
-    private LinearLayout topBar;
-    private TextView fps;
-    private ProgressBar loadingCircle;
-    private List<Long> time;
-    private String finalUrl;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,13 +102,13 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_full_camera_viewer);
-        cameraImage = findViewById(R.id.cameraFullImage);
-        loadingBar = findViewById(R.id.progressBar);
-        cameraFrame = findViewById(R.id.cameraFrame);
-        bottomBar = findViewById(R.id.bottomBar);
-        topBar = findViewById(R.id.topBar);
-        fps = findViewById(R.id.cameraFPS);
-        loadingCircle = findViewById(R.id.progressBar2);
+        ImageView cameraImage = findViewById(R.id.cameraFullImage);
+        LinearLayout loadingBar = findViewById(R.id.progressBar);
+        RelativeLayout cameraFrame = findViewById(R.id.cameraFrame);
+        LinearLayout bottomBar = findViewById(R.id.bottomBar);
+        LinearLayout topBar = findViewById(R.id.topBar);
+        TextView fps = findViewById(R.id.cameraFPS);
+        ProgressBar loadingCircle = findViewById(R.id.progressBar2);
         TextView cameraName = findViewById(R.id.cameraName);
         RecyclerView actions = findViewById(R.id.actions);
         LinearLayout joystick = findViewById(R.id.dircontrols);
@@ -212,7 +204,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                         }
                     }
                 });
-                time = new ArrayList<>();
+                List<Long> time = new ArrayList<>();
 
                 Device finalDevice = device;
                 timerRunnable = new Runnable() {
@@ -251,7 +243,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                 };
                 String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
                 url = helper.addAuthParams("GET", url, "");
-                finalUrl = url;
+                String finalUrl = url;
                 new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
 
 
@@ -270,9 +262,8 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
     }
 
     @Override
-    public void onActionClicked(String action, View button) {
+    public void onActionClicked(int position, String action, View button) {
 
-        Log.e("FCV", "Action clicked");
         try {
             String url = baseurl + "/action/" + camera.getId() + "/" + action + "/?_=" + new Date().getTime();
             MotionEyeHelper helper = new MotionEyeHelper();
@@ -284,9 +275,6 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
             apiInterface.peformAction(url).enqueue(new Callback<ActionStatus>() {
                 @Override
                 public void onResponse(Call<ActionStatus> call, Response<ActionStatus> response) {
-                    if (response.body() != null && response.body().getStatus() != 0)
-                        Toast.makeText(FullCameraViewer.this, getString(R.string.task_failed, String.valueOf(response.body().getStatus())), Toast.LENGTH_SHORT).show();
-
                     button.setEnabled(true);
 
                 }
@@ -294,7 +282,8 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
                 @Override
                 public void onFailure(Call<ActionStatus> call, Throwable t) {
                     button.setEnabled(true);
-                    Toast.makeText(FullCameraViewer.this, t.getMessage(), Toast.LENGTH_LONG).show();
+
+                    Toast.makeText(FullCameraViewer.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } catch (NoSuchAlgorithmException e) {
@@ -476,8 +465,6 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
     public void onResume() {
         super.onResume();
         attached = true;
-        new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
-
     }
 
     @Override
@@ -536,19 +523,19 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
             if (actionString.contains("up")) {
                 dircontrols.setVisibility(View.VISIBLE);
                 up.setVisibility(View.VISIBLE);
-                up.setOnClickListener(v -> listener.onActionClicked("up", up));
+                up.setOnClickListener(v -> listener.onActionClicked(-1, "up", up));
             } else if (actionString.contains("right")) {
                 dircontrols.setVisibility(View.VISIBLE);
                 right.setVisibility(View.VISIBLE);
-                right.setOnClickListener(v -> listener.onActionClicked("right", right));
+                right.setOnClickListener(v -> listener.onActionClicked(-1, "right", right));
             } else if (actionString.contains("down")) {
                 dircontrols.setVisibility(View.VISIBLE);
                 down.setVisibility(View.VISIBLE);
-                down.setOnClickListener(v -> listener.onActionClicked("down", down));
+                down.setOnClickListener(v -> listener.onActionClicked(-1, "down", down));
             } else if (actionString.contains("left")) {
                 dircontrols.setVisibility(View.VISIBLE);
                 left.setVisibility(View.VISIBLE);
-                left.setOnClickListener(v -> listener.onActionClicked("left", left));
+                left.setOnClickListener(v -> listener.onActionClicked(-1, "left", left));
             }
         }
         if (left.getVisibility() == View.GONE && right.getVisibility() == View.GONE)

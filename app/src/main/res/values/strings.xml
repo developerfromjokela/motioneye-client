@@ -31,7 +31,7 @@
     <string name="optional_ddns_port">(Optional) DDNS Port</string>
     <string name="optional_local_port">(Optional) Local Port</string>
     <string name="ddns_hostname">(Optional) DDNS Hostname</string>
-    <string name="local_hostname">motionEye Hostname</string>
+    <string name="local_hostname">motionEye IP Address</string>
     <string name="wizard_login_settings">Login Settings</string>
     <string name="wizard_username">Username</string>
     <string name="wizard_password">Password</string>
@@ -73,11 +73,11 @@
     <string name="motioneye_settings">motionEye Settings</string>
     <string name="device_settings">Device Settings</string>
     <string name="network_settings">Network Settings</string>
-    <string name="local_hostame_summary">Hostname or IP Address to access device in local network</string>
-    <string name="local_port_summary">If your motionEye is not running on default port 80, please set the correct port number.</string>
+    <string name="local_hostame_summary">IP Address to access device in local network</string>
+    <string name="local_port_summary">If your motionEye is not running on default port 80, please set it.</string>
     <string translatable="false" name="def_ip">0.0.0.0</string>
     <string translatable="false" name="def_port">80</string>
-    <string name="optional_ddns_port_summary">If your motionEye Server is port forwarded to other port than 80, please set that here</string>
+    <string name="optional_ddns_port_summary">If your motionEye Server is port forwarded to other port than 80, please set it here</string>
     <string name="admin_username">Admin Username</string>
     <string name="admin_password">Admin Password</string>
     <string name="surv_username">Surveillance Username</string>
@@ -97,13 +97,12 @@
     <string name="delete_camera_caution">Are you sure to delete this camera from devices list?</string>
     <string name="failed_device_delete">Failed to delete device: %1$s</string>
     <string name="title_recordings">Recordings</string>
-    <string name="title_activity_movie_view">Movie Viewer</string>
+    <string name="title_activity_movie_view">MovieView</string>
     <string name="other_settings">Other settings</string>
     <string name="open_by_default">Open by default</string>
     <string name="open_by_default_desc">Open this device\'s cameras stream as soon you open the app. It\'s handy when you have only a single device added.</string>
     <string name="location_permissions">Location permission is required to retrieve WiFi networks.</string>
     <string name="approve_loc_permission">Give location permission to this app</string>
     <string name="loading_video">Loading video…</string>
-    <string name="task_failed">Task failed with status code %1$s</string>
 
 </resources>
