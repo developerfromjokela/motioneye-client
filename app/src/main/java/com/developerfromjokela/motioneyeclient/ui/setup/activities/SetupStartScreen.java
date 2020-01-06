@@ -421,20 +421,13 @@ public class SetupStartScreen extends AppCompatActivity {
                 @Override
                 public void afterTextChanged(Editable s) {
                     String url = s.toString();
-                    if (validIP(url)) {
-                        device.setDeviceUrl(url);
 
-                        Log.e("SetupStartScreen", "Valid IP");
 
-                        continue_btn.setEnabled(true);
-                    } else {
-                        Log.e("SetupStartScreen", "Invalid IP");
+                    if (!url.contains(":/") && url.contains(":")) {
 
-                        continue_btn.setEnabled(false);
-                    }
-                    if (url.contains(":")) {
                         final String[] portparts = url.split(":");
                         if (portparts.length == 2) {
+
                             device.setDeviceUrl(portparts[0]);
                             local_port.setText(portparts[portparts.length - 1]);
                             new Handler().postDelayed(new Runnable() {
@@ -447,19 +440,41 @@ public class SetupStartScreen extends AppCompatActivity {
                                 }
                             }, 1000);
                         }
-                        if (validIP(portparts[0])) {
+
+
+                    } else if (url.contains("://")) {
+                        if (url.split("://").length >= 2) {
+                            String nURL = url.split("://")[1];
+                            final String[] portparts = nURL.split(":");
+                            if (portparts.length == 2) {
+                                if (portparts[1].equals("/"))
+                                    return;
+                                device.setDeviceUrl(url.split("://")[0] + "://" + portparts[0]);
+                                local_port.setText(portparts[portparts.length - 1]);
+                                String finalUrl = url;
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        local_hostname.setText(finalUrl.split("://")[0] + "://" + portparts[0]);
+                                        local_hostname.setSelection(local_hostname.getText().length());
+
+                                        Log.e("Setup", "Set Local Port " + portparts[1]);
+                                    }
+                                }, 1000);
+                            }
+                            continue_btn.setEnabled(URLUtil.isValidUrl(url));
+
+                        }
+                    }
+
+                    if (!URLUtil.isValidUrl(url)) {
+                        url = "http://" + url;
+                        if (URLUtil.isValidUrl(url))
                             device.setDeviceUrl(url);
 
-                            Log.e("SetupStartScreen", "Valid IP");
-
-                            continue_btn.setEnabled(true);
-                        } else {
-                            Log.e("SetupStartScreen", "Invalid IP");
-
-                            continue_btn.setEnabled(false);
-                        }
-
-                    }
+                        continue_btn.setEnabled(URLUtil.isValidUrl(url));
+                    } else
+                        continue_btn.setEnabled(true);
                 }
             });
             ddns_hostname.addTextChangedListener(new TextWatcher() {
@@ -476,6 +491,51 @@ public class SetupStartScreen extends AppCompatActivity {
                 @Override
                 public void afterTextChanged(Editable s) {
                     String url = s.toString();
+
+                    if (!url.contains(":/") && url.contains(":")) {
+
+
+                        final String[] portparts = url.split(":");
+                        if (portparts.length == 2) {
+
+                            device.setDdnsURL(portparts[0]);
+                            ddns_port.setText(portparts[portparts.length - 1]);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ddns_hostname.setText(portparts[0]);
+                                    ddns_hostname.setSelection(ddns_hostname.getText().length());
+
+                                    Log.e("Setup", "Set Local Port 1" + portparts[1]);
+                                }
+                            }, 1000);
+                        }
+
+
+                    } else if (url.contains("://")) {
+                        if (url.split("://").length >= 2) {
+                            String nURL = url.split("://")[1];
+                            final String[] portparts = nURL.split(":");
+                            if (portparts.length == 2) {
+                                if (portparts[1].equals("/"))
+                                    return;
+                                device.setDdnsURL(url.split("://")[0] + "://" + portparts[0]);
+                                ddns_port.setText(portparts[portparts.length - 1]);
+                                String finalUrl = url;
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ddns_hostname.setText(finalUrl.split("://")[0] + "://" + portparts[0]);
+                                        ddns_hostname.setSelection(ddns_hostname.getText().length());
+
+                                        Log.e("Setup", "Set Local Port 2" + portparts[1]);
+                                    }
+                                }, 1000);
+                            }
+                            continue_btn.setEnabled(URLUtil.isValidUrl(url));
+
+                        }
+                    }
                     if (!isValidURL(url) && url.length() > 2) {
 
                         if (isValidURL("http://" + url)) {
@@ -490,26 +550,6 @@ public class SetupStartScreen extends AppCompatActivity {
                     } else {
                         device.setDdnsURL(url);
                         continue_btn.setEnabled(true);
-                    }
-                    if (url.contains(":")) {
-                        final String[] portparts = url.split(":");
-                        if (portparts.length == 3) {
-                            device.setDdnsURL(url);
-
-                            ddns_port.setText(portparts[portparts.length - 1]);
-
-                            device.setDdnsURL(portparts[0]);
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ddns_hostname.setText(portparts[0]);
-                                    ddns_hostname.setSelection(ddns_hostname.getText().length());
-
-                                }
-                            }, 900);
-                        }
-
                     }
                 }
             });

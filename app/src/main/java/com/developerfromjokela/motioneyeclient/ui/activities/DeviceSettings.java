@@ -529,14 +529,12 @@ public class DeviceSettings extends AppCompatActivity {
                                             if (url.split("://").length >= 2) {
                                                 String nUrl = url.split("://")[1];
                                                 if (nUrl.contains(":")) {
-                                                    Log.e("DS", "PORT D");
                                                     b.setEnabled(false);
                                                     return;
                                                 } else
                                                     b.setEnabled(true);
                                             } else {
                                                 if (url.contains(":")) {
-                                                    Log.e("DS", "PORT D");
                                                     b.setEnabled(false);
                                                     return;
                                                 } else
@@ -640,13 +638,11 @@ public class DeviceSettings extends AppCompatActivity {
                                             if (url.contains("://") && url.split("://").length >= 2) {
                                                 String nUrl = url.split("://")[1];
                                                 if (nUrl.contains(":")) {
-                                                    Log.e("DS", "PORT D2");
                                                     b.setEnabled(false);
                                                 } else
                                                     b.setEnabled(true);
                                             } else {
                                                 if (url.contains(":")) {
-                                                    Log.e("DS", "PORT D");
                                                     b.setEnabled(false);
                                                 } else
                                                     b.setEnabled(true);
