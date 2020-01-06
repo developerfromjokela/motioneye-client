@@ -93,8 +93,7 @@
             android:title="@string/shutdown"
             app:isPreferenceVisible="false" />
     </PreferenceCategory>
-    <!-- TODO Implement Newtork Settings
-      -->
+
     <PreferenceCategory android:title="@string/network_settings">
 
         <Preference

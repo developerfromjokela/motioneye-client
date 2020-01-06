@@ -16,7 +16,7 @@
     <string name="optional_ddns_port">(Valinnainen) DDNS Portti</string>
     <string name="optional_local_port">(Valinnainen) Lähiverkon Portti</string>
     <string name="ddns_hostname">(Optional) DDNS osoite</string>
-    <string name="local_hostname">motionEye IP-osoite</string>
+    <string name="local_hostname">motionEye osoite</string>
     <string name="wizard_login_settings">Kirjautumisasetukset</string>
     <string name="wizard_username">Käyttäjänimi</string>
     <string name="wizard_password">Salasana</string>
@@ -58,7 +58,7 @@
     <string name="motioneye_settings">motionEye asetukset</string>
     <string name="device_settings">Laitteen asetukset</string>
     <string name="network_settings">Verkkoasetukset</string>
-    <string name="local_hostame_summary">IP osoite, jolla pääset laitteeseen käsiksi lähiverkossa</string>
+    <string name="local_hostame_summary">Isännän nimi tai IP osoite, jolla pääset laitteeseen käsiksi lähiverkossa</string>
     <string name="local_port_summary">Jos motionEye palvelin ei pyöri portilla 80, aseta oikea portti.</string>
     <string name="optional_ddns_port_summary">Jos motionEye palvelin on portinohjattu eri porttiin kuin 80, aseta oikea portti</string>
     <string name="admin_username">Ylläpitäjän käyttäjänimi</string>
@@ -87,5 +87,6 @@
     <string name="location_permissions">Location permission is required to retrieve WiFi networks.</string>
     <string name="approve_loc_permission">Anna sijainnin käyttöoikeus tälle sovellukselle</string>
     <string name="loading_video">Ladataan videota…</string>
+    <string name="task_failed">Tehtävä epäonnistui virhekoodilla %1$s</string>
 
 </resources>

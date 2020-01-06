@@ -63,6 +63,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
@@ -515,38 +517,45 @@ public class DeviceSettings extends AppCompatActivity {
                                     @Override
                                     public void afterTextChanged(Editable s) {
                                         String url = s.toString();
-                                        if (Utils.validIP(url)) {
 
+                                        if (!url.isEmpty()) {
 
                                             if (checkForDuplicate(device.getDeviceUrl(), url)) {
                                                 b.setEnabled(false);
-                                            }
-                                            else
+                                            } else
                                                 b.setEnabled(true);
 
-                                        } else {
 
-                                            b.setEnabled(false);
-                                        }
-                                        if (url.contains(":")) {
-                                            final String[] portparts = url.split(":");
-                                            editText.setText(portparts[0]);
-                                            editText.setSelection(url.length());
-
-                                            if (Utils.validIP(portparts[0])) {
-
-                                                if (checkForDuplicate(device.getDeviceUrl(), url)) {
+                                            if (url.split("://").length >= 2) {
+                                                String nUrl = url.split("://")[1];
+                                                if (nUrl.contains(":")) {
+                                                    Log.e("DS", "PORT D");
                                                     b.setEnabled(false);
-                                                }
-                                                else
+                                                    return;
+                                                } else
                                                     b.setEnabled(true);
-
                                             } else {
-
-                                                b.setEnabled(false);
+                                                if (url.contains(":")) {
+                                                    Log.e("DS", "PORT D");
+                                                    b.setEnabled(false);
+                                                    return;
+                                                } else
+                                                    b.setEnabled(true);
                                             }
 
+                                            if (!URLUtil.isValidUrl(url)) {
+                                                url = "http://" + url;
+                                                b.setEnabled(URLUtil.isValidUrl(url));
+                                            } else
+                                                b.setEnabled(true);
+
+
+                                        } else {
+                                            b.setEnabled(false);
+
                                         }
+
+
                                     }
                                 });
                                 b.setOnClickListener(new View.OnClickListener() {
@@ -615,8 +624,6 @@ public class DeviceSettings extends AppCompatActivity {
                                     public void afterTextChanged(Editable s) {
                                         String url = editText.getText().toString();
                                         if (!url.isEmpty()) {
-                                            if (Utils.isValidURL(url)) {
-
 
                                                 if (checkForDuplicate(device.getDdnsURL(), url)) {
                                                     b.setEnabled(false);
@@ -624,34 +631,33 @@ public class DeviceSettings extends AppCompatActivity {
                                                 else
                                                     b.setEnabled(true);
 
-                                            } else {
+                                            if (!URLUtil.isValidUrl(url)) {
+                                                url = "http://" + url;
+                                                b.setEnabled(URLUtil.isValidUrl(url));
+                                            } else
+                                                b.setEnabled(true);
 
-                                                b.setEnabled(false);
-                                            }
-
-                                            if (url.contains(":")) {
-                                                final String[] portparts = url.split(":");
-                                                editText.setText(portparts[0]);
-                                                editText.setSelection(url.length());
-
-                                                if (Utils.isValidURL(portparts[0])) {
-
-                                                    if (checkForDuplicate(device.getDdnsURL(), url)) {
-                                                        b.setEnabled(false);
-                                                    }
-                                                    else
-                                                        b.setEnabled(true);
-
-                                                } else {
-
+                                            if (url.contains("://") && url.split("://").length >= 2) {
+                                                String nUrl = url.split("://")[1];
+                                                if (nUrl.contains(":")) {
+                                                    Log.e("DS", "PORT D2");
                                                     b.setEnabled(false);
-                                                }
+                                                } else
+                                                    b.setEnabled(true);
+                                            } else {
+                                                if (url.contains(":")) {
+                                                    Log.e("DS", "PORT D");
+                                                    b.setEnabled(false);
+                                                } else
+                                                    b.setEnabled(true);
 
                                             }
+
                                         } else {
                                             b.setEnabled(true);
 
                                         }
+
 
                                     }
                                 });

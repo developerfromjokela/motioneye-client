@@ -22,7 +22,7 @@ public class ActionStatus {
 
 
     @SerializedName("status")
-    private int status;
+    private int status = 0;
 
     public ActionStatus(int status) {
         this.status = status;
