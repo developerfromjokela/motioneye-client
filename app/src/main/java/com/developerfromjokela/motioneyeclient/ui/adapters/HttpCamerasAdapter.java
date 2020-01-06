@@ -243,6 +243,11 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
                 }
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> parent of cfc8134... * Fixed stream performance, now it will load only visible cameras.
             } catch (Exception e) {
                 e.printStackTrace();
                 return new CameraImage(false, e.getMessage());
@@ -265,9 +270,15 @@ public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.
 
                 if (time.size() == Utils.fpsLen) {
 
+<<<<<<< HEAD
                     long streamingFps = time.size() * 1000 / (time.get(time.size() - 1) - time.get(0));
                     int fpsDeliv = Math.round(streamingFps);
                     fps.setText(fpsDeliv + "/" + result.getFps() + " fps");
+=======
+                    long streamingFps = time.size() * 1000 / (time.get(time.size()-1) - time.get(0));
+                    int fpsDeliv = Math.round(streamingFps);
+                    fps.setText(fpsDeliv + "/"+result.getFps()+" fps");
+>>>>>>> parent of cfc8134... * Fixed stream performance, now it will load only visible cameras.
 
                 }
 

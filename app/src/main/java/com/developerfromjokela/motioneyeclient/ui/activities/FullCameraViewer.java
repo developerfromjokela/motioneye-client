@@ -92,6 +92,10 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
     private Device device;
     private Camera camera;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of cfc8134... * Fixed stream performance, now it will load only visible cameras.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

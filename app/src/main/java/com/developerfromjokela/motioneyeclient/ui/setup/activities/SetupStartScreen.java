@@ -438,7 +438,7 @@ public class SetupStartScreen extends AppCompatActivity {
 
                                     Log.e("Setup", "Set Local Port " + portparts[1]);
                                 }
-                            }, 1000);
+                            }, 900);
                         }
 
 

@@ -144,6 +144,7 @@ public class CameraViewer extends AppCompatActivity {
                 public void onResponse(Call<Cameras> call, Response<Cameras> response) {
                     Cameras cameras = response.body();
                     if (response.isSuccessful()) {
+<<<<<<< HEAD
                         device.setCameras(cameras.getCameras());
                         apiInterface.getMotionDetails(baseurl + "/version").enqueue(new Callback<ResponseBody>() {
                             @Override
@@ -178,18 +179,62 @@ public class CameraViewer extends AppCompatActivity {
                                         e.printStackTrace();
                                     } catch (Exception e) {
                                         e.printStackTrace();
+=======
+                    device.setCameras(cameras.getCameras());
+                    apiInterface.getMotionDetails(baseurl + "/version").enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
+                                try {
+                                    final String stringResponse = response.body().string();
+                                    Document html = Jsoup.parse(stringResponse);
+                                    Elements elements = html.select("body");
+                                    String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
+                                    for (String string : lines) {
+                                        String[] paramParts = string.split("=");
+                                        String paramName = paramParts[0].trim();
+                                        String paramValue = paramParts[1];
+                                        if (paramName.contains("hostname"))
+                                            device.setDeviceName(paramValue);
+                                        else if (paramName.contains("motion_version"))
+                                            device.setMotionVersion(paramValue);
+                                        else if (paramName.contains("os_version"))
+                                            device.setOsVersion(paramValue);
+                                        else if (paramName.equals("version"))
+                                            device.setMotioneyeVersion(paramValue);
+
+>>>>>>> parent of cfc8134... * Fixed stream performance, now it will load only visible cameras.
                                     }
+                                    adapter.notifyDataSetChanged();
+                                    setTitle(device.getDeviceName());
+
+                                    source.editEntry(device);
 
 
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            }
 
 
+<<<<<<< HEAD
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                         }
                         });
+=======
+                            }
+                        }
+
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
+>>>>>>> parent of cfc8134... * Fixed stream performance, now it will load only visible cameras.
                     }
                 }
 
