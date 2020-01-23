@@ -46,9 +46,7 @@ Thank you for contributing to this project!
 
 ###  **Need To Be Implemented:**
 
-- Images Tab in Bottom Navigation to see all image captures, like in recordings
 - Custom recordings sorting
-- More is coming, request your own ideas
 
 
 ### Licence
