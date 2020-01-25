@@ -1,17 +1,16 @@
-# motioneye-client
-
-Android Motioneye Client App using Backend of motionEye
-
-
+# MotionEye Client
 <img src="http://img.shields.io/liberapay/receives/developerfromjokela.svg?logo=liberapay">
+
+Android Motioneye Client App using Backend of MotionEye
 
 <img width="100" alt="portfolio_view" src="https://raw.githubusercontent.com/developerfromjokela/motioneye-client/master/app/src/main/ic_launcher-web.png">
 
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" 
-      alt="Download from Google Play" 
-      height="80">](https://play.google.com/store/apps/details?id=com.developerfromjokela.motioneyeclient)
-
-
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.developerfromjokela.motioneyeclient/)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=com.developerfromjokela.motioneyeclient)
 
 This is new (Alpha at the moment) Motioneye client only using its backend, and not webview like in other apps.
 <img width="240" alt="portfolio_view" src="/images/img1.png">
