@@ -58,8 +58,8 @@ import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.other.Utils;
 import com.developerfromjokela.motioneyeclient.ui.adapters.ActionsAdapter;
-import com.developerfromjokela.motioneyeclient.ui.adapters.HttpCamerasAdapter;
 import com.google.gson.Gson;
+import com.ortiz.touchview.TouchImageView;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -91,7 +91,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
     private String baseurl;
     private Device device;
     private Camera camera;
-    private ImageView cameraImage;
+    private TouchImageView cameraImage;
     private LinearLayout loadingBar;
     private RelativeLayout cameraFrame;
     private LinearLayout bottomBar;
