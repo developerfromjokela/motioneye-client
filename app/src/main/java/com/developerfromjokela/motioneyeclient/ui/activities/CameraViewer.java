@@ -400,7 +400,7 @@ public class CameraViewer extends AppCompatActivity {
                 e.printStackTrace();
                 return new CameraImage(false, e.getMessage());
             }
-            return null;
+            return new CameraImage(false, "Got no image from motionEye");
 
         }
 
