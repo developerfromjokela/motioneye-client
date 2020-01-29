@@ -63,15 +63,15 @@
 
         <RelativeLayout
             android:id="@+id/cameraFrame"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:visibility="gone"
             tools:visibility="visible">
 
-            <ImageView
+            <com.ortiz.touchview.TouchImageView
                 android:id="@+id/cameraFullImage"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:cropToPadding="true"
                 android:scaleType="fitCenter"
@@ -93,27 +93,103 @@
                 android:layout_marginBottom="0dp"
                 android:layout_weight="0"
                 android:background="#D6787C78"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <TextView
-                    android:id="@+id/cameraFPS"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_margin="9dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/cameraFPS"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_margin="9dp"
+                        android:layout_weight="0"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:minWidth="29dp"
+                        android:text="0 fps"
+                        android:textSize="18sp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/actions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:scrollbars="horizontal">
+
+                    </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/dircontrols"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:gravity="center_horizontal|center_vertical"
-                    android:minWidth="29dp"
-                    android:text="0 fps"
-                    android:textSize="18sp" />
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/actions"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:scrollbars="horizontal" />
+                    <android.support.v7.widget.AppCompatImageButton
+                        android:id="@+id/up"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:contentDescription="@string/up"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_up"
+                        tools:visibility="visible" />
+
+                    <LinearLayout
+                        android:id="@+id/lrlayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_weight="0"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="visible"
+                        tools:visibility="visible">
+
+                        <android.support.v7.widget.AppCompatImageButton
+                            android:id="@+id/left"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="25dp"
+                            android:layout_marginRight="25dp"
+                            android:contentDescription="@string/left"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_back"
+                            tools:visibility="visible" />
+
+
+                        <android.support.v7.widget.AppCompatImageButton
+                            android:id="@+id/right"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="25dp"
+                            android:layout_marginLeft="25dp"
+                            android:contentDescription="@string/right"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_right"
+                            tools:visibility="visible" />
+
+                    </LinearLayout>
+
+                    <android.support.v7.widget.AppCompatImageButton
+                        android:id="@+id/down"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0"
+                        android:contentDescription="@string/down"
+
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_down"
+                        tools:visibility="visible" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -148,65 +224,6 @@
             </LinearLayout>
 
         </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/dircontrols"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal|center_vertical"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/up"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="@string/up"
-                app:srcCompat="@drawable/ic_up"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/lrlayout"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_weight="0"
-                android:gravity="center_horizontal|center_vertical"
-                android:orientation="horizontal">
-
-                <android.support.v7.widget.AppCompatImageButton
-                    android:id="@+id/left"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginRight="25dp"
-                    android:contentDescription="@string/left"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/ic_back" />
-
-
-                <android.support.v7.widget.AppCompatImageButton
-                    android:id="@+id/right"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginLeft="25dp"
-                    android:contentDescription="@string/right"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/ic_right" />
-
-            </LinearLayout>
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/down"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="0"
-                android:contentDescription="@string/down"
-
-                app:srcCompat="@drawable/ic_down"
-                android:visibility="gone" />
-
-        </LinearLayout>
 
 </LinearLayout>
 
