@@ -30,7 +30,7 @@ This is new (Alpha at the moment) Motioneye client only using its backend, and n
 ###  **Features:**
 
 - Auto DDNS and Local Network Switching
-- Using **ONLY** motionEye Backend
+- Using **ONLY** motionEye Backend (REST API)
 - Mulitple Devices and Cameras
 - Fullscreen
 - View recordings
