@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
-  ~ Licenced with MIT
+  ~ Licensed with MIT
   -->
 
 <network-security-config>
-    <base-config cleartextTrafficPermitted="false">
+    <!-- Enabled cleartext, because motionEye is using HTTP. User will get a warning that it's safer to switch using HTTPS -->
+    <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
             <certificates src="user" />
             <certificates src="system" />

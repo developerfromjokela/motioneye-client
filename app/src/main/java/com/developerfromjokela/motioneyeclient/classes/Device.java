@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
- * Licenced with MIT
+ * Licensed with MIT
  */
 
 package com.developerfromjokela.motioneyeclient.classes;
@@ -49,7 +49,7 @@ public class Device implements Serializable {
         if (localPort.length() > 0) {
             try {
                 return URLUtils.setPort(deviceUrl, Integer.parseInt(localPort));
-            } catch (URISyntaxException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return deviceUrl + ":" + localPort;
             }
@@ -62,7 +62,7 @@ public class Device implements Serializable {
         if (DDNSPort.length() > 0) {
             try {
                 return URLUtils.setPort(ddnsURL, Integer.parseInt(DDNSPort));
-            } catch (URISyntaxException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return ddnsURL + ":" + DDNSPort;
             }
@@ -240,15 +240,28 @@ public class Device implements Serializable {
         }
 
         public String getDeviceUrlCombo() {
-            if (localPort.length() > 0)
-                return deviceUrl + ":" + localPort;
+
+            if (localPort.length() > 0) {
+                try {
+                    return URLUtils.setPort(deviceUrl, Integer.parseInt(localPort));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return deviceUrl + ":" + localPort;
+                }
+            }
             else
                 return deviceUrl;
         }
 
         public String getDDNSUrlCombo() {
-            if (DDNSPort.length() > 0)
-                return ddnsURL + ":" + DDNSPort;
+            if (DDNSPort.length() > 0) {
+                try {
+                    return URLUtils.setPort(ddnsURL, Integer.parseInt(DDNSPort));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ddnsURL + ":" + DDNSPort;
+                }
+            }
             else
                 return ddnsURL;
         }

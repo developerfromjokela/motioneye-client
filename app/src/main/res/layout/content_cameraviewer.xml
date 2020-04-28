@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
-  ~ Licenced with MIT
+  ~ Licensed with MIT
   -->
 
 <LinearLayout android:layout_width="match_parent"

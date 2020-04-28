@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
- * Licenced with MIT
+ * Licensed with MIT
  */
 
 package com.developerfromjokela.motioneyeclient.ui.setup.activities;
@@ -53,6 +53,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -417,18 +418,23 @@ public class SetupStartScreen extends AppCompatActivity {
 
                         final String[] portparts = url.split(":");
                         if (portparts.length == 2) {
+                            String portString = portparts[portparts.length - 1];
+                            try {
+                                int port = Integer.parseInt(portString);
+                                device.setDeviceUrl(portparts[0]);
+                                local_port.setText(String.valueOf(port));
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        local_hostname.setText(portparts[0]);
+                                        local_hostname.setSelection(local_hostname.getText().length());
 
-                            device.setDeviceUrl(portparts[0]);
-                            local_port.setText(portparts[portparts.length - 1]);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    local_hostname.setText(portparts[0]);
-                                    local_hostname.setSelection(local_hostname.getText().length());
+                                        Log.e("Setup", "Set Local Port " + portparts[1]);
+                                    }
+                                }, 1000);
+                            } catch (Exception ignored) {
+                            }
 
-                                    Log.e("Setup", "Set Local Port " + portparts[1]);
-                                }
-                            }, 1000);
                         }
 
 
@@ -439,18 +445,24 @@ public class SetupStartScreen extends AppCompatActivity {
                             if (portparts.length == 2) {
                                 if (portparts[1].equals("/"))
                                     return;
-                                device.setDeviceUrl(url.split("://")[0] + "://" + portparts[0]);
-                                local_port.setText(portparts[portparts.length - 1]);
-                                String finalUrl = url;
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        local_hostname.setText(finalUrl.split("://")[0] + "://" + portparts[0]);
-                                        local_hostname.setSelection(local_hostname.getText().length());
+                                String portString = portparts[portparts.length - 1];
+                                try {
+                                    int port = Integer.parseInt(portString);
+                                    device.setDeviceUrl(url.split("://")[0] + "://" + portparts[0]);
+                                    local_port.setText(String.valueOf(port));
+                                    String finalUrl = url;
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            local_hostname.setText(finalUrl.split("://")[0] + "://" + portparts[0]);
+                                            local_hostname.setSelection(local_hostname.getText().length());
 
-                                        Log.e("Setup", "Set Local Port " + portparts[1]);
-                                    }
-                                }, 1000);
+                                            Log.e("Setup", "Set Local Port2 " + portparts[1]);
+                                        }
+                                    }, 1000);
+                                } catch (Exception ignored) {
+                                }
+
                             }
                             continue_btn.setEnabled(URLUtil.isValidUrl(url));
 
@@ -487,18 +499,22 @@ public class SetupStartScreen extends AppCompatActivity {
 
                         final String[] portparts = url.split(":");
                         if (portparts.length == 2) {
+                            String portString = portparts[portparts.length - 1];
+                            try {
+                                int port = Integer.parseInt(portString);
+                                device.setDdnsURL(portparts[0]);
+                                ddns_port.setText(String.valueOf(port));
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ddns_hostname.setText(portparts[0]);
+                                        ddns_hostname.setSelection(ddns_hostname.getText().length());
 
-                            device.setDdnsURL(portparts[0]);
-                            ddns_port.setText(portparts[portparts.length - 1]);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ddns_hostname.setText(portparts[0]);
-                                    ddns_hostname.setSelection(ddns_hostname.getText().length());
-
-                                    Log.e("Setup", "Set Local Port 1" + portparts[1]);
-                                }
-                            }, 1000);
+                                        Log.e("Setup", "Set Local Port 1" + portparts[1]);
+                                    }
+                                }, 1000);
+                            } catch (Exception ignored) {
+                            }
                         }
 
 
@@ -509,18 +525,23 @@ public class SetupStartScreen extends AppCompatActivity {
                             if (portparts.length == 2) {
                                 if (portparts[1].equals("/"))
                                     return;
-                                device.setDdnsURL(url.split("://")[0] + "://" + portparts[0]);
-                                ddns_port.setText(portparts[portparts.length - 1]);
-                                String finalUrl = url;
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ddns_hostname.setText(finalUrl.split("://")[0] + "://" + portparts[0]);
-                                        ddns_hostname.setSelection(ddns_hostname.getText().length());
+                                String portString = portparts[portparts.length - 1];
+                                try {
+                                    int port = Integer.parseInt(portString);
+                                    device.setDdnsURL(url.split("://")[0] + "://" + portparts[0]);
+                                    ddns_port.setText(String.valueOf(port));
+                                    String finalUrl = url;
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ddns_hostname.setText(finalUrl.split("://")[0] + "://" + portparts[0]);
+                                            ddns_hostname.setSelection(ddns_hostname.getText().length());
 
-                                        Log.e("Setup", "Set Local Port 2" + portparts[1]);
-                                    }
-                                }, 1000);
+                                            Log.e("Setup", "Set Local Port 2" + portparts[1]);
+                                        }
+                                    }, 1000);
+                                } catch (Exception ignored) {
+                                }
                             }
                             continue_btn.setEnabled(URLUtil.isValidUrl(url));
 
@@ -821,7 +842,14 @@ public class SetupStartScreen extends AppCompatActivity {
             baseurl = removeSlash(serverurl);
 
         Log.e("Setup", baseurl);
-        ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+        ApiInterface apiInterface = null;
+        try {
+            apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            testInterface.TestFailed(e.getMessage(), 700);
+            return;
+        }
         Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword(), "login");
         Log.e("Setup", baseurl);
         call.enqueue(new Callback<ResponseBody>() {
@@ -830,8 +858,11 @@ public class SetupStartScreen extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Log.e("Setup", call.request().body().contentType().toString());
                     try {
-                        testInterface.TestSuccessful(response.body().string(), response.code());
-                    } catch (IOException e) {
+                        if (response.isSuccessful())
+                            testInterface.TestSuccessful(Jsoup.parse(response.body().string()).wholeText(), response.code());
+                        else
+                            testInterface.TestFailed(Jsoup.parse(response.errorBody().string()).wholeText(), response.code());
+                    } catch (Exception e) {
                         e.printStackTrace();
                         testInterface.TestFailed(e.getMessage(), 700);
 
@@ -859,9 +890,17 @@ public class SetupStartScreen extends AppCompatActivity {
             baseurl = removeSlash(serverurl);
 
         Log.e("Setup", baseurl);
-        ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+        ApiInterface apiInterface = null;
+        try {
+            apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            testInterface.TestFailed(e.getMessage(), 700);
+            return;
+        }
         Call<ResponseBody> call = apiInterface.getMotionDetails(baseurl + "/version");
         Log.e("Setup", baseurl);
+        ApiInterface finalApiInterface = apiInterface;
         call.enqueue(new Callback<ResponseBody>() {
 
             @Override
@@ -891,7 +930,7 @@ public class SetupStartScreen extends AppCompatActivity {
                         helper.setPasswordHash(device.getUser().getPassword());
                         url = helper.addAuthParams("GET", url, "");
 
-                        Call<Cameras> call2 = apiInterface.getCameras(url);
+                        Call<Cameras> call2 = finalApiInterface.getCameras(url);
                         call2.enqueue(new Callback<Cameras>() {
                             @Override
                             public void onResponse(Call<Cameras> call, Response<Cameras> response) {

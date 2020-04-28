@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
- * Licenced with MIT
+ * Licensed with MIT
  */
 
 package com.developerfromjokela.motioneyeclient.classes;

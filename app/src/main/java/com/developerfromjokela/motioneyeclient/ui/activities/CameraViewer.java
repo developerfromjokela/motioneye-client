@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
- * Licenced with MIT
+ * Licensed with MIT
  */
 
 package com.developerfromjokela.motioneyeclient.ui.activities;
@@ -63,6 +63,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -71,6 +73,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
+import static com.developerfromjokela.motioneyeclient.api.ServiceGenerator.motionEyeVerifier;
 
 public class CameraViewer extends AppCompatActivity {
 
@@ -86,6 +89,7 @@ public class CameraViewer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cameraviewer);
+        HttpsURLConnection.setDefaultHostnameVerifier(motionEyeVerifier);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -176,7 +180,6 @@ public class CameraViewer extends AppCompatActivity {
                         apiInterface.getMotionDetails(baseurl + "/version").enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
                                     try {
                                         final String stringResponse = response.body().string();
                                         Document html = Jsoup.parse(stringResponse);
@@ -223,8 +226,6 @@ public class CameraViewer extends AppCompatActivity {
                                         adapter.notifyDataSetChanged();
                                     }
 
-
-                                }
                             }
 
 
@@ -258,6 +259,10 @@ public class CameraViewer extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
+            for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
+                cameraImageFrame.setError(new CameraImageError("motioneye_error3", e.getMessage(), true));
+            }
+            adapter.notifyDataSetChanged();
         }
 
 
@@ -369,8 +374,15 @@ public class CameraViewer extends AppCompatActivity {
 
             try {
                 URL url = new URL(imageURL);
-                URLConnection connection = url.openConnection();
-                Map<String, List<String>> fps = connection.getHeaderFields();
+                Map<String, List<String>> fps;
+                if (imageURL.startsWith("https://")) {
+                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                    connection.setHostnameVerifier(motionEyeVerifier);
+                    fps = connection.getHeaderFields();
+                } else {
+                    URLConnection connection = url.openConnection();
+                    fps = connection.getHeaderFields();
+                }
                 InputStream in = url.openStream();
                 final Bitmap decoded = BitmapFactory.decodeStream(in);
                 in.close();

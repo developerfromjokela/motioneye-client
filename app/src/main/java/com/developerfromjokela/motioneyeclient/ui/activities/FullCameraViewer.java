@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
- * Licenced with MIT
+ * Licensed with MIT
  */
 
 package com.developerfromjokela.motioneyeclient.ui.activities;
@@ -60,12 +60,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static android.app.DownloadManager.Request.NETWORK_WIFI;
+import static com.developerfromjokela.motioneyeclient.api.ServiceGenerator.motionEyeVerifier;
 
 
 public class FullCameraViewer extends Activity implements ActionsAdapter.ActionsAdapterListener {
@@ -110,7 +113,7 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
         RecyclerView actions = findViewById(R.id.actions);
         LinearLayout joystick = findViewById(R.id.dircontrols);
 
-
+        HttpsURLConnection.setDefaultHostnameVerifier(motionEyeVerifier);
         status = findViewById(R.id.status);
 
         source = new Source(this);
@@ -350,8 +353,15 @@ public class FullCameraViewer extends Activity implements ActionsAdapter.Actions
 
             try {
                 URL url = new URL(imageURL);
-                URLConnection connection = url.openConnection();
-                Map<String, List<String>> fps = connection.getHeaderFields();
+                Map<String, List<String>> fps;
+                if (imageURL.startsWith("https://")) {
+                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                    connection.setHostnameVerifier(motionEyeVerifier);
+                    fps = connection.getHeaderFields();
+                } else {
+                    URLConnection connection = url.openConnection();
+                    fps = connection.getHeaderFields();
+                }
                 String humanReadableFPS = "0";
                 InputStream in = url.openStream();
                 final Bitmap decoded = BitmapFactory.decodeStream(in);

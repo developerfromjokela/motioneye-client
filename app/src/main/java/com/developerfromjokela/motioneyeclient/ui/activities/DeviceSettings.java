@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
- * Licenced with MIT
+ * Licensed with MIT
  */
 
 package com.developerfromjokela.motioneyeclient.ui.activities;
@@ -1147,13 +1147,19 @@ public class DeviceSettings extends AppCompatActivity {
             else
                 baseurl = removeSlash(serverurl);
 
-            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+            ApiInterface apiInterface = null;
+            try {
+                apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                testInterface.TestFailed(e.getMessage(), 700);
+                return;
+            }
             Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword(), "login");
             call.enqueue(new Callback<ResponseBody>() {
 
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
                         try {
                             testInterface.TestSuccessful(response.body().string(), response.code());
                         } catch (IOException e) {
@@ -1161,14 +1167,6 @@ public class DeviceSettings extends AppCompatActivity {
                             testInterface.TestFailed(e.getMessage(), 700);
 
                         }
-
-
-                    } else {
-                        testInterface.TestFailed(getString(R.string.wizard_not_motioneye), 404);
-
-                    }
-
-
                 }
 
                 @Override
@@ -1189,13 +1187,20 @@ public class DeviceSettings extends AppCompatActivity {
             else
                 baseurl = removeSlash(serverurl);
 
-            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+            ApiInterface apiInterface = null;
+            try {
+                apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                testInterface.TestFailed(e.getMessage(), 700);
+                return;
+            }
             Call<ResponseBody> call = apiInterface.getMotionDetails(baseurl + "/version");
+            ApiInterface finalApiInterface = apiInterface;
             call.enqueue(new Callback<ResponseBody>() {
 
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
                         try {
                             final String stringResponse = response.body().string();
                             Document html = Jsoup.parse(stringResponse);
@@ -1221,7 +1226,7 @@ public class DeviceSettings extends AppCompatActivity {
                             helper.setPasswordHash(device.getUser().getPassword());
                             url = helper.addAuthParams("GET", url, "");
 
-                            Call<Cameras> call2 = apiInterface.getCameras(url);
+                            Call<Cameras> call2 = finalApiInterface.getCameras(url);
                             call2.enqueue(new Callback<Cameras>() {
                                 @Override
                                 public void onResponse(Call<Cameras> call, Response<Cameras> response) {
@@ -1249,12 +1254,6 @@ public class DeviceSettings extends AppCompatActivity {
                             testInterface.TestFailed(e.getMessage(), 700);
 
                         }
-
-
-                    } else {
-                        testInterface.TestFailed(getString(R.string.wizard_not_motioneye), 404);
-
-                    }
 
 
                 }
@@ -1492,7 +1491,16 @@ public class DeviceSettings extends AppCompatActivity {
         private void getAdvancedDetails() {
 
 
-            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, getFullUrl());
+            ApiInterface apiInterface = null;
+            try {
+                apiInterface = ServiceGenerator.createService(ApiInterface.class, getFullUrl());
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                setConfigValues();
+                enableMEYESettings();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
             disableMEYESettings();
 
             apiInterface.getMotionDetails(getFullUrl() + "/version").enqueue(new Callback<ResponseBody>() {
@@ -1500,7 +1508,6 @@ public class DeviceSettings extends AppCompatActivity {
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     setConfigValues();
                     enableMEYESettings();
-                    if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
                         try {
                             final String stringResponse = response.body().string();
                             Document html = Jsoup.parse(stringResponse);
@@ -1551,7 +1558,6 @@ public class DeviceSettings extends AppCompatActivity {
                         }
 
 
-                    }
                 }
 
                 @Override
