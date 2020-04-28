@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
+ * Licenced with MIT
+ */
+
 package com.developerfromjokela.motioneyeclient.ui.fragments;
 
 
@@ -67,6 +72,7 @@ public class RecordingsFragment extends Fragment implements MediaDeviceAdapter.D
     private ProgressBar recordingsProgress;
 
     private RecordingsAdapter recordingsAdapter;
+
     public RecordingsFragment() {
         // Required empty public constructor
     }

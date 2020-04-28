@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
+ * Licenced with MIT
+ */
+
 package com.developerfromjokela.motioneyeclient.classes;
 
 import android.graphics.Bitmap;

@@ -1,17 +1,6 @@
 /*
- * Copyright (c) 2019. MotionEye Client by Developer From Jokela, All Rights Reserved.
- * Licenced with MIT:
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- *  and associated documentation files (the "Software"), to deal in the Software without restriction,including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- *    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *    SOFTWARE.
+ * Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
+ * Licenced with MIT
  */
 
 package com.developerfromjokela.motioneyeclient.ui.setup.activities;
@@ -57,6 +46,7 @@ import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.classes.WifiNetwork;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.ui.adapters.WifisAdapter;
+import com.developerfromjokela.motioneyeclient.ui.utils.URLUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -239,7 +229,7 @@ public class SetupStartScreen extends AppCompatActivity {
             ddns_hostname.setText(device.getDdnsURL());
             ddns_port.setText(device.getDDNSPort());
             local_port.setText(device.getPort());
-            if (validIP(device.getDeviceUrl())) {
+            if (URLUtils.validIP(device.getDeviceUrl())) {
 
 
                 continue_btn.setEnabled(true);
@@ -819,28 +809,6 @@ public class SetupStartScreen extends AppCompatActivity {
 
     }
 
-    public static boolean validIP(String ip) {
-        try {
-            if (ip == null || ip.isEmpty()) {
-                return false;
-            }
-
-            String[] parts = ip.split("\\.");
-            if (parts.length != 4) {
-                return false;
-            }
-
-            for (String s : parts) {
-                int i = Integer.parseInt(s);
-                if ((i < 0) || (i > 255)) {
-                    return false;
-                }
-            }
-            return !ip.endsWith(".");
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-    }
 
     private void validateServer(TestInterface testInterface, String serverurl) {
         Log.e("Setup", serverurl);
@@ -860,7 +828,6 @@ public class SetupStartScreen extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
                     Log.e("Setup", call.request().body().contentType().toString());
                     try {
                         testInterface.TestSuccessful(response.body().string(), response.code());
@@ -869,14 +836,6 @@ public class SetupStartScreen extends AppCompatActivity {
                         testInterface.TestFailed(e.getMessage(), 700);
 
                     }
-
-
-                } else {
-                    testInterface.TestFailed(getString(R.string.wizard_not_motioneye), 404);
-
-                }
-
-
             }
 
             @Override
@@ -907,7 +866,6 @@ public class SetupStartScreen extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.headers().get("Server").toLowerCase().contains("motioneye")) {
                     try {
                         final String stringResponse = response.body().string();
                         Document html = Jsoup.parse(stringResponse);
@@ -962,13 +920,6 @@ public class SetupStartScreen extends AppCompatActivity {
                         testInterface.TestFailed(e.getMessage(), 700);
 
                     }
-
-
-                } else {
-                    testInterface.TestFailed(getString(R.string.wizard_not_motioneye), 404);
-
-                }
-
 
             }
 
