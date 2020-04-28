@@ -56,7 +56,7 @@ import static com.developerfromjokela.motioneyeclient.other.Utils.removeSlash;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecordingsFragment extends Fragment implements MediaDeviceAdapter.DevicesAdapterListener, RecordingsAdapter.MediaAdapterListener {
+public class RecordingsFragment extends MotionEyeFragment implements MediaDeviceAdapter.DevicesAdapterListener, RecordingsAdapter.MediaAdapterListener {
 
     private BottomSheetBehavior sheetBehavior;
     private LinearLayout bottom_sheet;
@@ -202,10 +202,12 @@ public class RecordingsFragment extends Fragment implements MediaDeviceAdapter.D
                     hideProgress();
                     t.printStackTrace();
                     t.fillInStackTrace();
+                    snack(t.getMessage());
                 }
             });
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            snack(e.getMessage());
         }
     }
 
@@ -245,5 +247,6 @@ public class RecordingsFragment extends Fragment implements MediaDeviceAdapter.D
     public void onDeviceClicked(int position, RecordingDevice device) {
         selectedDevice = device;
         loadRecordings();
+        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 }

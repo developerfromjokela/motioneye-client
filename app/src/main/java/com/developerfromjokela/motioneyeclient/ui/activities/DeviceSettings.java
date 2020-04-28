@@ -66,7 +66,7 @@ import retrofit2.Response;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 
-public class DeviceSettings extends AppCompatActivity {
+public class DeviceSettings extends MotionEyeActivity {
 
 
 

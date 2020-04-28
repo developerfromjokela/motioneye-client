@@ -75,7 +75,7 @@ import retrofit2.Retrofit;
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static com.developerfromjokela.motioneyeclient.api.ServiceGenerator.motionEyeVerifier;
 
-public class CameraViewer extends AppCompatActivity {
+public class CameraViewer extends MotionEyeActivity {
 
     private HttpCamerasAdapter adapter;
     private Device device;

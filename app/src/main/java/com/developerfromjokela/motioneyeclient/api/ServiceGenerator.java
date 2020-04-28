@@ -5,10 +5,13 @@
 
 package com.developerfromjokela.motioneyeclient.api;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +64,10 @@ public class ServiceGenerator {
                 .hostnameVerifier(motionEyeVerifier)
                 .sslSocketFactory(sslContext.getSocketFactory())
                 .build();
+    }
+
+    public static Picasso getPicasso(Context context) throws NoSuchAlgorithmException {
+        return new Picasso.Builder(context).downloader(new OkHttp3Downloader(ServiceGenerator.createOkHttpClient(true))).build();
     }
 
 }

@@ -16,11 +16,13 @@ import android.widget.TextView;
 
 import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.api.MotionEyeHelper;
+import com.developerfromjokela.motioneyeclient.api.ServiceGenerator;
 import com.developerfromjokela.motioneyeclient.classes.Camera;
 import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.classes.Media;
 import com.developerfromjokela.motioneyeclient.classes.RecordingDevice;
 import com.developerfromjokela.motioneyeclient.other.Utils;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.security.NoSuchAlgorithmException;
@@ -104,7 +106,8 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
             url = helper.addAuthParams("GET", url, "");
             Log.e("RA", url);
 
-            Picasso.get().load(url).into(holder.preview);
+            Picasso picasso = ServiceGenerator.getPicasso(mContext);
+            picasso.load(url).into(holder.preview);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

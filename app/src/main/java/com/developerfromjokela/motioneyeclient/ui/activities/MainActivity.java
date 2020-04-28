@@ -17,11 +17,7 @@ import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.ui.fragments.DevicesFragment;
 import com.developerfromjokela.motioneyeclient.ui.fragments.RecordingsFragment;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import static com.developerfromjokela.motioneyeclient.api.ServiceGenerator.motionEyeVerifier;
-
-public class MainActivity extends AppCompatActivity implements DevicesFragment.startupExecListener {
+public class MainActivity extends MotionEyeActivity implements DevicesFragment.startupExecListener {
 
     private boolean startupExec = false;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -49,8 +45,6 @@ public class MainActivity extends AppCompatActivity implements DevicesFragment.s
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        HttpsURLConnection.setDefaultHostnameVerifier(motionEyeVerifier);
-
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         loadFragment(new DevicesFragment());

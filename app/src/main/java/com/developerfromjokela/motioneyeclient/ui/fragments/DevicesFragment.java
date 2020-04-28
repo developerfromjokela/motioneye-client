@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DevicesFragment extends android.support.v4.app.Fragment implements DevicesAdapter.DevicesAdapterListener {
+public class DevicesFragment extends MotionEyeFragment implements DevicesAdapter.DevicesAdapterListener {
 
     private DevicesView camerasRecyclerView;
     private DevicesAdapter adapter;

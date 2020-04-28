@@ -71,7 +71,7 @@ import static android.app.DownloadManager.Request.NETWORK_WIFI;
 import static com.developerfromjokela.motioneyeclient.api.ServiceGenerator.motionEyeVerifier;
 
 
-public class FullCameraViewer extends Activity implements ActionsAdapter.ActionsAdapterListener {
+public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapter.ActionsAdapterListener {
 
     private Source source;
     private boolean loaded = false;

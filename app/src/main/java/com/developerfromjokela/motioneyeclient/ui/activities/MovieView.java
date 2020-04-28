@@ -36,7 +36,7 @@ import java.util.Date;
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static com.developerfromjokela.motioneyeclient.other.Utils.removeSlash;
 
-public class MovieView extends AppCompatActivity {
+public class MovieView extends MotionEyeActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
