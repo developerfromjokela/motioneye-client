@@ -12,7 +12,7 @@ Android Motioneye Client App using Backend of MotionEye
      alt="Get it on Google Play"
      height="80">](https://play.google.com/store/apps/details?id=com.developerfromjokela.motioneyeclient)
 
-This is new (Alpha at the moment) Motioneye client only using its backend, and not webview like in other apps.
+This is new (RC (Release Candidate) at the moment) Motioneye client only using its backend, and not webview like in other apps.
 <img width="240" alt="portfolio_view" src="/images/img1.png">
 <img width="240" alt="portfolio_view" src="/images/img2.png">
 <img width="240" alt="portfolio_view" src="/images/img3.png">
