@@ -8,17 +8,17 @@ package com.developerfromjokela.motioneyeclient.classes;
 import android.graphics.Bitmap;
 
 public class CameraImage {
-    private String fps = "0";
+    private int fps = 0;
     private Bitmap bitmap = null;
     private boolean successful;
     private String errorString;
 
 
-    public String getFps() {
+    public int getFps() {
         return fps;
     }
 
-    public CameraImage(String fps, Bitmap bitmap, boolean successful) {
+    public CameraImage(int fps, Bitmap bitmap, boolean successful) {
         this.fps = fps;
         this.bitmap = bitmap;
         this.successful = successful;

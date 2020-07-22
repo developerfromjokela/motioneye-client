@@ -22,6 +22,7 @@ import com.developerfromjokela.motioneyeclient.api.ServiceGenerator;
 import com.developerfromjokela.motioneyeclient.classes.Media;
 import com.developerfromjokela.motioneyeclient.classes.RecordingDevice;
 import com.developerfromjokela.motioneyeclient.other.Utils;
+import com.developerfromjokela.motioneyeclient.ui.utils.DeviceURLUtils;
 import com.squareup.picasso.Picasso;
 
 import java.security.NoSuchAlgorithmException;
@@ -37,6 +38,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
     private List<Media> mediaList;
     private MediaAdapterListener listener;
     private RecordingDevice device;
+    private String cachedURL = "";
 
     public class DevicesViewHolder extends RecyclerView.ViewHolder {
 
@@ -75,29 +77,14 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
         holder.itemDate.setText(media.getShortMonent());
         holder.itemSize.setText(media.getSize());
         String baseurl;
-        String serverurl;
-        if (device.getDevice().getDdnsURL().length() > 5) {
-            if ((Utils.getNetworkType(mContext)) == NETWORK_MOBILE) {
-                serverurl = device.getDevice().getDDNSUrlCombo();
-            } else if (device.getDevice().getWlan() != null && device.getDevice().getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(mContext))) {
-                serverurl = device.getDevice().getDeviceUrlCombo();
-
-            } else {
-                serverurl = device.getDevice().getDDNSUrlCombo();
-
-            }
-        } else {
-            serverurl = device.getDevice().getDeviceUrlCombo();
-
-        }
-        Log.e("Setup", String.valueOf(serverurl.split("//").length));
-        if (!serverurl.contains("://"))
-            baseurl = removeSlash("http://" + serverurl);
+        Log.e("Setup", String.valueOf(cachedURL.split("//").length));
+        if (!cachedURL.contains("://"))
+            baseurl = removeSlash("http://" + cachedURL);
         else
-            baseurl = removeSlash(serverurl);
+            baseurl = removeSlash(cachedURL);
 
         try {
-            String url = baseurl + "/movie/"+device.getCamera().getId()+"/preview"+media.getPath()+"?_=" + new Date().getTime();
+            String url = baseurl + "/movie/" + device.getCamera().getId() + "/preview" + media.getPath() + "?_=" + new Date().getTime();
             MotionEyeHelper helper = new MotionEyeHelper();
             helper.setUsername(device.getDevice().getUser().getUsername());
             helper.setPasswordHash(device.getDevice().getUser().getPassword());
@@ -113,7 +100,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onMediaClicked(position, media);
+                listener.onMediaClicked(position, media, cachedURL);
             }
         });
 
@@ -122,7 +109,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
 
     public interface MediaAdapterListener {
 
-        void onMediaClicked(int position, Media media);
+        void onMediaClicked(int position, Media media, String cachedURL);
     }
 
     @Override
@@ -133,6 +120,18 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
 
     public void updateDetails(RecordingDevice device) {
         this.device = device;
+        DeviceURLUtils.getOptimalURL(mContext, device.getDevice(), new DeviceURLUtils.DeviceURLListener() {
+            @Override
+            public void onOptimalURL(String serverURL) {
+                cachedURL = serverURL;
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
     }
 
 }

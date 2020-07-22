@@ -78,6 +78,14 @@
                 android:visibility="visible"
                 tools:visibility="visible" />
 
+            <TextView
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/no_wifi_networks_saved"
+                android:textSize="14sp" />
+
             <Button
                 android:id="@+id/skip_wifi"
                 android:layout_width="wrap_content"

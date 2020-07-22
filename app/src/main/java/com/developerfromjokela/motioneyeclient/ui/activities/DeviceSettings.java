@@ -1350,7 +1350,7 @@ public class DeviceSettings extends MotionEyeActivity {
             if (device.getDdnsURL().length() > 5) {
                 if ((Utils.getNetworkType(getActivity())) == NETWORK_MOBILE) {
                     serverurl = device.getDDNSUrlCombo();
-                } else if (device.getWlan() != null && device.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(getActivity()))) {
+                } else if (device.getWlan() != null && device.getWlan().SSID.equals(Utils.getCurrentWifiNetworkId(getActivity()))) {
                     serverurl = device.getDeviceUrlCombo();
 
                 } else {

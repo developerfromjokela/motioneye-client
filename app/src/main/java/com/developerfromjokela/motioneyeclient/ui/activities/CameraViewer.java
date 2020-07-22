@@ -40,6 +40,8 @@ import com.developerfromjokela.motioneyeclient.classes.ErrorResponse;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.other.Utils;
 import com.developerfromjokela.motioneyeclient.ui.adapters.HttpCamerasAdapter;
+import com.developerfromjokela.motioneyeclient.ui.utils.ConnectionUtils;
+import com.developerfromjokela.motioneyeclient.ui.utils.DeviceURLUtils;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
@@ -75,6 +77,8 @@ public class CameraViewer extends MotionEyeActivity {
     private List<CameraImageFrame> cameraImageFrames = new ArrayList<>();
     private boolean sleeping = false;
     private GridLayoutManager manager;
+    private boolean isLocalAvailable = false;
+    private String cachedAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,118 +138,7 @@ public class CameraViewer extends MotionEyeActivity {
             }, cameraImageFrames);
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
-            String baseurl;
-            String serverurl;
-            if (device.getDdnsURL().length() > 5) {
-                if ((Utils.getNetworkType(CameraViewer.this)) == NETWORK_MOBILE) {
-                    serverurl = device.getDDNSUrlCombo();
-                } else if (device.getWlan() != null && device.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(CameraViewer.this))) {
-                    serverurl = device.getDeviceUrlCombo();
-
-                } else {
-                    serverurl = device.getDDNSUrlCombo();
-
-                }
-            } else {
-                serverurl = device.getDeviceUrlCombo();
-
-            }
-            Log.e("Setup", String.valueOf(serverurl.split("//").length));
-            if (!serverurl.contains("://"))
-                baseurl = removeSlash("http://" + serverurl);
-            else
-                baseurl = removeSlash(serverurl);
-            String url = baseurl + "/config/list?_=" + new Date().getTime();
-            MotionEyeHelper helper = new MotionEyeHelper();
-            helper.setUsername(device.getUser().getUsername());
-            helper.setPasswordHash(device.getUser().getPassword());
-            url = helper.addAuthParams("GET", url, "");
-            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
-
-            apiInterface.getCameras(url).enqueue(new Callback<Cameras>() {
-                @Override
-                public void onResponse(Call<Cameras> call, Response<Cameras> response) {
-                    Cameras cameras = response.body();
-                    if (response.isSuccessful()) {
-                        device.setCameras(cameras.getCameras());
-                        apiInterface.getMotionDetails(baseurl + "/version").enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    try {
-                                        final String stringResponse = response.body().string();
-                                        Document html = Jsoup.parse(stringResponse);
-                                        Elements elements = html.select("body");
-                                        String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
-                                        for (String string : lines) {
-                                            String[] paramParts = string.split("=");
-                                            String paramName = paramParts[0].trim();
-                                            String paramValue = paramParts[1];
-                                            if (paramName.contains("hostname"))
-                                                device.setDeviceName(paramValue);
-                                            else if (paramName.contains("motion_version"))
-                                                device.setMotionVersion(paramValue);
-                                            else if (paramName.contains("os_version"))
-                                                device.setOsVersion(paramValue);
-                                            else if (paramName.equals("version"))
-                                                device.setMotioneyeVersion(paramValue);
-
-                                        }
-
-                                        cameraImageFrames.clear();
-
-                                        for (Camera camera : device.getCameras()) {
-                                            CameraImageFrame frame = new CameraImageFrame(camera, device, null, false);
-                                            cameraImageFrames.add(frame);
-                                            getRunnableForCamera(cameraImageFrames.size() - 1).run();
-                                        }
-
-                                        adapter.notifyDataSetChanged();
-                                        setTitle(device.getDeviceName());
-
-                                        source.editEntry(device);
-
-
-                                    } catch (IOException e) {
-                                        for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
-                                            cameraImageFrame.setError(new CameraImageError("motioneye_error5", e.getMessage(), true));
-                                        }
-                                        adapter.notifyDataSetChanged();
-                                    } catch (Exception e) {
-                                        for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
-                                            cameraImageFrame.setError(new CameraImageError("motioneye_error6", e.getMessage(), true));
-                                        }
-                                        adapter.notifyDataSetChanged();
-                                    }
-
-                            }
-
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
-                                    cameraImageFrame.setError(new CameraImageError("motioneye_error2", t.getMessage(), true));
-                                }
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                    } else {
-
-                        ErrorResponse message = new Gson().fromJson(response.errorBody().charStream(), ErrorResponse.class);
-                        for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
-                            cameraImageFrame.setError(new CameraImageError("motioneye_error4", message.getError(), true));
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Cameras> call, Throwable t) {
-                    for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
-                        cameraImageFrame.setError(new CameraImageError("motioneye_error3", t.getMessage(), true));
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            });
+            load();
 
 
         } catch (Exception e) {
@@ -255,6 +148,129 @@ public class CameraViewer extends MotionEyeActivity {
             }
             adapter.notifyDataSetChanged();
         }
+
+
+    }
+
+    private void load() {
+        DeviceURLUtils.getOptimalURL(this, device, new DeviceURLUtils.DeviceURLListener() {
+            @Override
+            public void onOptimalURL(String serverURL) {
+                cachedAddress = serverURL;
+                try {
+                    String baseurl;
+                    Log.e("Setup", String.valueOf(serverURL.split("//").length));
+                    if (!serverURL.contains("://"))
+                        baseurl = removeSlash("http://" + serverURL);
+                    else
+                        baseurl = removeSlash(serverURL);
+                    String url = baseurl + "/config/list?_=" + new Date().getTime();
+                    MotionEyeHelper helper = new MotionEyeHelper();
+                    helper.setUsername(device.getUser().getUsername());
+                    helper.setPasswordHash(device.getUser().getPassword());
+                    url = helper.addAuthParams("GET", url, "");
+                    ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+
+                    apiInterface.getCameras(url).enqueue(new Callback<Cameras>() {
+                        @Override
+                        public void onResponse(Call<Cameras> call, Response<Cameras> response) {
+                            Cameras cameras = response.body();
+                            if (response.isSuccessful()) {
+                                device.setCameras(cameras.getCameras());
+                                apiInterface.getMotionDetails(baseurl + "/version").enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        try {
+                                            final String stringResponse = response.body().string();
+                                            Document html = Jsoup.parse(stringResponse);
+                                            Elements elements = html.select("body");
+                                            String[] lines = elements.html().replace("\"", "").replace("\n", "").split("<br>");
+                                            for (String string : lines) {
+                                                String[] paramParts = string.split("=");
+                                                String paramName = paramParts[0].trim();
+                                                String paramValue = paramParts[1];
+                                                if (paramName.contains("hostname"))
+                                                    device.setDeviceName(paramValue);
+                                                else if (paramName.contains("motion_version"))
+                                                    device.setMotionVersion(paramValue);
+                                                else if (paramName.contains("os_version"))
+                                                    device.setOsVersion(paramValue);
+                                                else if (paramName.equals("version"))
+                                                    device.setMotioneyeVersion(paramValue);
+
+                                            }
+
+                                            cameraImageFrames.clear();
+
+                                            for (Camera camera : device.getCameras()) {
+                                                CameraImageFrame frame = new CameraImageFrame(camera, device, null, false);
+                                                cameraImageFrames.add(frame);
+                                                getRunnableForCamera(cameraImageFrames.size() - 1).run();
+                                            }
+
+                                            adapter.notifyDataSetChanged();
+                                            setTitle(device.getDeviceName());
+
+                                            source.editEntry(device);
+
+
+                                        } catch (IOException e) {
+                                            for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
+                                                cameraImageFrame.setError(new CameraImageError("motioneye_error5", e.getMessage(), true));
+                                            }
+                                            adapter.notifyDataSetChanged();
+                                        } catch (Exception e) {
+                                            for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
+                                                cameraImageFrame.setError(new CameraImageError("motioneye_error6", e.getMessage(), true));
+                                            }
+                                            adapter.notifyDataSetChanged();
+                                        }
+
+                                    }
+
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
+                                            cameraImageFrame.setError(new CameraImageError("motioneye_error2", t.getMessage(), true));
+                                        }
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                            } else {
+
+                                ErrorResponse message = new Gson().fromJson(response.errorBody().charStream(), ErrorResponse.class);
+                                for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
+                                    cameraImageFrame.setError(new CameraImageError("motioneye_error4", message.getError(), true));
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Cameras> call, Throwable t) {
+                            for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
+                                cameraImageFrame.setError(new CameraImageError("motioneye_error3", t.getMessage(), true));
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                } catch (Exception e) {
+                    for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
+                        cameraImageFrame.setError(new CameraImageError("motioneye_error3", e.getMessage(), true));
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                for (CameraImageFrame cameraImageFrame : cameraImageFrames) {
+                    cameraImageFrame.setError(new CameraImageError("motioneye_error3", e.getMessage(), true));
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
 
 
     }
@@ -305,21 +321,7 @@ public class CameraViewer extends MotionEyeActivity {
 
                 CameraImageFrame frame = cameraImageFrames.get(position);
                 String cameraId = frame.getCamera().getId();
-                String serverurl;
-                if (device.getDdnsURL().length() > 5) {
-                    if ((Utils.getNetworkType(CameraViewer.this)) == NETWORK_MOBILE) {
-                        serverurl = device.getDDNSUrlCombo();
-                    } else if (device.getWlan() != null && device.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(CameraViewer.this))) {
-                        serverurl = device.getDeviceUrlCombo();
-
-                    } else {
-                        serverurl = device.getDDNSUrlCombo();
-
-                    }
-                } else {
-                    serverurl = device.getDeviceUrlCombo();
-
-                }
+                String serverurl = cachedAddress;
                 String baseurl;
                 if (!serverurl.contains("://"))
                     baseurl = removeSlash("http://" + serverurl);
@@ -381,7 +383,7 @@ public class CameraViewer extends MotionEyeActivity {
                     for (String string : key.getValue()) {
                         if (string.contains("capture_fps")) {
                             double d = Double.parseDouble(string.split("capture_fps_" + camera.getCamera().getId() + "=")[1].split(";")[0].trim());
-                            String humanReadableFPS = String.valueOf(Math.round((int) d));
+                            int humanReadableFPS = Math.round((int) d);
                             return new CameraImage(humanReadableFPS, decoded, true);
 
                         }
@@ -410,7 +412,11 @@ public class CameraViewer extends MotionEyeActivity {
 
                     long streamingFps = time.size() * 1000 / (time.get(time.size() - 1) - time.get(0));
                     int fpsDeliv = Math.round(streamingFps);
-                    camera.setFrameRateText((fpsDeliv + "/" + result.getFps() + " fps"));
+                    if (fpsDeliv > result.getFps() || fpsDeliv == result.getFps()) {
+                        fpsDeliv = result.getFps();
+                        camera.setFrameRateText((fpsDeliv + " fps"));
+                    } else
+                        camera.setFrameRateText((fpsDeliv + "/" + result.getFps() + " fps"));
 
                 }
 

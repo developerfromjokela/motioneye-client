@@ -48,6 +48,7 @@ import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.other.Utils;
 import com.developerfromjokela.motioneyeclient.ui.adapters.ActionsAdapter;
+import com.developerfromjokela.motioneyeclient.ui.utils.DeviceURLUtils;
 import com.google.gson.Gson;
 import com.ortiz.touchview.TouchImageView;
 
@@ -134,7 +135,6 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
-                String serverurl;
                 String cameraId = camera.getId();
                 List<String> customActions = new ArrayList<>(camera.getActions());
                 Iterator cIterator = customActions.iterator();
@@ -159,27 +159,57 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
                 actions.setLayoutManager(layoutManager);
                 adapter.notifyDataSetChanged();
                 initControls(camera, joystick, this);
-                if (device.getDdnsURL().length() > 5) {
-                    if ((Utils.getNetworkType(FullCameraViewer.this)) == NETWORK_MOBILE) {
-                        serverurl = device.getDDNSUrlCombo();
-                    } else if (device.getWlan() != null && device.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(FullCameraViewer.this))) {
-                        serverurl = device.getDeviceUrlCombo();
+                DeviceURLUtils.getOptimalURL(this, device, new DeviceURLUtils.DeviceURLListener() {
+                    @Override
+                    public void onOptimalURL(String serverURL) {
 
-                    } else {
-                        serverurl = device.getDDNSUrlCombo();
+                        if (!serverURL.contains("://"))
+                            baseurl = Utils.removeSlash("http://" + serverURL);
+                        else
+                            baseurl = Utils.removeSlash(serverURL);
 
+                        try {
+                            time = new ArrayList<>();
+
+                            timerRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    String cameraId = camera.getId();
+
+
+                                    String baseurl;
+                                    if (!serverURL.contains("://"))
+                                        baseurl = Utils.removeSlash("http://" + serverURL);
+                                    else
+                                        baseurl = Utils.removeSlash(serverURL);
+
+                                    String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
+                                    url = helper.addAuthParams("GET", url, "");
+                                    String finalUrl = url;
+                                    new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
+
+
+                                }
+                            };
+                            String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
+                            url = helper.addAuthParams("GET", url, "");
+                            finalUrl = url;
+                            new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showError(e.getMessage());
+                        }
                     }
-                } else {
-                    serverurl = device.getDeviceUrlCombo();
 
-                }
-                if (!serverurl.contains("://"))
-                    baseurl = Utils.removeSlash("http://" + serverurl);
-                else
-                    baseurl = Utils.removeSlash(serverurl);
+                    @Override
+                    public void onError(Exception e) {
+                        showError(e.getMessage());
+                    }
+                });
 
 
-                int framerate = Integer.valueOf(camera.getFramerate());
+                int framerate = Integer.parseInt(camera.getFramerate());
                 cameraName.setText(camera.getName());
 
                 cameraImage.setOnClickListener(new View.OnClickListener() {
@@ -205,51 +235,10 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
                         }
                     }
                 });
-                time = new ArrayList<>();
-
-                Device finalDevice = device;
-                timerRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        String serverurl;
-                        String cameraId = camera.getId();
-
-                        if (finalDevice.getDdnsURL().length() > 5) {
-                            if ((Utils.getNetworkType(FullCameraViewer.this)) == NETWORK_MOBILE) {
-                                serverurl = finalDevice.getDDNSUrlCombo();
-                            } else if (finalDevice.getWlan() != null && finalDevice.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(FullCameraViewer.this))) {
-                                serverurl = finalDevice.getDeviceUrlCombo();
-
-                            } else {
-                                serverurl = finalDevice.getDDNSUrlCombo();
-
-                            }
-                        } else {
-                            serverurl = finalDevice.getDeviceUrlCombo();
-
-                        }
-                        String baseurl;
-                        if (!serverurl.contains("://"))
-                            baseurl = Utils.removeSlash("http://" + serverurl);
-                        else
-                            baseurl = Utils.removeSlash(serverurl);
-
-                        String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
-                        url = helper.addAuthParams("GET", url, "");
-                        String finalUrl = url;
-                        new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
-
-
-                    }
-                };
-                String url = baseurl + "/picture/" + cameraId + "/current?_=" + new Date().getTime();
-                url = helper.addAuthParams("GET", url, "");
-                finalUrl = url;
-                new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
-
 
             } catch (Exception e) {
                 e.printStackTrace();
+                showError(e.getMessage());
             }
 
         } else {
@@ -260,6 +249,35 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
+    }
+
+    private void showError(String error) {
+        Log.e("FCV", "Error shown");
+        loaded = false;
+        loadingCircle.setVisibility(View.GONE);
+        cameraImage.setVisibility(View.GONE);
+        status.setVisibility(View.VISIBLE);
+        status.setText(error);
+        ViewParent parent = status.getParent();
+        LinearLayout r;
+        if (parent != null)
+            if (parent instanceof ViewGroup) {
+                ViewParent grandparent = ((ViewGroup) parent).getParent();
+                if (grandparent != null) {
+                    if (parent instanceof LinearLayout) {
+                        r = (LinearLayout) grandparent;
+                        Button button = r.findViewById(R.id.tryagain);
+                        button.setVisibility(View.VISIBLE);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                timerRunnable.run();
+                            }
+                        });
+                    }
+
+                }
+            }
     }
 
     @Override
@@ -291,6 +309,7 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
                 }
             });
         } catch (NoSuchAlgorithmException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -363,7 +382,7 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
                     URLConnection connection = url.openConnection();
                     fps = connection.getHeaderFields();
                 }
-                String humanReadableFPS = "0";
+                int humanReadableFPS;
                 InputStream in = url.openStream();
                 final Bitmap decoded = BitmapFactory.decodeStream(in);
                 in.close();
@@ -374,7 +393,7 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
 
                             double d = Double.parseDouble(string.split("capture_fps_" + camera.getId() + "=")[1].split(";")[0].trim());
                             ii = (int) d;
-                            humanReadableFPS = String.valueOf(Math.round(ii));
+                            humanReadableFPS = Math.round(ii);
                             return new CameraImage(humanReadableFPS, decoded, true);
 
                         }
@@ -416,9 +435,13 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
 
                 if (time.size() == Utils.fpsLen) {
 
-                    long streamingFps = time.size() * 1000 / (time.get(time.size()-1) - time.get(0));
+                    long streamingFps = time.size() * 1000 / (time.get(time.size() - 1) - time.get(0));
                     int fpsDeliv = Math.round(streamingFps);
-                    fps.setText(fpsDeliv + "/"+result.getFps()+" fps");
+                    if (fpsDeliv > result.getFps() || fpsDeliv == result.getFps()) {
+                        fpsDeliv = result.getFps();
+                        fps.setText((fpsDeliv + " fps"));
+                    } else
+                        fps.setText((fpsDeliv + "/" + result.getFps() + " fps"));
 
                 }
 

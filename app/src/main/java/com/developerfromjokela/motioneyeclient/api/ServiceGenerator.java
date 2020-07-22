@@ -8,6 +8,7 @@ package com.developerfromjokela.motioneyeclient.api;
 import android.content.Context;
 import android.util.Log;
 
+import com.developerfromjokela.motioneyeclient.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Cache;
@@ -56,6 +57,8 @@ public class ServiceGenerator {
     private static OkHttpClient createOkHttpClientNoCache() throws NoSuchAlgorithmException {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        if (!BuildConfig.DEBUG)
+            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
         SSLContext sslContext = SSLContext.getDefault();
         return new OkHttpClient.Builder()
                 .readTimeout(60, TimeUnit.SECONDS)
@@ -71,6 +74,8 @@ public class ServiceGenerator {
     private static OkHttpClient createOkHttpClient(Context context, boolean enableCache) throws NoSuchAlgorithmException {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        if (!BuildConfig.DEBUG)
+            logging.setLevel(HttpLoggingInterceptor.Level.NONE);
         SSLContext sslContext = SSLContext.getDefault();
         File httpCacheDirectory = new File(context.getCacheDir(), "http-cache");
         int cacheSize = 20 * 1024 * 1024; // 10 MiB

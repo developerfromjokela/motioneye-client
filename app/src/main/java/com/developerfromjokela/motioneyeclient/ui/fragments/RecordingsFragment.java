@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.developerfromjokela.motioneyeclient.ui.adapters.CompactRecordingsAdapter;
+import com.developerfromjokela.motioneyeclient.ui.utils.DeviceURLUtils;
 import com.developerfromjokela.motioneyeclient.ui.utils.MotionEyeSettings;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -157,94 +158,78 @@ public class RecordingsFragment extends MotionEyeFragment implements MediaDevice
 
     private void loadRecordings() {
         displayProgress();
-        try {
-            String baseurl;
-            String serverurl;
-            if (selectedDevice.getDevice().getDdnsURL().length() > 5) {
-                if ((Utils.getNetworkType(getContext())) == NETWORK_MOBILE) {
-                    serverurl = selectedDevice.getDevice().getDDNSUrlCombo();
-                } else if (selectedDevice.getDevice().getWlan() != null && selectedDevice.getDevice().getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(getContext()))) {
-                    serverurl = selectedDevice.getDevice().getDeviceUrlCombo();
+        DeviceURLUtils.getOptimalURL(getContext(), selectedDevice.getDevice(), new DeviceURLUtils.DeviceURLListener() {
+            @Override
+            public void onOptimalURL(String serverURL) {
+                try {
+                    String baseurl;
+                    Log.e("Setup", String.valueOf(serverURL.split("//").length));
+                    if (!serverURL.contains("://"))
+                        baseurl = removeSlash("http://" + serverURL);
+                    else
+                        baseurl = removeSlash(serverURL);
+                    String url = baseurl + "/movie/" + selectedDevice.getCamera().getId() + "/list?_=" + new Date().getTime();
+                    MotionEyeHelper helper = new MotionEyeHelper();
+                    helper.setUsername(selectedDevice.getDevice().getUser().getUsername());
 
-                } else {
-                    serverurl = selectedDevice.getDevice().getDDNSUrlCombo();
+                    helper.setPasswordHash(selectedDevice.getDevice().getUser().getPassword());
 
-                }
-            } else {
-                serverurl = selectedDevice.getDevice().getDeviceUrlCombo();
+                    url = helper.addAuthParams("GET", url, "");
+                    ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
 
-            }
-            Log.e("Setup", String.valueOf(serverurl.split("//").length));
-            if (!serverurl.contains("://"))
-                baseurl = removeSlash("http://" + serverurl);
-            else
-                baseurl = removeSlash(serverurl);
-            String url = baseurl + "/movie/"+selectedDevice.getCamera().getId()+"/list?_=" + new Date().getTime();
-            MotionEyeHelper helper = new MotionEyeHelper();
-            helper.setUsername(selectedDevice.getDevice().getUser().getUsername());
-
-            helper.setPasswordHash(selectedDevice.getDevice().getUser().getPassword());
-
-            url = helper.addAuthParams("GET", url, "");
-            ApiInterface apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
-
-            apiInterface.getMedia(url).enqueue(new Callback<MediaList>() {
-                @Override
-                public void onResponse(Call<MediaList> call, Response<MediaList> response) {
-                    hideProgress();
-                    MediaList mediaListObj = response.body();
-                    mediaList.clear();
-                    recordingsAdapter.notifyDataSetChanged();
-                    recordingsAdapter.updateDetails(selectedDevice);
-                    Collections.sort(mediaListObj.getMedia(), new Comparator<Media>() {
+                    apiInterface.getMedia(url).enqueue(new Callback<MediaList>() {
                         @Override
-                        public int compare(Media o1, Media o2) {
-                            return (int)o2.getTimestamp()-(int)o1.getTimestamp();
+                        public void onResponse(Call<MediaList> call, Response<MediaList> response) {
+                            hideProgress();
+                            MediaList mediaListObj = response.body();
+                            recordingsAdapter.updateDetails(selectedDevice);
+                            mediaList.clear();
+                            recordingsAdapter.notifyDataSetChanged();
+                            Collections.sort(mediaListObj.getMedia(), new Comparator<Media>() {
+                                @Override
+                                public int compare(Media o1, Media o2) {
+                                    return (int) o2.getTimestamp() - (int) o1.getTimestamp();
+                                }
+                            });
+                            for (Media media : mediaListObj.getMedia()) {
+                                mediaList.add(media);
+                                recordingsAdapter.notifyItemInserted(mediaList.size() - 1);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<MediaList> call, Throwable t) {
+                            hideProgress();
+                            t.printStackTrace();
+                            t.fillInStackTrace();
+                            snack(t.getMessage());
                         }
                     });
-                    for (Media media : mediaListObj.getMedia()) {
-                        mediaList.add(media);
-                        recordingsAdapter.notifyItemInserted(mediaList.size()-1);
-                    }
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                    snack(e.getMessage());
                 }
+            }
 
-                @Override
-                public void onFailure(Call<MediaList> call, Throwable t) {
-                    hideProgress();
-                    t.printStackTrace();
-                    t.fillInStackTrace();
-                    snack(t.getMessage());
-                }
-            });
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            snack(e.getMessage());
-        }
+            @Override
+            public void onError(Exception e) {
+                hideProgress();
+                e.printStackTrace();
+                e.fillInStackTrace();
+                snack(e.getMessage());
+            }
+        });
+
     }
 
     @Override
-    public void onMediaClicked(int position, Media media) {
+    public void onMediaClicked(int position, Media media, String cachedURL) {
         String baseurl;
-        String serverurl;
-        if (selectedDevice.getDevice().getDdnsURL().length() > 5) {
-            if ((Utils.getNetworkType(getContext())) == NETWORK_MOBILE) {
-                serverurl = selectedDevice.getDevice().getDDNSUrlCombo();
-            } else if (selectedDevice.getDevice().getWlan() != null && selectedDevice.getDevice().getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(getContext()))) {
-                serverurl = selectedDevice.getDevice().getDeviceUrlCombo();
-
-            } else {
-                serverurl = selectedDevice.getDevice().getDDNSUrlCombo();
-
-            }
-        } else {
-            serverurl = selectedDevice.getDevice().getDeviceUrlCombo();
-
-        }
-        Log.e("Setup", String.valueOf(serverurl.split("//").length));
-        if (!serverurl.contains("://"))
-            baseurl = removeSlash("http://" + serverurl);
+        Log.e("Setup", String.valueOf(cachedURL.split("//").length));
+        if (!cachedURL.contains("://"))
+            baseurl = removeSlash("http://" + cachedURL);
         else
-            baseurl = removeSlash(serverurl);
+            baseurl = removeSlash(cachedURL);
         Intent playbackIntent = new Intent(getContext(), MovieView.class);
         playbackIntent.putExtra("baseurl", baseurl);
         playbackIntent.putExtra("user", selectedDevice.getDevice().getUser());

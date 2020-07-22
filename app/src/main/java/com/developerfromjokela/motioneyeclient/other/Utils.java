@@ -109,7 +109,7 @@ public class Utils {
             final WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
             if (connectionInfo != null) {
-                networkId = connectionInfo.getBSSID();
+                networkId = connectionInfo.getSSID();
             }
         }
         return networkId;

@@ -93,5 +93,7 @@
     <string name="loading_video">Ladataan videota…</string>
     <string name="task_failed">Tehtävä epäonnistui virhekoodilla %1$s</string>
     <string name="skip">Ohita</string>
-
+    <string name="disable_device_selection">Ota laitevalinta pois käytöstä</string>
+    <string name="disable_device_selection_msg">Kytkemällä asetuksen päälle, tallennelistassa kaikki laitteet ovat yhdessä listassa</string>
+    <string name="ui_mode">Käyttöliittymän tyyppi</string>
 </resources>
