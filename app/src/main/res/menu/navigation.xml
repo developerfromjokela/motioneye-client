@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_recordings"
         android:title="@string/title_recordings" />
 
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/settings" />
+
 </menu>

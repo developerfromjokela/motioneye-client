@@ -4,7 +4,7 @@
   -->
 
 
-<android.support.v7.widget.CardView android:id="@+id/itemCard"
+<androidx.cardview.widget.CardView android:id="@+id/itemCard"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     app:cardElevation="6dp"
@@ -67,4 +67,4 @@
             android:textSize="18sp" />
 
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

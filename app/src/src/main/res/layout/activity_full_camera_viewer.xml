@@ -95,7 +95,7 @@
                 android:text="0 fps"
                 android:textSize="18sp" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/actions"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
@@ -144,7 +144,7 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <android.support.v7.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/up"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -160,7 +160,7 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="horizontal">
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/left"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -171,7 +171,7 @@
                 app:srcCompat="@drawable/ic_back" />
 
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/right"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -183,7 +183,7 @@
 
         </LinearLayout>
 
-        <android.support.v7.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/down"
             android:layout_width="50dp"
             android:layout_height="50dp"

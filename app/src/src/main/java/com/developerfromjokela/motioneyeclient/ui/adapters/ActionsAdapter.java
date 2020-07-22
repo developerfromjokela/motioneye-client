@@ -17,7 +17,7 @@
 package com.developerfromjokela.motioneyeclient.ui.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;

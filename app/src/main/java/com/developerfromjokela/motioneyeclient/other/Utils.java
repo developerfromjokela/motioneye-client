@@ -12,10 +12,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.TypedValue;
 import android.view.View;
-import android.webkit.URLUtil;
 
 import org.jsoup.helper.StringUtil;
 
@@ -100,15 +101,15 @@ public class Utils {
         return bSSID;
     }
 
-    public static int getCurrentWifiNetworkId(Context context) {
-        int networkId = -1;
+    public static String getCurrentWifiNetworkId(Context context) {
+        String networkId = "";
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (networkInfo.isConnected()) {
             final WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
             if (connectionInfo != null) {
-                networkId = connectionInfo.getNetworkId();
+                networkId = connectionInfo.getBSSID();
             }
         }
         return networkId;

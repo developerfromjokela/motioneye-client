@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="recording_modes">
+        <item>Laajennettu</item>
+        <item>Kompakti</item>
+    </string-array>
+</resources>

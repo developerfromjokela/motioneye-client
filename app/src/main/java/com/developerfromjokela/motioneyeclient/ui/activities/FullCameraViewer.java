@@ -7,7 +7,6 @@ package com.developerfromjokela.motioneyeclient.ui.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,8 +16,10 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,7 +162,7 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
                 if (device.getDdnsURL().length() > 5) {
                     if ((Utils.getNetworkType(FullCameraViewer.this)) == NETWORK_MOBILE) {
                         serverurl = device.getDDNSUrlCombo();
-                    } else if (device.getWlan().networkId == Utils.getCurrentWifiNetworkId(FullCameraViewer.this)) {
+                    } else if (device.getWlan() != null && device.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(FullCameraViewer.this))) {
                         serverurl = device.getDeviceUrlCombo();
 
                     } else {
@@ -216,7 +217,7 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
                         if (finalDevice.getDdnsURL().length() > 5) {
                             if ((Utils.getNetworkType(FullCameraViewer.this)) == NETWORK_MOBILE) {
                                 serverurl = finalDevice.getDDNSUrlCombo();
-                            } else if (finalDevice.getWlan().networkId == Utils.getCurrentWifiNetworkId(FullCameraViewer.this)) {
+                            } else if (finalDevice.getWlan() != null && finalDevice.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(FullCameraViewer.this))) {
                                 serverurl = finalDevice.getDeviceUrlCombo();
 
                             } else {

@@ -6,7 +6,9 @@
 package com.developerfromjokela.motioneyeclient.ui.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +19,9 @@ import android.widget.TextView;
 import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.api.MotionEyeHelper;
 import com.developerfromjokela.motioneyeclient.api.ServiceGenerator;
-import com.developerfromjokela.motioneyeclient.classes.Camera;
-import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.classes.Media;
 import com.developerfromjokela.motioneyeclient.classes.RecordingDevice;
 import com.developerfromjokela.motioneyeclient.other.Utils;
-import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.security.NoSuchAlgorithmException;
@@ -50,7 +49,6 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
             itemSize = itemView.findViewById(R.id.itemSize);
             itemDate = itemView.findViewById(R.id.itemDate);
             preview = itemView.findViewById(R.id.preview);
-
         }
 
     }
@@ -71,9 +69,9 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
     }
 
     @Override
-    public void onBindViewHolder(final RecordingsAdapter.DevicesViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecordingsAdapter.DevicesViewHolder holder, int position) {
         final Media media = mediaList.get(position);
-        holder.mediaName.setText(media.getPath().split("/")[media.getPath().split("/").length-1]);
+        holder.mediaName.setText(media.getPath().split("/")[media.getPath().split("/").length - 1]);
         holder.itemDate.setText(media.getShortMonent());
         holder.itemSize.setText(media.getSize());
         String baseurl;
@@ -81,7 +79,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
         if (device.getDevice().getDdnsURL().length() > 5) {
             if ((Utils.getNetworkType(mContext)) == NETWORK_MOBILE) {
                 serverurl = device.getDevice().getDDNSUrlCombo();
-            } else if (device.getDevice().getWlan().networkId == Utils.getCurrentWifiNetworkId(mContext)) {
+            } else if (device.getDevice().getWlan() != null && device.getDevice().getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(mContext))) {
                 serverurl = device.getDevice().getDeviceUrlCombo();
 
             } else {

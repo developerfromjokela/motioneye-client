@@ -4,9 +4,9 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#EFEFEF</color>
-    <color name="colorPrimaryDark">#0D0E0E</color>
-    <color name="colorAccent">#2DABFF</color>
+    <color name="colorPrimary">#3498db</color>
+    <color name="colorPrimaryDark">#176FAA</color>
+    <color name="colorAccent">#007DD1</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="device_bottomsheet">#686262</color>

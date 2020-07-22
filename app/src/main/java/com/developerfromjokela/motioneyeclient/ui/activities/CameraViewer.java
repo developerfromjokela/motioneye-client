@@ -14,23 +14,17 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
-import android.util.Range;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.api.ApiInterface;
@@ -54,7 +48,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
@@ -68,9 +61,7 @@ import javax.net.ssl.HttpsURLConnection;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Converter;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static com.developerfromjokela.motioneyeclient.api.ServiceGenerator.motionEyeVerifier;
@@ -148,7 +139,7 @@ public class CameraViewer extends MotionEyeActivity {
             if (device.getDdnsURL().length() > 5) {
                 if ((Utils.getNetworkType(CameraViewer.this)) == NETWORK_MOBILE) {
                     serverurl = device.getDDNSUrlCombo();
-                } else if (device.getWlan().networkId == Utils.getCurrentWifiNetworkId(CameraViewer.this)) {
+                } else if (device.getWlan() != null && device.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(CameraViewer.this))) {
                     serverurl = device.getDeviceUrlCombo();
 
                 } else {
@@ -318,7 +309,7 @@ public class CameraViewer extends MotionEyeActivity {
                 if (device.getDdnsURL().length() > 5) {
                     if ((Utils.getNetworkType(CameraViewer.this)) == NETWORK_MOBILE) {
                         serverurl = device.getDDNSUrlCombo();
-                    } else if (device.getWlan().networkId == Utils.getCurrentWifiNetworkId(CameraViewer.this)) {
+                    } else if (device.getWlan() != null && device.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(CameraViewer.this))) {
                         serverurl = device.getDeviceUrlCombo();
 
                     } else {

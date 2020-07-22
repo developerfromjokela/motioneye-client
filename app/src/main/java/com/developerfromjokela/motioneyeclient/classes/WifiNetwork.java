@@ -17,6 +17,7 @@ public class WifiNetwork {
         this.selected = selected;
     }
 
+
     public WifiConfiguration getConfiguration() {
         return configuration;
     }

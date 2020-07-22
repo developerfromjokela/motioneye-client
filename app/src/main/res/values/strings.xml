@@ -94,5 +94,9 @@
     <string name="approve_loc_permission">Give location permission to this app</string>
     <string name="loading_video">Loading video…</string>
     <string name="task_failed">Task failed with status code %1$s</string>
+    <string name="skip">Skip</string>
+    <string name="disable_device_selection">Disable device selection</string>
+    <string name="disable_device_selection_msg">By disabling this you\'ll get rid of the device selector at the bottom</string>
+    <string name="ui_mode">UI mode</string>
 
 </resources>

@@ -14,8 +14,8 @@
     tools:context=".ui.activities.CameraViewer"
     tools:showIn="@layout/activity_cameraviewer">
 
-    <android.support.v7.widget.RecyclerView
-    android:id="@+id/cameras"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cameras"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

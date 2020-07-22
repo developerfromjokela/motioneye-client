@@ -11,11 +11,13 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -47,13 +49,13 @@ import com.developerfromjokela.motioneyeclient.classes.WifiNetwork;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.ui.adapters.WifisAdapter;
 import com.developerfromjokela.motioneyeclient.ui.utils.URLUtils;
+import com.developerfromjokela.motioneyeclient.ui.utils.WifiInfoConverter;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -302,8 +304,11 @@ public class SetupStartScreen extends AppCompatActivity {
 
         for (WifiConfiguration tmp : wifiManager.getConfiguredNetworks()) {
             SSIDCONFIGS.add(new WifiNetwork(tmp, false));
-
             Log.e("Setup", "Wifi " + tmp.SSID + ": " + tmp.status + " & " + tmp.networkId);
+        }
+        SSIDCONFIGS.clear();
+        if (SSIDCONFIGS.isEmpty()) {
+            SSIDCONFIGS.add(new WifiNetwork(WifiInfoConverter.infoToConfiguration(wifiManager.getConnectionInfo()), false));
         }
 
         final int[] itemPosition = {-1};
@@ -336,10 +341,10 @@ public class SetupStartScreen extends AppCompatActivity {
 
         WifisAdapter adapter = new WifisAdapter(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, SSIDCONFIGS);
-
         continue_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 device.setWlan(SSIDCONFIGS.get(itemPosition[0]).getConfiguration());
                 continueListener.onClick(v);
             }
@@ -369,6 +374,21 @@ public class SetupStartScreen extends AppCompatActivity {
                 // Show Alert
 
                 continue_btn.setEnabled(true);
+            }
+        });
+
+        Button skip = findViewById(R.id.skip_wifi);
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                device.setWlan(null);
+                continue_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        continueListener.onClick(continue_btn);
+                    }
+                });
+                continueListener.onClick(continue_btn);
             }
         });
     }

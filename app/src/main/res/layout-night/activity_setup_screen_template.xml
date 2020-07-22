@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
   ~ Licensed with MIT
   -->
@@ -18,7 +17,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:id="@+id/ll"
-        android:orientation="vertical"/>
+        android:orientation="vertical" />
 
 
     <LinearLayout
@@ -42,8 +41,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/previous_setup"
-                android:textColor="@android:color/black" />
+                android:text="@string/previous_setup" />
         </LinearLayout>
 
         <LinearLayout
@@ -60,8 +58,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/continue_setup"
-                android:textColor="@android:color/black" />
+                android:text="@string/continue_setup" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

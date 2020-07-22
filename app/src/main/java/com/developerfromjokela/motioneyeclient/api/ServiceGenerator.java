@@ -10,9 +10,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.picasso.Cache;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +45,7 @@ public class ServiceGenerator {
 
 
             retrofit = new Retrofit.Builder()
-                    .client(createOkHttpClient(false))
+                    .client(createOkHttpClientNoCache())
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
@@ -51,7 +53,7 @@ public class ServiceGenerator {
         return retrofit.create(serviceClass);
     }
 
-    private static OkHttpClient createOkHttpClient(boolean canCache) throws NoSuchAlgorithmException {
+    private static OkHttpClient createOkHttpClientNoCache() throws NoSuchAlgorithmException {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         SSLContext sslContext = SSLContext.getDefault();
@@ -66,8 +68,28 @@ public class ServiceGenerator {
                 .build();
     }
 
+    private static OkHttpClient createOkHttpClient(Context context, boolean enableCache) throws NoSuchAlgorithmException {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        SSLContext sslContext = SSLContext.getDefault();
+        File httpCacheDirectory = new File(context.getCacheDir(), "http-cache");
+        int cacheSize = 20 * 1024 * 1024; // 10 MiB
+        okhttp3.Cache cache = new okhttp3.Cache(httpCacheDirectory, cacheSize);
+        if (!enableCache)
+            cache = null;
+        return new OkHttpClient.Builder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60 / 2, TimeUnit.SECONDS)
+                .addInterceptor(logging)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .cache(cache)
+                .hostnameVerifier(motionEyeVerifier)
+                .sslSocketFactory(sslContext.getSocketFactory())
+                .build();
+    }
+
     public static Picasso getPicasso(Context context) throws NoSuchAlgorithmException {
-        return new Picasso.Builder(context).downloader(new OkHttp3Downloader(ServiceGenerator.createOkHttpClient(true))).build();
+        return new Picasso.Builder(context).downloader(new OkHttp3Downloader(ServiceGenerator.createOkHttpClient(context, true))).build();
     }
 
 }

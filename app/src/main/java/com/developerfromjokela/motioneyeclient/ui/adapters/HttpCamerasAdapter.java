@@ -5,15 +5,10 @@
 
 package com.developerfromjokela.motioneyeclient.ui.adapters;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,24 +19,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.developerfromjokela.motioneyeclient.R;
-import com.developerfromjokela.motioneyeclient.api.MotionEyeHelper;
-import com.developerfromjokela.motioneyeclient.classes.Camera;
-import com.developerfromjokela.motioneyeclient.classes.CameraImage;
 import com.developerfromjokela.motioneyeclient.classes.CameraImageFrame;
-import com.developerfromjokela.motioneyeclient.classes.Device;
-import com.developerfromjokela.motioneyeclient.other.Utils;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 
 public class HttpCamerasAdapter extends RecyclerView.Adapter<HttpCamerasAdapter.CamerasViewHolder> {
 

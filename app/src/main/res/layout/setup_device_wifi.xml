@@ -13,8 +13,8 @@
     android:gravity="center_horizontal|center_vertical"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="3dp"
         app:cardElevation="9dp">
@@ -34,7 +34,7 @@
                 android:text="@string/select_wifi"
                 android:textSize="24sp" />
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/permissionWarning"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -69,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/approve_loc_permission" />
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <ListView
                 android:id="@+id/wifiNetwork"
@@ -78,7 +78,15 @@
                 android:visibility="visible"
                 tools:visibility="visible" />
 
+            <Button
+                android:id="@+id/skip_wifi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="@string/skip" />
+
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

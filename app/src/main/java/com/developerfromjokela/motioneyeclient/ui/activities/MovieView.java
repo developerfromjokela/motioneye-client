@@ -9,12 +9,9 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.UserHandle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
@@ -25,16 +22,10 @@ import com.developerfromjokela.motioneyeclient.R;
 import com.developerfromjokela.motioneyeclient.api.MotionEyeHelper;
 import com.developerfromjokela.motioneyeclient.classes.Camera;
 import com.developerfromjokela.motioneyeclient.classes.CameraUser;
-import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.classes.Media;
-import com.developerfromjokela.motioneyeclient.other.Utils;
-import com.squareup.picasso.Picasso;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-
-import static android.app.DownloadManager.Request.NETWORK_MOBILE;
-import static com.developerfromjokela.motioneyeclient.other.Utils.removeSlash;
 
 public class MovieView extends MotionEyeActivity {
 

@@ -19,7 +19,7 @@
     <string name="wizard_device_type">Verkkoasetukset</string>
     <string name="optional_ddns_port">(Valinnainen) DDNS Portti</string>
     <string name="optional_local_port">(Valinnainen) Lähiverkon Portti</string>
-    <string name="ddns_hostname">(Optional) DDNS osoite</string>
+    <string name="ddns_hostname">(Valinnainen) DDNS osoite</string>
     <string name="local_hostname">motionEye osoite</string>
     <string name="wizard_login_settings">Kirjautumisasetukset</string>
     <string name="wizard_username">Käyttäjänimi</string>
@@ -92,5 +92,6 @@
     <string name="approve_loc_permission">Anna sijainnin käyttöoikeus tälle sovellukselle</string>
     <string name="loading_video">Ladataan videota…</string>
     <string name="task_failed">Tehtävä epäonnistui virhekoodilla %1$s</string>
+    <string name="skip">Ohita</string>
 
 </resources>

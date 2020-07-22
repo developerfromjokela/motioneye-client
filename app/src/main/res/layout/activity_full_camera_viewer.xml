@@ -101,14 +101,14 @@
                         android:textColor="@color/overlay_text_color"
                         android:textSize="18sp" />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/actions"
                         android:layout_width="wrap_content"
                         android:layout_height="50dp"
                         android:layout_weight="1"
                         android:scrollbars="horizontal">
 
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
                 </LinearLayout>
 
                 <LinearLayout
@@ -121,7 +121,7 @@
                     android:visibility="gone"
                     tools:visibility="visible">
 
-                    <android.support.v7.widget.AppCompatImageButton
+                    <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/up"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
@@ -140,7 +140,7 @@
                         android:visibility="visible"
                         tools:visibility="visible">
 
-                        <android.support.v7.widget.AppCompatImageButton
+                        <androidx.appcompat.widget.AppCompatImageButton
                             android:id="@+id/left"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
@@ -152,7 +152,7 @@
                             tools:visibility="visible" />
 
 
-                        <android.support.v7.widget.AppCompatImageButton
+                        <androidx.appcompat.widget.AppCompatImageButton
                             android:id="@+id/right"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
@@ -165,7 +165,7 @@
 
                     </LinearLayout>
 
-                    <android.support.v7.widget.AppCompatImageButton
+                    <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/down"
                         android:layout_width="50dp"
                         android:layout_height="50dp"

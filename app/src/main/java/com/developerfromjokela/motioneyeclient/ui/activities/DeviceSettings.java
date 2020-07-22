@@ -10,19 +10,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.CheckBoxPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.preference.SwitchPreferenceCompat;
-import android.support.v7.widget.Toolbar;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreferenceCompat;
+import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -43,7 +44,6 @@ import com.developerfromjokela.motioneyeclient.classes.Device;
 import com.developerfromjokela.motioneyeclient.classes.MainConfig;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.other.Utils;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,8 +52,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
@@ -92,8 +90,7 @@ public class DeviceSettings extends MotionEyeActivity {
     }
 
 
-    public static class DevicePreferences extends android.support.v7.preference.PreferenceFragmentCompat
-    {
+    public static class DevicePreferences extends androidx.preference.PreferenceFragmentCompat {
 
         private MainConfig config;
         private Device device;
@@ -1353,7 +1350,7 @@ public class DeviceSettings extends MotionEyeActivity {
             if (device.getDdnsURL().length() > 5) {
                 if ((Utils.getNetworkType(getActivity())) == NETWORK_MOBILE) {
                     serverurl = device.getDDNSUrlCombo();
-                } else if (device.getWlan().networkId == Utils.getCurrentWifiNetworkId(getActivity())) {
+                } else if (device.getWlan() != null && device.getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(getActivity()))) {
                     serverurl = device.getDeviceUrlCombo();
 
                 } else {

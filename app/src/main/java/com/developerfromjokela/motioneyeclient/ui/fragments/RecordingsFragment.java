@@ -8,12 +8,18 @@ package com.developerfromjokela.motioneyeclient.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.developerfromjokela.motioneyeclient.ui.adapters.CompactRecordingsAdapter;
+import com.developerfromjokela.motioneyeclient.ui.utils.MotionEyeSettings;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,10 +39,8 @@ import com.developerfromjokela.motioneyeclient.classes.RecordingDevice;
 import com.developerfromjokela.motioneyeclient.database.Source;
 import com.developerfromjokela.motioneyeclient.other.Utils;
 import com.developerfromjokela.motioneyeclient.ui.activities.MovieView;
-import com.developerfromjokela.motioneyeclient.ui.adapters.DevicesAdapter;
 import com.developerfromjokela.motioneyeclient.ui.adapters.MediaDeviceAdapter;
 import com.developerfromjokela.motioneyeclient.ui.adapters.RecordingsAdapter;
-import com.google.gson.Gson;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -73,6 +77,8 @@ public class RecordingsFragment extends MotionEyeFragment implements MediaDevice
 
     private RecordingsAdapter recordingsAdapter;
 
+    private MotionEyeSettings settings;
+
     public RecordingsFragment() {
         // Required empty public constructor
     }
@@ -95,6 +101,7 @@ public class RecordingsFragment extends MotionEyeFragment implements MediaDevice
         devicesView = view.findViewById(R.id.devices);
         adapter = new MediaDeviceAdapter(getContext(), devices, this);
         source = new Source(getContext());
+        settings = new MotionEyeSettings(getContext());
         recordingsProgress = view.findViewById(R.id.recordingsProgress);
         try {
             for (Device device : source.getAll()) {
@@ -112,7 +119,11 @@ public class RecordingsFragment extends MotionEyeFragment implements MediaDevice
         devicesView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         devicesView.addItemDecoration(new Utils.GridSpacingItemDecoration(1, Utils.dpToPx(getActivity()), true));
         adapter.notifyDataSetChanged();
-        recordingsAdapter = new RecordingsAdapter(getContext(), mediaList, this, selectedDevice);
+
+        if (settings.getRecordingsUIMode().equals("compact"))
+            recordingsAdapter = new CompactRecordingsAdapter(getContext(), mediaList, this, selectedDevice);
+        else
+            recordingsAdapter = new RecordingsAdapter(getContext(), mediaList, this, selectedDevice);
 
         recordings = view.findViewById(R.id.recordings);
 
@@ -152,7 +163,7 @@ public class RecordingsFragment extends MotionEyeFragment implements MediaDevice
             if (selectedDevice.getDevice().getDdnsURL().length() > 5) {
                 if ((Utils.getNetworkType(getContext())) == NETWORK_MOBILE) {
                     serverurl = selectedDevice.getDevice().getDDNSUrlCombo();
-                } else if (selectedDevice.getDevice().getWlan().networkId == Utils.getCurrentWifiNetworkId(getContext())) {
+                } else if (selectedDevice.getDevice().getWlan() != null && selectedDevice.getDevice().getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(getContext()))) {
                     serverurl = selectedDevice.getDevice().getDeviceUrlCombo();
 
                 } else {
@@ -218,7 +229,7 @@ public class RecordingsFragment extends MotionEyeFragment implements MediaDevice
         if (selectedDevice.getDevice().getDdnsURL().length() > 5) {
             if ((Utils.getNetworkType(getContext())) == NETWORK_MOBILE) {
                 serverurl = selectedDevice.getDevice().getDDNSUrlCombo();
-            } else if (selectedDevice.getDevice().getWlan().networkId == Utils.getCurrentWifiNetworkId(getContext())) {
+            } else if (selectedDevice.getDevice().getWlan() != null && selectedDevice.getDevice().getWlan().BSSID.equals(Utils.getCurrentWifiNetworkId(getContext()))) {
                 serverurl = selectedDevice.getDevice().getDeviceUrlCombo();
 
             } else {

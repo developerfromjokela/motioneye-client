@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="recordings_mode">
+        <item>expanded</item>
+        <item>compact</item>
+    </string-array>
+    <string-array name="recording_modes">
+        <item>Expanded</item>
+        <item>Compact</item>
+    </string-array>
+</resources>

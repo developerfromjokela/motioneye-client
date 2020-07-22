@@ -6,11 +6,15 @@
 package com.developerfromjokela.motioneyeclient.ui.activities;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+
+import com.developerfromjokela.motioneyeclient.ui.fragments.MotionEyePreferencesFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.MenuItem;
 
 import com.developerfromjokela.motioneyeclient.R;
@@ -21,24 +25,23 @@ public class MainActivity extends MotionEyeActivity implements DevicesFragment.s
 
     private boolean startupExec = false;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_devices:
-                    Bundle a = new Bundle();
-                    a.putBoolean("startupExec", startupExec);
-                    DevicesFragment devicesFragment = new DevicesFragment();
-                    devicesFragment.setArguments(a);
-                    loadFragment(devicesFragment);
-                    return true;
-                case R.id.navigation_recordings:
-                    loadFragment(new RecordingsFragment());
-                    return true;
-            }
-            return false;
+            = item -> {
+        switch (item.getItemId()) {
+            case R.id.navigation_devices:
+                Bundle a = new Bundle();
+                a.putBoolean("startupExec", startupExec);
+                DevicesFragment devicesFragment = new DevicesFragment();
+                devicesFragment.setArguments(a);
+                loadFragment(devicesFragment);
+                return true;
+            case R.id.navigation_recordings:
+                loadFragment(new RecordingsFragment());
+                return true;
+            case R.id.navigation_settings:
+                loadFragment(new MotionEyePreferencesFragment());
+                return true;
         }
+        return false;
     };
 
     @Override

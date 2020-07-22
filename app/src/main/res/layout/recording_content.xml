@@ -19,7 +19,7 @@
         android:visibility="invisible"
         android:animateLayoutChanges="true"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recordings"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
