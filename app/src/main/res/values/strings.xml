@@ -98,5 +98,7 @@
     <string name="disable_device_selection">Disable device selection</string>
     <string name="disable_device_selection_msg">By disabling this you\'ll get rid of the device selector at the bottom</string>
     <string name="ui_mode">UI mode</string>
+    <string name="video_playback_error">Video playback error: %1$s</string>
+    <string name="fullscreen">Full Screen</string>
 
 </resources>

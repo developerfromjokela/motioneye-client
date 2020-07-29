@@ -23,10 +23,12 @@ import com.developerfromjokela.motioneyeclient.classes.Media;
 import com.developerfromjokela.motioneyeclient.classes.RecordingDevice;
 import com.developerfromjokela.motioneyeclient.other.Utils;
 import com.developerfromjokela.motioneyeclient.ui.utils.DeviceURLUtils;
+import com.developerfromjokela.motioneyeclient.ui.utils.MotionEyeSettings;
 import com.squareup.picasso.Picasso;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
@@ -37,8 +39,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
     private Context mContext;
     private List<Media> mediaList;
     private MediaAdapterListener listener;
-    private RecordingDevice device;
-    private String cachedURL = "";
+
 
     public class DevicesViewHolder extends RecyclerView.ViewHolder {
 
@@ -56,11 +57,9 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
     }
 
 
-
-    public RecordingsAdapter(Context mContext, List<Media> mediaList, MediaAdapterListener listener, RecordingDevice device) {
+    public RecordingsAdapter(Context mContext, List<Media> mediaList, MediaAdapterListener listener) {
         this.mContext = mContext;
         this.listener = listener;
-        this.device = device;
         this.mediaList = mediaList;
     }
 
@@ -73,34 +72,48 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
     @Override
     public void onBindViewHolder(final RecordingsAdapter.DevicesViewHolder holder, int position) {
         final Media media = mediaList.get(position);
-        holder.mediaName.setText(media.getPath().split("/")[media.getPath().split("/").length - 1]);
+        RecordingDevice device = media.getDevice();
+        if (new MotionEyeSettings(holder.itemView.getContext()).isDeviceSelectionDisabled())
+            holder.mediaName.setText(media.getDevice().getCamera().getName());
+        else
+            holder.mediaName.setText(media.getPath().split("/")[media.getPath().split("/").length - 1]);
         holder.itemDate.setText(media.getShortMonent());
         holder.itemSize.setText(media.getSize());
-        String baseurl;
-        Log.e("Setup", String.valueOf(cachedURL.split("//").length));
-        if (!cachedURL.contains("://"))
-            baseurl = removeSlash("http://" + cachedURL);
-        else
-            baseurl = removeSlash(cachedURL);
-
-        try {
-            String url = baseurl + "/movie/" + device.getCamera().getId() + "/preview" + media.getPath() + "?_=" + new Date().getTime();
-            MotionEyeHelper helper = new MotionEyeHelper();
-            helper.setUsername(device.getDevice().getUser().getUsername());
-            helper.setPasswordHash(device.getDevice().getUser().getPassword());
-            url = helper.addAuthParams("GET", url, "");
-            Log.e("RA", url);
-
-            Picasso picasso = ServiceGenerator.getPicasso(mContext);
-            picasso.load(url).into(holder.preview);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        DeviceURLUtils.getOptimalURL(mContext, device.getDevice(), new DeviceURLUtils.DeviceURLListener() {
             @Override
-            public void onClick(View v) {
-                listener.onMediaClicked(position, media, cachedURL);
+            public void onOptimalURL(String serverURL) {
+                String baseurl;
+                Log.e("Setup", String.valueOf(serverURL.split("//").length));
+                if (!serverURL.contains("://"))
+                    baseurl = removeSlash("http://" + serverURL);
+                else
+                    baseurl = removeSlash(serverURL);
+
+                try {
+                    String url = baseurl + "/movie/" + device.getCamera().getId() + "/preview" + media.getPath() + "?_=" + new Date().getTime();
+                    MotionEyeHelper helper = new MotionEyeHelper();
+                    helper.setUsername(device.getDevice().getUser().getUsername());
+                    helper.setPasswordHash(device.getDevice().getUser().getPassword());
+                    url = helper.addAuthParams("GET", url, "");
+                    Log.e("RA", url);
+
+                    Picasso picasso = ServiceGenerator.getPicasso(mContext);
+                    picasso.load(url).into(holder.preview);
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onMediaClicked(position, media, serverURL);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+
             }
         });
 
@@ -118,20 +131,5 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
     }
 
 
-    public void updateDetails(RecordingDevice device) {
-        this.device = device;
-        DeviceURLUtils.getOptimalURL(mContext, device.getDevice(), new DeviceURLUtils.DeviceURLListener() {
-            @Override
-            public void onOptimalURL(String serverURL) {
-                cachedURL = serverURL;
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-        });
-    }
 
 }

@@ -24,13 +24,24 @@ public class Media implements Serializable {
     @SerializedName("path")
     private String path;
 
-    public Media(String mimeType, String size, String shortMonent, double timestamp, String moment, String path) {
+    private RecordingDevice device;
+
+    public Media(String mimeType, String size, String shortMonent, double timestamp, String moment, String path, RecordingDevice device) {
         this.mimeType = mimeType;
         this.size = size;
         this.shortMonent = shortMonent;
         this.timestamp = timestamp;
         this.moment = moment;
         this.path = path;
+        this.device = device;
+    }
+
+    public RecordingDevice getDevice() {
+        return device;
+    }
+
+    public void setDevice(RecordingDevice device) {
+        this.device = device;
     }
 
     public String getMimeType() {

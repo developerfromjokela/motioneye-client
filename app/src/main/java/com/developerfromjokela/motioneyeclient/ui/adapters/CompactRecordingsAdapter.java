@@ -32,8 +32,8 @@ import static com.developerfromjokela.motioneyeclient.other.Utils.removeSlash;
 
 public class CompactRecordingsAdapter extends RecordingsAdapter {
 
-    public CompactRecordingsAdapter(Context mContext, List<Media> mediaList, MediaAdapterListener listener, RecordingDevice device) {
-        super(mContext, mediaList, listener, device);
+    public CompactRecordingsAdapter(Context mContext, List<Media> mediaList, MediaAdapterListener listener) {
+        super(mContext, mediaList, listener);
     }
 
     @Override

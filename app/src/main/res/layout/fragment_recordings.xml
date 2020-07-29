@@ -13,8 +13,9 @@
 
     <include layout="@layout/recording_content" />
 
-
     <include layout="@layout/devicebottomsheet" />
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- Adding bottom sheet after main content -->

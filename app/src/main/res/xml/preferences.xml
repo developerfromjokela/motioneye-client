@@ -9,11 +9,9 @@
 
         <SwitchPreference
             android:defaultValue="false"
-            android:enabled="false"
             android:key="no_selection"
             android:summary="@string/disable_device_selection_msg"
-            android:title="@string/disable_device_selection"
-            app:enabled="false" />
+            android:title="@string/disable_device_selection" />
         <ListPreference
             android:defaultValue="expanded"
             android:entries="@array/recording_modes"

@@ -96,4 +96,6 @@
     <string name="disable_device_selection">Ota laitevalinta pois käytöstä</string>
     <string name="disable_device_selection_msg">Kytkemällä asetuksen päälle, tallennelistassa kaikki laitteet ovat yhdessä listassa</string>
     <string name="ui_mode">Käyttöliittymän tyyppi</string>
+    <string name="video_playback_error">Videon toistaessa tapahtui virhe: %1$s</string>
+    <string name="fullscreen">Koko näyttö</string>
 </resources>

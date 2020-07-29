@@ -5,7 +5,9 @@
 
 package com.developerfromjokela.motioneyeclient.classes;
 
-public class RecordingDevice {
+import java.io.Serializable;
+
+public class RecordingDevice implements Serializable {
     private Device device;
     private Camera camera;
 
@@ -28,5 +30,13 @@ public class RecordingDevice {
 
     public void setCamera(Camera camera) {
         this.camera = camera;
+    }
+
+    public String getRecordingDeviceID() {
+        return getDevice().getID() + getCamera().getId();
+    }
+
+    public String getRecordingDeviceName() {
+        return getDevice().getDeviceName() + getCamera().getName();
     }
 }
