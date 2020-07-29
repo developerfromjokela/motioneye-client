@@ -8,6 +8,7 @@ package com.developerfromjokela.motioneyeclient.classes;
 import android.net.wifi.WifiConfiguration;
 
 import com.developerfromjokela.motioneyeclient.ui.utils.URLUtils;
+import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.net.Inet4Address;
@@ -26,7 +27,7 @@ public class Device implements Serializable {
     private String motionVersion = "";
     private String osVersion = "";
     private ArrayList<Camera> cameras = new ArrayList<>();
-    private WifiConfiguration wlan;
+    private String wlan;
 
 
     public Device(String ID, String deviceName, String deviceUrl, String ddnsURL, String localPort, String DDNSPort, CameraUser user, String motioneyeVersion, String motionVersion, String osVersion, ArrayList<Camera> cameras, WifiConfiguration wlan) {
@@ -41,7 +42,7 @@ public class Device implements Serializable {
         this.motionVersion = motionVersion;
         this.osVersion = osVersion;
         this.cameras = cameras;
-        this.wlan = wlan;
+        this.wlan = new Gson().toJson(wlan);
     }
 
     public String getDeviceUrlCombo() {
@@ -132,7 +133,7 @@ public class Device implements Serializable {
     }
 
     public WifiConfiguration getWlan() {
-        return wlan;
+        return new Gson().fromJson(this.wlan, WifiConfiguration.class);
     }
 
     public String getPort() {
@@ -148,7 +149,7 @@ public class Device implements Serializable {
     }
 
     public void setWlan(WifiConfiguration wlan) {
-        this.wlan = wlan;
+        this.wlan = new Gson().toJson(wlan);
     }
 
     public String getDeviceName() {
