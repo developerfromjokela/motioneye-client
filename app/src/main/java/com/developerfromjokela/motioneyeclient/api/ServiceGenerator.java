@@ -45,21 +45,21 @@ public class ServiceGenerator {
         if (retrofit == null) {
 
 
+            // example.com because we don't need baseurl, but it's required
             retrofit = new Retrofit.Builder()
                     .client(createOkHttpClientNoCache())
-                    .baseUrl(BASE_URL)
+                    .baseUrl("http://example.com")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit.create(serviceClass);
     }
 
-    private static OkHttpClient createOkHttpClientNoCache() throws NoSuchAlgorithmException {
+    private static OkHttpClient createOkHttpClientNoCache() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         if (!BuildConfig.DEBUG)
             logging.setLevel(HttpLoggingInterceptor.Level.NONE);
-        SSLContext sslContext = SSLContext.getDefault();
         return new OkHttpClient.Builder()
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60 / 2, TimeUnit.SECONDS)
@@ -67,7 +67,6 @@ public class ServiceGenerator {
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .cache(null)
                 .hostnameVerifier(motionEyeVerifier)
-                .sslSocketFactory(sslContext.getSocketFactory())
                 .build();
     }
 
@@ -76,7 +75,6 @@ public class ServiceGenerator {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         if (!BuildConfig.DEBUG)
             logging.setLevel(HttpLoggingInterceptor.Level.NONE);
-        SSLContext sslContext = SSLContext.getDefault();
         File httpCacheDirectory = new File(context.getCacheDir(), "http-cache");
         int cacheSize = 20 * 1024 * 1024; // 10 MiB
         okhttp3.Cache cache = new okhttp3.Cache(httpCacheDirectory, cacheSize);
@@ -89,7 +87,6 @@ public class ServiceGenerator {
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .cache(cache)
                 .hostnameVerifier(motionEyeVerifier)
-                .sslSocketFactory(sslContext.getSocketFactory())
                 .build();
     }
 

@@ -406,6 +406,13 @@ public class SetupStartScreen extends AppCompatActivity {
     }
 
 
+    private static String removeSlash(String url) {
+        if (url.endsWith("/")) {
+            return url.substring(0, url.length() - 1);
+        } else
+            return url;
+    }
+
     private void setListenersForSetupItems(View view, final int position) {
 
         Log.e("Setup", String.valueOf(position));
@@ -501,6 +508,7 @@ public class SetupStartScreen extends AppCompatActivity {
                         }
                     }
 
+                    Log.e("SSS", url);
                     if (!URLUtil.isValidUrl(url)) {
                         url = "http://" + url;
                         if (URLUtil.isValidUrl(url))
@@ -714,6 +722,7 @@ public class SetupStartScreen extends AppCompatActivity {
             }
 
 
+            Log.e("SETUP", device.getDeviceUrlCombo());
             validateServer(new TestInterface() {
                 @Override
                 public void TestSuccessful(String response, int status) {
@@ -860,55 +869,6 @@ public class SetupStartScreen extends AppCompatActivity {
 
         }
 
-    }
-
-
-    private void validateServer(TestInterface testInterface, String serverurl) {
-        Log.e("Setup", serverurl);
-        String baseurl;
-
-        Log.e("Setup", String.valueOf(serverurl.split("//").length));
-        if (!serverurl.contains("://"))
-            baseurl = removeSlash("http://" + serverurl);
-        else
-            baseurl = removeSlash(serverurl);
-
-        Log.e("Setup", baseurl);
-        ApiInterface apiInterface = null;
-        try {
-            apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            testInterface.TestFailed(e.getMessage(), 700);
-            return;
-        }
-        Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword(), "login");
-        Log.e("Setup", baseurl);
-        call.enqueue(new Callback<ResponseBody>() {
-
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.e("Setup", call.request().body().contentType().toString());
-                    try {
-                        if (response.isSuccessful())
-                            testInterface.TestSuccessful(Jsoup.parse(response.body().string()).wholeText(), response.code());
-                        else
-                            testInterface.TestFailed(Jsoup.parse(response.errorBody().string()).wholeText(), response.code());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        testInterface.TestFailed(e.getMessage(), 700);
-
-                    }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                t.printStackTrace();
-                t.fillInStackTrace();
-                testInterface.TestFailed(t.getMessage(), 700);
-
-            }
-        });
     }
 
     private void getServerDetails(TestInterface testInterface, String serverurl) {
@@ -1075,12 +1035,52 @@ public class SetupStartScreen extends AppCompatActivity {
         });
     }
 
-    private static String removeSlash(String url) {
-        if (!url.endsWith("/"))
-            return url;
-        String[] parts = url.split("/");
+    private void validateServer(TestInterface testInterface, String serverurl) {
+        Log.e("Setup1", serverurl);
+        String baseurl;
 
-        return parts[0];
+        Log.e("Setup2", String.valueOf(serverurl.split("//").length));
+        if (!serverurl.contains("://"))
+            baseurl = removeSlash("http://" + serverurl);
+        else
+            baseurl = removeSlash(serverurl);
+
+        Log.e("Setup3", baseurl);
+        ApiInterface apiInterface = null;
+        try {
+            apiInterface = ServiceGenerator.createService(ApiInterface.class, baseurl);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            testInterface.TestFailed(e.getMessage(), 700);
+            return;
+        }
+        Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword(), "login");
+        Log.e("Setup", baseurl);
+        call.enqueue(new Callback<ResponseBody>() {
+
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("Setup", call.request().body().contentType().toString());
+                try {
+                    if (response.isSuccessful())
+                        testInterface.TestSuccessful(Jsoup.parse(response.body().string()).wholeText(), response.code());
+                    else
+                        testInterface.TestFailed(Jsoup.parse(response.errorBody().string()).wholeText(), response.code());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    testInterface.TestFailed(e.getMessage(), 700);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+                t.fillInStackTrace();
+                testInterface.TestFailed(t.getMessage(), 700);
+
+            }
+        });
     }
 
     @Override
