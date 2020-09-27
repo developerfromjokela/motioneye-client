@@ -39,6 +39,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
     private Context mContext;
     private List<Media> mediaList;
     private MediaAdapterListener listener;
+    private Picasso picasso;
 
 
     public class DevicesViewHolder extends RecyclerView.ViewHolder {
@@ -61,6 +62,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
         this.mContext = mContext;
         this.listener = listener;
         this.mediaList = mediaList;
+        this.picasso = ServiceGenerator.getPicasso(mContext);
     }
 
     @Override
@@ -97,7 +99,7 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
                     url = helper.addAuthParams("GET", url, "");
                     Log.e("RA", url);
 
-                    Picasso picasso = ServiceGenerator.getPicasso(mContext);
+
                     if (picasso != null) {
                         picasso.load(url).into(holder.preview);
                     }
