@@ -98,4 +98,7 @@
     <string name="ui_mode">Käyttöliittymän tyyppi</string>
     <string name="video_playback_error">Videon toistaessa tapahtui virhe: %1$s</string>
     <string name="fullscreen">Koko näyttö</string>
+    <string name="downloading_recording_from">Ladataan videota kamerasta %1$s</string>
+    <string name="download">Lataa</string>
+    <string name="allow_permissions">Hyväksy tallennustilan käyttöoikeudet, jotta video voitaisiin ladata</string>
 </resources>

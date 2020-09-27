@@ -90,8 +90,13 @@ public class ServiceGenerator {
                 .build();
     }
 
-    public static Picasso getPicasso(Context context) throws NoSuchAlgorithmException {
-        return new Picasso.Builder(context).downloader(new OkHttp3Downloader(ServiceGenerator.createOkHttpClient(context, true))).build();
+    public static Picasso getPicasso(Context context) {
+        try {
+            return new Picasso.Builder(context).downloader(new OkHttp3Downloader(ServiceGenerator.createOkHttpClient(context, true))).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

@@ -98,7 +98,9 @@ public class RecordingsAdapter extends RecyclerView.Adapter<RecordingsAdapter.De
                     Log.e("RA", url);
 
                     Picasso picasso = ServiceGenerator.getPicasso(mContext);
-                    picasso.load(url).into(holder.preview);
+                    if (picasso != null) {
+                        picasso.load(url).into(holder.preview);
+                    }
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }

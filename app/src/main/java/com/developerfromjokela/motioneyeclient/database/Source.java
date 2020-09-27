@@ -56,7 +56,7 @@ public final class Source {
     /**
      * Adds a camera device.
      *
-     * @param device The Device Class whcih will be saved in the database.
+     * @param device The Device Class which will be saved in the database.
      */
     public final void createEntry(final Device device) throws Exception {
 
@@ -92,7 +92,7 @@ public final class Source {
     /**
      * Adds a camera device.
      *
-     * @param device The Device Class whcih will be saved in the database.
+     * @param device The Device Class which will be saved in the database.
      */
     public final void editEntry(final Device device) throws Exception {
 
@@ -228,11 +228,8 @@ public final class Source {
     }
 
     public final Cursor getCursor() {
-
         return database.query(Helper.TABLE_DEVICE, devicesColumns, null, null,
                 null, null, null);
-
-
     }
 
 

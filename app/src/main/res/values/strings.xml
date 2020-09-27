@@ -100,5 +100,10 @@
     <string name="ui_mode">UI mode</string>
     <string name="video_playback_error">Video playback error: %1$s</string>
     <string name="fullscreen">Full Screen</string>
+    <string name="downloading_recording_from">Downloading recording from %1$s</string>
+    <string name="download">Download</string>
+    <string name="allow_permissions">Allow Storage permissions to download the video</string>
+    <string name="download_error">Download error: %1$s</string>
+    <string name="video_downloaded">Video downloaded</string>
 
 </resources>

@@ -3,9 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/download_video"
+        android:icon="@drawable/ic_download_outline"
+        android:title="@string/download"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/fullscreen"
         android:icon="@drawable/ic_fullscreen"
         android:title="@string/fullscreen"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>
