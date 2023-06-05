@@ -3,19 +3,23 @@
  * Licensed with MIT
  */
 
-apply plugin: 'com.android.application'
+plugins {
+    // Or "com.android.library"
+    id("com.android.application")
+}
 
 def versionMajor = 1
-def versionMinor = 0
-def versionPatch = 1
-def versionBuild = 98 // 0-50=Alpha / 51-98=RC / 90-99=stable
+def versionMinor = 1
+def versionPatch = 0
+def versionBuild = 54 // 0-50=Alpha / 51-98=RC / 90-99=stable
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.developerfromjokela.motioneyeclient"
         minSdkVersion 15
-        targetSdkVersion 30
+        targetSdkVersion 33
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
         versionCode versionMajor * 10000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
 
         if (versionBuild > 89) {
@@ -42,25 +46,26 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleCompatible
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'androidx.recyclerview:recyclerview:1.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
-    implementation 'com.squareup.okhttp3:okhttp:4.8.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
-    implementation 'org.jsoup:jsoup:1.11.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'org.jsoup:jsoup:1.15.3'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference:1.2.0'
     implementation 'com.github.MikeOrtiz:TouchImageView:1.4.1'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
     //implementation 'com.github.niqdev:mjpeg-view:1.6.0'
 }

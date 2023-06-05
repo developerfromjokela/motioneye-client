@@ -5,20 +5,17 @@
   ~ Licensed with MIT
   -->
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="12dp"
-    android:background="@color/device_bottomsheet"
     android:orientation="vertical"
     android:padding="16dp"
     app:behavior_hideable="false"
     app:behavior_peekHeight="90dp"
-    app:cardBackgroundColor="@color/device_bottomsheet"
-    app:cardCornerRadius="6dp"
-    app:cardElevation="5dp"
+    app:cardElevation="6dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -27,5 +24,5 @@
         android:layout_height="match_parent"
         android:layout_margin="3dp" />
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
 

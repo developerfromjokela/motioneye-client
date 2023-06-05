@@ -69,10 +69,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DevicesV
             holder.deviceURL.setText(device.getDeviceUrl() + " (" + mContext.getString(R.string.ddns_available) + ")");
         else
             holder.deviceURL.setText(device.getDeviceUrl());
-        String suffix = mContext.getString(R.string.cameras_count_morethan1);
-        if (device.getCamera().size() == 1)
-            suffix = "";
-        holder.cameras.setText(mContext.getString(R.string.cameras_count, String.valueOf(device.getCamera().size()), suffix));
+        holder.cameras.setText(mContext.getResources().getQuantityString(R.plurals.cameras, device.getCamera().size(), device.getCamera().size()));
         holder.itemCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

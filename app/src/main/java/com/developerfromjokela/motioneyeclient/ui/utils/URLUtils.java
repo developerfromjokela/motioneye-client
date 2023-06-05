@@ -16,7 +16,13 @@ public class URLUtils {
             throws Exception {
 
         URI uri = new URI(originalURL);
-        uri = new URI(uri.getScheme().toLowerCase(Locale.US), uri.getUserInfo(), uri.getHost(), port,
+        String scheme = uri.getScheme();
+        if (scheme != null) {
+            scheme = scheme.toLowerCase(Locale.US);
+        } else {
+            scheme = "http";
+        }
+        uri = new URI(scheme, uri.getUserInfo(), uri.getHost(), port,
                 uri.getPath(), uri.getQuery(), uri.getFragment());
 
         return uri.toString();
@@ -41,13 +47,17 @@ public class URLUtils {
             }
             return !ip.endsWith(".");
         } catch (NumberFormatException nfe) {
-            return false;
+            try {
+                getDomainName(ip);
+                return true;
+            } catch (URISyntaxException e) {
+                return false;
+            }
         }
     }
 
     public static String getDomainName(String url) throws URISyntaxException {
         URI uri = new URI(url);
-        String domain = uri.getHost();
-        return domain.startsWith("www.") ? domain.substring(4) : domain;
+        return uri.getHost();
     }
 }

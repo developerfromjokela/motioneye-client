@@ -7,9 +7,10 @@
         android:layout_width="match_parent"
         android:title="@string/title_recordings">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="no_selection"
+            android:widgetLayout="@layout/m3_prefswitch"
             android:summary="@string/disable_device_selection_msg"
             android:title="@string/disable_device_selection" />
         <ListPreference
@@ -18,5 +19,12 @@
             android:entryValues="@array/recordings_mode"
             android:key="ui_mode"
             android:title="@string/ui_mode" />
+        <SeekBarPreference
+                app:defaultValue="100"
+            app:min="0"
+            app:key="framerateFactor"
+            app:title="@string/framerateFactor"
+            app:summary="@string/framerateFactorDesc"
+            app:showSeekBarValue="true"/>
     </PreferenceCategory>
 </PreferenceScreen>

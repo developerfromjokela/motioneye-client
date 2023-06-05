@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AlertDialog;
@@ -169,7 +170,7 @@ public class DevicesFragment extends MotionEyeFragment implements DevicesAdapter
     }
 
     private void deleteDevice(Device device) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(requireActivity());
         dialogBuilder.setTitle(R.string.delete_camera);
         dialogBuilder.setMessage(R.string.delete_camera_caution);
         dialogBuilder.setNegativeButton(R.string.cancel, null);

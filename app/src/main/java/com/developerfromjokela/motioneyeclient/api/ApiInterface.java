@@ -44,7 +44,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST()
-    Call<okhttp3.ResponseBody> login(@Url String url, @Field("username") String username, @Field("password") String password, @Field("login") String login);
+    Call<okhttp3.ResponseBody> login(@Url String url, @Field("username") String username, @Field("password") String password);
 
     @POST()
     Call<okhttp3.ResponseBody> changeMainConfig(@Url String url, @Body RequestBody body);

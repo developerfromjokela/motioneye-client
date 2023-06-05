@@ -1,0 +1,107 @@
+<!--
+  ~ Copyright (c) 2020 MotionEye Client by Developer From Jokela, All Rights Reserved.
+  ~ Licensed with MIT
+  -->
+
+<resources>
+    <string name="app_name">motionEye Client</string>
+    <string name="title_devices">Устройства</string>
+    <string name="no_devices_added">Не добавлено устройств</string>
+    <string name="add_new_device">Добавить новое устройство</string>
+    <string name="title_activity_setup_start_screen">Мастер добавления устройств</string>
+    <string name="welcome_to_wizard">Добро пожаловать в Мастер добавления устройств</string>
+    <string name="continue_setup">Продолжить</string>
+    <string name="previous_setup">Предыдущий</string>
+    <string name="cd_rpi">Raspberry Pi</string>
+    <string name="setup_device_hint">Давайте настроим устройство, нажмите Продолжить</string>
+    <string name="wizard_device_type">Конфигурировать настройки сети</string>
+    <string name="optional_ddns_port">(Опционально) DDNS порт</string>
+    <string name="optional_local_port">(Опционально) Local порт</string>
+    <string name="ddns_hostname">(Опционально) DDNS Hostname</string>
+    <string name="local_hostname">motionEye Hostname</string>
+    <string name="wizard_login_settings">Login Settings</string>
+    <string name="wizard_username">Имя пользователя</string>
+    <string name="wizard_password">Пароль</string>
+    <string name="wizard_local_help">Введите локальный IP адрес устройства для локального доступа через Wi-Fi</string>
+    <string name="wizard_ddns_help">Введите ваш DDNS адрес для удалённого доступа через port forwarding.</string>
+    <string name="wizard_port_help">Введите опционально номер порта для motionEye сервера, если он переназначен</string>
+    <string name="select_wifi">Выберите Local Wi-Fi сеть</string>
+    <string name="no_wifi_networks_saved">Нет сохранённых Wifi сетей! Добавьте из настроек Wifi.</string>
+    <string name="connected">подключено</string>
+    <string name="checking_connection">Проверка подключения</string>
+    <string name="wizard_trying_login">Проверка аутентификации</string>
+    <string name="wizard_validating">Валидация параметров</string>
+    <string name="wizard_check_wifi">Проверка локального подключения</string>
+    <string name="wizard_check_login">Попытка логина</string>
+    <string name="wizard_check_ddns">DDNS подключение</string>
+    <string name="wizard_not_motioneye">Нет motionEye сервера, проверьте URL и порт</string>
+    <string name="wizard_wrong_credentials">Неверные данные аутентификации, проверьте имя пользователя и пароль</string>
+    <string name="wizard_completed">Устройство %1$s успешно добавлено!</string>
+    <string name="wizard_completed_desc">Ваше устройство успешно добавлено!</string>
+    <string name="wizard_getting_details">Получить информацию о motionEye</string>
+    <string name="wizard_finish">Закрыть настройку</string>
+    <string name="title_activity_camera_viewer">Camera Viewer</string>
+
+    <string name="title_activity_full_camera_viewer">FullCameraViewer</string>
+    <string name="loading">Загрузка потока…</string>
+    <string name="ddns_available">DDNS доступен</string>
+    <string name="change_protocol">Сменить протокол</string>
+    <string name="change_protocol_desc">Вы можете ускорить время загрузки сменив протокол</string>
+    <string name="http_or_rtsp">HTTP работает лучше если вы не переназначаете порт, но переназначение рекомендуется при переключении на RTSP для живого вещания.</string>
+    <string name="try_again">Попробуйте снова</string>
+    <string name="left">Влево</string>
+    <string name="right">Вправо</string>
+    <string name="down">Вниз</string>
+    <string name="up">Вверх</string>
+    <string name="action">Действие</string>
+    <string name="settings">Настройки</string>
+    <string name="title_activity_device_settings">Настройки устройства</string>
+    <string name="advanced_settings">Расширенные настройки</string>
+    <string name="motioneye_settings">motionEye настройки</string>
+    <string name="device_settings">Настройки устройства</string>
+    <string name="network_settings">Сетевые настройки</string>
+    <string name="local_hostame_summary">Имя устройства или IP адрес для доступа к устройству в локальной сети</string>
+    <string name="local_port_summary">Если ваш motionEye запущен не на умолчальном порту 80, то введите корректный номер порта.</string>
+    <string name="optional_ddns_port_summary">Если порт вашего motionEye сервера переназначен не на порт 80, укажите номер порта</string>
+    <string name="admin_username">Имя Admin-а</string>
+    <string name="admin_password">Пароль Admin-а</string>
+    <string name="surv_username">Имя Surveillance</string>
+    <string name="surv_password">Пароль Surveillance</string>
+    <string name="save">Сохранить</string>
+    <string name="close">Закрыть</string>
+    <string name="motioneye_version">Версия motionEye</string>
+    <string name="motion_version">Версия Motion</string>
+    <string name="os_version">Версия ОС</string>
+    <string name="reboot_summary">Перезагрузите устройство щёлкнув здесь</string>
+    <string name="reboot">Перезагрузить</string>
+    <string name="shutdown">Выключить</string>
+    <string name="shutdown_summary">Выключите устройство щёлкнув здесь</string>
+    <string name="delete_camera">Удалить это устройство</string>
+    <string name="delete_camera_summary">Удалить это устройство из списка устройств</string>
+    <string name="cancel">Отмена</string>
+    <string name="delete_camera_caution">Удалить эту камеру из списка устройств?</string>
+    <string name="failed_device_delete">Сбой удаления устройства: %1$s</string>
+    <string name="title_recordings">Записи</string>
+    <string name="title_activity_movie_view">Просмотр записей</string>
+    <string name="other_settings">Другие настройки</string>
+    <string name="open_by_default">Открыть умольчально</string>
+    <string name="open_by_default_desc">Открыть поток с камеры этого устройства при открытии приложения. Удобно если добавлено одно устройство.</string>
+    <string name="location_permissions">Разрешение определения местоположения необходимо для получения списка WiFi сетей.</string>
+    <string name="approve_loc_permission">Разрешить определять местоположение этому приложению</string>
+    <string name="loading_video">Загрузка видео…</string>
+    <string name="task_failed">Задание сбойнуло с кодом статуса %1$s</string>
+    <string name="skip">Пропустить</string>
+    <string name="disable_device_selection">Отключить выбор устройств</string>
+    <string name="disable_device_selection_msg">Отключив это вы уберёте выбор устройств внизу</string>
+    <string name="ui_mode">UI режим</string>
+    <string name="video_playback_error">Ошибка проигрывания видео: %1$s</string>
+    <string name="fullscreen">Полный экран</string>
+    <string name="downloading_recording_from">Загрузка записи с %1$s</string>
+    <string name="download">Скачать</string>
+    <string name="allow_permissions">Разрешите доступ к хранилищу для загрузки видео</string>
+    <string name="download_error">Ошибка при загрузке: %1$s</string>
+    <string name="video_downloaded">Видео загружено</string>
+    <string name="framerateFactor">Коэффициент частоты кадров</string>
+    <string name="framerateFactorDesc">Коэффициент частоты кадров регулирует частоту процесса обновления изображения. Чем ниже число, тем медленнее обновление. Уменьшение этого значения полезно, если изображение медленно обновляется или лагает. При использовании мобильных данных значение уменьшается для лучшей скорости.</string>
+
+</resources>

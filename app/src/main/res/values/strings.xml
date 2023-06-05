@@ -6,8 +6,6 @@
 <resources>
     <string name="app_name">motionEye Client</string>
     <string name="title_devices">Devices</string>
-    <string name="cameras_count">%1$s camera%2$s</string>
-    <string name="cameras_count_morethan1">s</string>
     <string name="no_devices_added">No Devices Added</string>
     <string name="add_new_device">Add New Device</string>
     <string name="title_activity_setup_start_screen">Add Device Wizard</string>
@@ -105,5 +103,7 @@
     <string name="allow_permissions">Allow Storage permissions to download the video</string>
     <string name="download_error">Download error: %1$s</string>
     <string name="video_downloaded">Video downloaded</string>
+    <string name="framerateFactor">Frame rate factor</string>
+    <string name="framerateFactorDesc">Frame rate factor regulates frequency of image refresh process. Lower number, slower refresh. Lowering this value is useful, if image is slow to refresh or laggy. When using mobile data, value is decreased for better speed.</string>
 
 </resources>

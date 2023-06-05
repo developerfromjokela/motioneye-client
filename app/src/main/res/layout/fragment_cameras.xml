@@ -44,7 +44,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
-        app:backgroundTint="@color/colorAccent"
         app:layout_anchor="@+id/camerasRecyclerView"
         app:layout_anchorGravity="right|bottom"
         app:srcCompat="@drawable/ic_add"

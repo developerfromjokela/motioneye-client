@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -130,7 +131,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("admin_username").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.settingdialog, null);
                         dialogBuilder.setView(dialogView);
@@ -204,7 +205,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("delete_camera").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         dialogBuilder.setTitle(R.string.delete_camera);
                         dialogBuilder.setMessage(R.string.delete_camera_caution);
                         dialogBuilder.setNegativeButton(R.string.cancel, null);
@@ -232,7 +233,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("admin_password").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.settingdialog, null);
                         dialogBuilder.setView(dialogView);
@@ -307,7 +308,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("surv_username").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.settingdialog, null);
                         dialogBuilder.setView(dialogView);
@@ -382,7 +383,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("surv_password").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.settingdialog, null);
                         dialogBuilder.setView(dialogView);
@@ -461,7 +462,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("ip_addr").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.settingdialog, null);
                         dialogBuilder.setView(dialogView);
@@ -565,7 +566,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("ddns_addr").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.settingdialog, null);
                         dialogBuilder.setView(dialogView);
@@ -666,7 +667,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("port").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.settingdialog, null);
                         dialogBuilder.setView(dialogView);
@@ -743,7 +744,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 findPreference("ddns_port").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
                         LayoutInflater inflater = getActivity().getLayoutInflater();
                         View dialogView = inflater.inflate(R.layout.settingdialog, null);
                         dialogBuilder.setView(dialogView);
@@ -863,7 +864,7 @@ public class DeviceSettings extends MotionEyeActivity {
         }
 
         private void validateSettings() {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+            MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getActivity());
             LayoutInflater inflater = getActivity().getLayoutInflater();
             View validateView = inflater.inflate(R.layout.validatedialog, null);
             dialogBuilder.setView(validateView);
@@ -1152,7 +1153,7 @@ public class DeviceSettings extends MotionEyeActivity {
                 testInterface.TestFailed(e.getMessage(), 700);
                 return;
             }
-            Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword(), "login");
+            Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword());
             call.enqueue(new Callback<ResponseBody>() {
 
                 @Override

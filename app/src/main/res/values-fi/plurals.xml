@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="cameras">
+        <item quantity="one">%d kamera</item>
+        <item quantity="other">%d kameraa</item>
+    </plurals>
+</resources>

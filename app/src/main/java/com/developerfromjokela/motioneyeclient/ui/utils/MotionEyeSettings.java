@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.developerfromjokela.motioneyeclient.other.Utils;
+
 public class MotionEyeSettings {
 
     private SharedPreferences sharedPreferences;
@@ -14,6 +16,7 @@ public class MotionEyeSettings {
 
     private static class Keys {
         public static String DISABLE_DEVICE_SELECTION = "no_selection";
+        public static String FRAMERATE_FACTOR = "framerateFactor";
         public static String RECORDINGS_UI_MODE = "ui_mode";
         public static String SORT_OPTION = "recordings_sort";
     }
@@ -24,6 +27,10 @@ public class MotionEyeSettings {
 
     public String getRecordingsUIMode() {
         return sharedPreferences.getString(Keys.RECORDINGS_UI_MODE, "compact");
+    }
+
+    public int getFrameRateFactor() {
+        return sharedPreferences.getInt(Keys.FRAMERATE_FACTOR, 100);
     }
 
     public String getSortOption() {

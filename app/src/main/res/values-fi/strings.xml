@@ -6,8 +6,6 @@
 <resources>
     <string name="app_name">motionEye</string>
     <string name="title_devices">Laitteet</string>
-    <string name="cameras_count">%1$s kamera%2$s</string>
-    <string name="cameras_count_morethan1">a</string>
     <string name="no_devices_added">Ei lisättyjä laitteita</string>
     <string name="add_new_device">Lisää uusi laite</string>
     <string name="title_activity_setup_start_screen">Laitteen lisäysasetys</string>
@@ -101,4 +99,8 @@
     <string name="downloading_recording_from">Ladataan videota kamerasta %1$s</string>
     <string name="download">Lataa</string>
     <string name="allow_permissions">Hyväksy tallennustilan käyttöoikeudet, jotta video voitaisiin ladata</string>
+    <string name="download_error">Virhe ladatessa: %1$s</string>
+    <string name="video_downloaded">Video ladattu</string>
+    <string name="framerateFactor">Kehysnopeuskerroin</string>
+    <string name="framerateFactorDesc">Kehysnopeuskerroin säätää kuvan päviitysaikaa. Mitä pienempi numero, sitä hitaammin kuva päivittyy. Arvon pienentäminen kannattaa, jos kuva pätkii tai päivittyy hitaasti. Mobiilidatalla arvo pienennetään paremman nopeuden takaamiseksi.</string>
 </resources>

@@ -58,59 +58,59 @@ public class ActionsAdapter extends RecyclerView.Adapter<ActionsAdapter.ActionsV
     @Override
     public void onBindViewHolder(final ActionsAdapter.ActionsViewHolder holder, final int position) {
         String actionString = actionsList.get(position);
-        if (actionString.contains("preset")) {
+        if (actionString.startsWith("preset")) {
             holder.icon.setVisibility(View.GONE);
             holder.number.setText(actionString.split("preset")[1]);
             holder.number.setVisibility(View.VISIBLE);
-        } else if (actionString.contains("lock")) {
+        } else if (actionString.startsWith("lock")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_lock);
-        } else if (actionString.contains("unlock")) {
+        } else if (actionString.startsWith("unlock")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_unlock);
-        } else if (actionString.contains("light_on")) {
+        } else if (actionString.startsWith("light_on")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_light_on);
-        } else if (actionString.contains("light_off")) {
+        } else if (actionString.startsWith("light_off")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_light_off);
-        } else if (actionString.contains("alarm_on")) {
+        } else if (actionString.startsWith("alarm_on")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_alarm_on);
-        } else if (actionString.contains("alarm_off")) {
+        } else if (actionString.startsWith("alarm_off")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_alarm_off);
-        } else if (actionString.contains("up")) {
+        } else if (actionString.startsWith("up")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_up);
-        } else if (actionString.contains("right")) {
+        } else if (actionString.startsWith("right")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_right);
-        } else if (actionString.contains("down")) {
+        } else if (actionString.startsWith("down")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_down);
-        } else if (actionString.contains("left")) {
+        } else if (actionString.startsWith("left")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_back);
-        } else if (actionString.contains("zoom_in")) {
+        } else if (actionString.startsWith("zoom_in")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_zoom_in);
-        } else if (actionString.contains("zoom_out")) {
+        } else if (actionString.startsWith("zoom_out")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_zoom_out);
-        } else if (actionString.contains("snapshot")) {
+        } else if (actionString.startsWith("snapshot")) {
             holder.number.setVisibility(View.GONE);
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setImageResource(R.drawable.ic_snapshot);

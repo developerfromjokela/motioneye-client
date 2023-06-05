@@ -13,11 +13,10 @@
     android:gravity="center_horizontal|center_vertical"
     android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="9dp">
+        app:cardElevation="3dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,6 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="9dp"
+                android:gravity="center_horizontal"
                 android:text="@string/wizard_completed_desc"
                 android:textSize="18sp" />
 
@@ -50,6 +50,6 @@
                 app:srcCompat="@drawable/ic_check_green" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

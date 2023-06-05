@@ -71,6 +71,7 @@ import retrofit2.Response;
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static android.app.DownloadManager.Request.NETWORK_WIFI;
 import static com.developerfromjokela.motioneyeclient.api.ServiceGenerator.motionEyeVerifier;
+import static com.developerfromjokela.motioneyeclient.other.Utils.framerateFactor;
 
 
 public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapter.ActionsAdapterListener {
@@ -499,7 +500,8 @@ public class FullCameraViewer extends MotionEyeActivity implements ActionsAdapte
     public void onResume() {
         super.onResume();
         attached = true;
-        new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
+        if (finalUrl != null)
+            new DownloadImageFromInternet(cameraImage, loadingBar, fps, status, loadingCircle, camera, time, cameraFrame).execute(finalUrl);
 
     }
 

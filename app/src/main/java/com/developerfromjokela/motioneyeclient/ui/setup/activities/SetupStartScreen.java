@@ -235,14 +235,7 @@ public class SetupStartScreen extends AppCompatActivity {
             ddns_hostname.setText(device.getDdnsURL());
             ddns_port.setText(device.getDDNSPort());
             local_port.setText(device.getPort());
-            if (URLUtils.validIP(device.getDeviceUrl())) {
-
-
-                continue_btn.setEnabled(true);
-            } else {
-
-                continue_btn.setEnabled(false);
-            }
+            continue_btn.setEnabled(URLUtils.validIP(device.getDeviceUrl()));
             if (!device.getDdnsURL().contains("//") && device.getDdnsURL().length() > 7) {
                 ddns_hostname.setText("http://" + device.getDdnsURL());
             }
@@ -1054,7 +1047,7 @@ public class SetupStartScreen extends AppCompatActivity {
             testInterface.TestFailed(e.getMessage(), 700);
             return;
         }
-        Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword(), "login");
+        Call<ResponseBody> call = apiInterface.login(baseurl + "/login", device.getUser().getUsername(), device.getUser().getPassword());
         Log.e("Setup", baseurl);
         call.enqueue(new Callback<ResponseBody>() {
 
@@ -1085,6 +1078,7 @@ public class SetupStartScreen extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == locPermissionRequest) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

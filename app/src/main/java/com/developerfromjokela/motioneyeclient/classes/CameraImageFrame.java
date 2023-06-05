@@ -24,6 +24,8 @@ public class CameraImageFrame {
     private CameraImageError error = null;
     private List<Long> times = new ArrayList<>();
 
+    private long refreshDivider = 0;
+
 
     public CameraImageFrame(Camera camera, Device device, Bitmap bitmap, boolean initialLoadDone) {
         this.camera = camera;
@@ -38,6 +40,14 @@ public class CameraImageFrame {
 
     public CameraImageError getError() {
         return error;
+    }
+
+    public long getRefreshDivider() {
+        return refreshDivider;
+    }
+
+    public void setRefreshDivider(long refreshDivider) {
+        this.refreshDivider = refreshDivider;
     }
 
     public void setError(CameraImageError error) {

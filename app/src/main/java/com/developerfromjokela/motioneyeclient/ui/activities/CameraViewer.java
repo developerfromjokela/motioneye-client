@@ -42,6 +42,7 @@ import com.developerfromjokela.motioneyeclient.other.Utils;
 import com.developerfromjokela.motioneyeclient.ui.adapters.HttpCamerasAdapter;
 import com.developerfromjokela.motioneyeclient.ui.utils.ConnectionUtils;
 import com.developerfromjokela.motioneyeclient.ui.utils.DeviceURLUtils;
+import com.developerfromjokela.motioneyeclient.ui.utils.MotionEyeSettings;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
@@ -80,6 +81,11 @@ public class CameraViewer extends MotionEyeActivity {
     private boolean isLocalAvailable = false;
     private String cachedAddress;
 
+    private double frameRateFactor = Utils.framerateFactor;
+
+    private MotionEyeSettings settings;
+    private ConnectivityManager connectivityManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,11 +102,22 @@ public class CameraViewer extends MotionEyeActivity {
         });
         Intent intent = getIntent();
         source = new Source(this);
+        settings = new MotionEyeSettings(this);
+        connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         if (intent.getExtras() != null) {
             ID = intent.getStringExtra("DeviceId");
         } else {
             finish();
         }
+        final Handler handler = new Handler();
+        final int delay = 1000; // 1000 milliseconds == 1 second
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (!sleeping)
+                    updateFrameRateFactor();
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
 
     }
 
@@ -110,6 +127,8 @@ public class CameraViewer extends MotionEyeActivity {
         sleeping = false;
         try {
             device = source.get(ID);
+
+            updateFrameRateFactor();
 
             setTitle(device.getDeviceName());
             Log.e(CameraViewer.class.getSimpleName(), new Gson().toJson(device));
@@ -150,6 +169,13 @@ public class CameraViewer extends MotionEyeActivity {
         }
 
 
+    }
+
+    private void updateFrameRateFactor() {
+        frameRateFactor = (double) settings.getFrameRateFactor()/100;
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED) {
+            frameRateFactor -= 0.45;
+        }
     }
 
     private void load() {
@@ -310,6 +336,9 @@ public class CameraViewer extends MotionEyeActivity {
         return new Runnable() {
             @Override
             public void run() {
+                if (cachedAddress == null) {
+                    return;
+                }
                 MotionEyeHelper helper = new MotionEyeHelper();
                 helper.setUsername(device.getUser().getUsername());
                 try {
@@ -348,59 +377,84 @@ public class CameraViewer extends MotionEyeActivity {
         Runnable timerRunnable;
         CameraImageFrame camera;
         int position;
+        boolean exec = true;
         Handler timeHandler;
 
         public DownloadImageFromInternet(int position, CameraImageFrame camera, Runnable timerRunnable) {
             this.camera = camera;
             this.timerRunnable = timerRunnable;
             this.position = position;
+
             timeHandler = new Handler();
         }
 
         protected void onPreExecute() {
+            int count = (int) (1000L/((long) Utils.imageRefreshInterval *Integer.parseInt(camera.getCamera().getStreaming_framerate())));
+            count /= frameRateFactor;
+            exec = false;
+            /* if frameFactor is 0, we only want one camera refresh at the beginning,
+             * and no subsequent refreshes at all */
+            exec = frameRateFactor == 0 && this.camera.getRefreshDivider() == 0;
+            if (camera.getError() != null) {
+                /* in case of error, decrease the refresh rate to 1 fps */
+                count = 1000 / Utils.imageRefreshInterval;
+            }
+            if (camera.getRefreshDivider() < count) {
+                camera.setRefreshDivider(camera.getRefreshDivider()+1);
+            }
+            else {
+                exec = true;
+                camera.setRefreshDivider(0);
+            }
         }
 
         protected CameraImage doInBackground(String... urls) {
 
             String imageURL = urls[0];
 
+            if (exec) {
+                try {
+                    URL url = new URL(imageURL);
+                    Map<String, List<String>> fps;
+                    if (imageURL.startsWith("https://")) {
+                        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                        connection.setHostnameVerifier(motionEyeVerifier);
+                        fps = connection.getHeaderFields();
+                    } else {
+                        URLConnection connection = url.openConnection();
+                        fps = connection.getHeaderFields();
+                    }
+                    InputStream in = url.openStream();
+                    final Bitmap decoded = BitmapFactory.decodeStream(in);
+                    in.close();
+                    for (Map.Entry<String, List<String>> key : fps.entrySet()) {
+                        for (String string : key.getValue()) {
+                            if (string.contains("capture_fps")) {
+                                double d = Double.parseDouble(string.split("capture_fps_" + camera.getCamera().getId() + "=")[1].split(";")[0].trim());
+                                int humanReadableFPS = Math.round((int) d);
+                                return new CameraImage(humanReadableFPS, decoded, true);
 
-            try {
-                URL url = new URL(imageURL);
-                Map<String, List<String>> fps;
-                if (imageURL.startsWith("https://")) {
-                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                    connection.setHostnameVerifier(motionEyeVerifier);
-                    fps = connection.getHeaderFields();
-                } else {
-                    URLConnection connection = url.openConnection();
-                    fps = connection.getHeaderFields();
-                }
-                InputStream in = url.openStream();
-                final Bitmap decoded = BitmapFactory.decodeStream(in);
-                in.close();
-                for (Map.Entry<String, List<String>> key : fps.entrySet()) {
-                    for (String string : key.getValue()) {
-                        if (string.contains("capture_fps")) {
-                            double d = Double.parseDouble(string.split("capture_fps_" + camera.getCamera().getId() + "=")[1].split(";")[0].trim());
-                            int humanReadableFPS = Math.round((int) d);
-                            return new CameraImage(humanReadableFPS, decoded, true);
+                            }
 
                         }
-
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return new CameraImage(false, e.getMessage());
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new CameraImage(false, e.getMessage());
+                return new CameraImage(false, "Got no image from motionEye");
+            } else {
+                return null;
             }
-            return new CameraImage(false, "Got no image from motionEye");
-
         }
 
         protected void onPostExecute(CameraImage result) {
-
-            camera.setError(null);
+            if (result == null) {
+                if (!isFinishing()) {
+                    timeHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer afte
+                }
+                return;
+            }
             if (result.isSuccessful()) {
                 if (!camera.isInitialLoadDone()) {
                     camera.setInitialLoadDone(true);
@@ -410,7 +464,7 @@ public class CameraViewer extends MotionEyeActivity {
 
                 if (time.size() == Utils.fpsLen) {
 
-                    long streamingFps = time.size() * 1000 / (time.get(time.size() - 1) - time.get(0));
+                    long streamingFps = time.size() * 1000L / (time.get(time.size() - 1) - time.get(0));
                     int fpsDeliv = Math.round(streamingFps);
                     if (fpsDeliv > result.getFps() || fpsDeliv == result.getFps()) {
                         fpsDeliv = result.getFps();
@@ -427,8 +481,12 @@ public class CameraViewer extends MotionEyeActivity {
                 }
 
                 if (!isFinishing()) {
-                    timeHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer after 1 sec
+                    timeHandler.postDelayed(timerRunnable, Utils.imageRefreshInterval); //Start timer afte
                 }
+
+
+                camera.setError(null);
+
 
             } else {
                 camera.setInitialLoadDone(false);

@@ -18,16 +18,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 
-import org.jsoup.helper.StringUtil;
 
 import static android.app.DownloadManager.Request.NETWORK_MOBILE;
 import static android.app.DownloadManager.Request.NETWORK_WIFI;
+
+import org.jsoup.internal.StringUtil;
 
 public class Utils {
 
     public static final boolean DEBUG = true;
     public static int imageRefreshInterval = 15;
-    public static int framerateFactor = 1;
+    public static double framerateFactor = 1;
     public static int fpsLen = 4;
     public static class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 

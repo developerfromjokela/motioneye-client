@@ -14,6 +14,7 @@
             android:defaultValue="false"
             android:key="advancedSettings"
             android:enabled="false"
+            android:widgetLayout="@layout/m3_prefswitch"
 
             android:title="@string/advanced_settings" />
         <Preference
